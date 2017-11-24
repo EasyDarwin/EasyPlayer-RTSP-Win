@@ -30,6 +30,16 @@ typedef enum __RENDER_FORMAT
 	DISPLAY_FORMAT_RGB24_GDI=		26
 }RENDER_FORMAT;
 
+
+typedef struct tagEASY_PALYER_OSD
+{
+	char	stOSD[128];
+	DWORD	alpha;		//0-255
+	DWORD	color;		//RGB(0xf9,0xf9,0xf9)
+	DWORD	shadowcolor;		//RGB(0x4d,0x4d,0x4d) 全为0背景透明
+	RECT	rect;		//OSD基于图像右上角显示区域
+}EASY_PALYER_OSD;
+
 typedef int (CALLBACK *MediaSourceCallBack)( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
 
 LIB_EASYPLAYER_API int EasyPlayer_Init();
@@ -43,6 +53,7 @@ LIB_EASYPLAYER_API int EasyPlayer_SetShownToScale(int channelId, int shownToScal
 LIB_EASYPLAYER_API int EasyPlayer_SetDecodeType(int channelId, int decodeKeyframeOnly);
 LIB_EASYPLAYER_API int EasyPlayer_SetRenderRect(int channelId, LPRECT lpSrcRect);
 LIB_EASYPLAYER_API int EasyPlayer_ShowStatisticalInfo(int channelId, int show);
+LIB_EASYPLAYER_API int EasyPlayer_ShowOSD(int channelId, int show, EASY_PALYER_OSD osd);
 
 LIB_EASYPLAYER_API int EasyPlayer_SetDragStartPoint(int channelId, POINT pt);
 LIB_EASYPLAYER_API int EasyPlayer_SetDragEndPoint(int channelId, POINT pt);

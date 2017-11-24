@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+<TITLE>EasyPlayer</TITLE>
+<script type="text/javascript">
+	
+	function config(obj){
+		var cache = document.getElementById("cache").value;
+		var playsound = document.getElementById("playsound").value;
+		var showtoscale= document.getElementById("showtoscale").value;
+		var showsatic = document.getElementById("showsatic").value;
+
+		obj.Config(cache, playsound, showtoscale, showsatic);	
+		//alert(cache+";"+playsound+";"+showtoscale+";"+showsatic);
+	}
+
+	function startplay(){
+		
+		var url = document.getElementById("url").value;
+		var rendertype = document.getElementById("rendertype").value;
+		var name= document.getElementById("name").value;
+		var password = document.getElementById("password").value;
+		var harddecode = document.getElementById("harddecode").value;
+
+		start(url, rendertype, name, password, harddecode);
+		//alert(url+";"+rendertype+";"+name+";"+password);
+	}
+
+	function stopplay(){
+		//alert("Close()!!!!!");
+		for(var i = 1; i <= 4; ++i){
+			var obj = document.getElementById("obj"+i);
+			obj.Close();
+		}
+	}
+
+	function start(url, rendertype, name, password, harddecode){
+		for(var i = 1; i <= 4; ++i){
+			var obj = document.getElementById("obj"+i);
+			obj.Start(url, rendertype, name, password, harddecode);
+			config(obj);
+		}
+	}
+	
+</script>
+</HEAD>
+
+<BODY>
+<center>
+EasyPlayer Plugin muti-player Example
+<p></p>
+
+
+<OBJECT id="obj1" WIDTH=480px HEIGHT=270px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+</OBJECT>
+<OBJECT id="obj2" WIDTH=480px HEIGHT=270px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+</OBJECT>
+<OBJECT id="obj3" WIDTH=480px HEIGHT=270px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+</OBJECT>
+<OBJECT id="obj4" WIDTH=480px HEIGHT=270px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+</OBJECT>
+<br>
+界面信息<br>
+RTSP URL：<input type="text" name="url" id="url" VALUE="rtsp://127.0.0.1:10554/stream.sdp"/>
+RenderFormat：<input type="text" name="rendertype" id="rendertype" VALUE="0"/>
+用户名：<input type="text" name="name" id="name" size=25 value=""/>
+密码：<input type="text" name="password" id="password" size=25 value=""/>
+采用硬解码：<input type="text" name="harddecode" id="harddecode" size=25 value="0"/>
+
+<br>
+缓存：<input type="text" name="cache" id="cache" size=25 value ="3"/>
+播放声音：<input type="text" name="playsound" id="playsound" size=25 value ="0"/>
+按比例显示：<input type="text" name="showtoscale" id="showtoscale" size=25 value ="1"/>
+显示码率信息：<input type="text" name="showsatic" id="showsatic" size=25 value ="1"/><br>
+
+
+<button type="button" onclick="startplay();">Start</button>
+<button type="button" onclick="config();">config</button>
+<button type="button" onclick="stopplay();">Stop</button>
+
+</center>
+</BODY>
+</HTML>

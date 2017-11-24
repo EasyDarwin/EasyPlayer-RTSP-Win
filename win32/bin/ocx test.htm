@@ -14,6 +14,7 @@
 		var showsatic = document.getElementById("showsatic").value;
 
 		obj.Config(cache, playsound, showtoscale, showsatic);
+		obj.SetOSD(1,255,0,0,255,100,100, 1000,150,"我勒个去");	
 				
 		//alert(cache+";"+playsound+";"+showtoscale+";"+showsatic);
 
@@ -58,8 +59,8 @@ EasyPlayer Plugin Example
 界面信息<br>
 RTSP URL：<input type="text" name="url" id="url" VALUE="rtsp://127.0.0.1:554/stream0.sdp"/>
 RenderFormat：<input type="text" name="rendertype" id="rendertype" VALUE="0"/>
-用户名：<input type="text" name="name" id="name" size=25 value="admin"/>
-密码：<input type="text" name="password" id="password" size=25 value="admin"/>
+用户名：<input type="text" name="name" id="name" size=25 value=""/>
+密码：<input type="text" name="password" id="password" size=25 value=""/>
 采用硬解码：<input type="text" name="harddecode" id="harddecode" size=25 value="1"/>
 
 <br>

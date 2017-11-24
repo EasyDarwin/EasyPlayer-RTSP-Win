@@ -178,6 +178,19 @@ int	CChannelManager::ShowStatisticalInfo(int channelId, int _show)
 	pRealtimePlayThread[iNvsIdx].showStatisticalInfo = _show;
 	return 0;
 }
+
+int	CChannelManager::ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+
+	pRealtimePlayThread[iNvsIdx].showOSD = _show;
+	memcpy(&pRealtimePlayThread[iNvsIdx].osd,  &osd, sizeof(EASY_PALYER_OSD));
+	return 0;
+}
+
 int	CChannelManager::SetFrameCache(int channelId, int _cache)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
@@ -1135,7 +1148,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 					if (pThread->decodeYuvIdx >= MAX_YUV_FRAME_NUM)		pThread->decodeYuvIdx = 0;
 
 					//抓图
-					if (pThread->manuScreenshot == 0x01 && pThread->renderFormat == D3D_FORMAT_YUY2)//Just support YUY2->jpg
+					if (pThread->manuScreenshot == 0x01 )//Just support YUY2->jpg
 					{
 						unsigned int timestamp = (unsigned int)time(NULL);
 						time_t tt = timestamp;
@@ -1153,6 +1166,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 						pShotThreadInfo->pYuvBuf = new unsigned char[nYuvBufLen];
 						pShotThreadInfo->width = frameinfo.width;
 						pShotThreadInfo->height = frameinfo.height;
+						pShotThreadInfo->renderFormat = pThread->renderFormat ;
 
 						memcpy(pShotThreadInfo->pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, nYuvBufLen);
 						CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpPhotoShotThread, pShotThreadInfo, 0, NULL);
@@ -1333,20 +1347,174 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 	return 0;
 }
 
+// 抓图函数实现
+int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Format)
+{
+	char              *fileext = NULL;
+	enum AVCodecID     codecid = AV_CODEC_ID_NONE;
+	struct SwsContext *sws_ctx = NULL;
+	AVPixelFormat      swsofmt = AV_PIX_FMT_NONE;
+	AVFrame            picture = {};
+	int                ret     = -1;
+
+	AVFormatContext   *fmt_ctxt   = NULL;
+	AVOutputFormat    *out_fmt    = NULL;
+	AVStream          *stream     = NULL;
+	AVCodecContext    *codec_ctxt = NULL;
+	AVCodec           *codec      = NULL;
+	AVPacket           packet     = {};
+	int                retry      = 8;
+	int                got        = 0;
+
+	// init ffmpeg
+	av_register_all();
+
+	fileext = file + strlen(file) - 3;
+	if (_stricmp(fileext, "png") == 0) {
+		codecid = AV_CODEC_ID_APNG;
+		swsofmt = AV_PIX_FMT_RGB24;
+	}
+	else {
+		codecid = AV_CODEC_ID_MJPEG;
+		swsofmt = AV_PIX_FMT_YUVJ420P;
+	}
+
+	AVFrame video;
+	int numBytesIn;
+	numBytesIn = av_image_get_buffer_size(Format, w, h, 1);
+	av_image_fill_arrays(video.data, video.linesize, buffer, Format, w, h, 1);
+	video.width = w;
+	video.height = h;
+
+	// alloc picture
+	picture.format = swsofmt;
+	picture.width  = w > 0 ? w : video.width;
+	picture.height = h > 0 ? h : video.height;
+	if (av_frame_get_buffer(&picture, 32) < 0) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to allocate picture !\n", file);
+		goto done;
+	}
+
+	// scale picture
+	sws_ctx = sws_getContext(video.width, video.height, (AVPixelFormat)Format/*video->format*/,
+		picture.width, picture.height, swsofmt, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+	if (!sws_ctx) {
+		//av_log(NULL, AV_LOG_ERROR, "could not initialize the conversion context jpg\n");
+		goto done;
+	}
+	sws_scale(sws_ctx, video.data, video.linesize, 0, video.height, picture.data, picture.linesize);
+
+	// do encoding
+	fmt_ctxt = avformat_alloc_context();
+	out_fmt  = av_guess_format(codecid == AV_CODEC_ID_APNG ? "apng" : "mjpeg", NULL, NULL);
+	fmt_ctxt->oformat = out_fmt;
+	if (!out_fmt) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to guess format !\n");
+		goto done;
+	}
+
+	if (avio_open(&fmt_ctxt->pb, file, AVIO_FLAG_READ_WRITE) < 0) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to open output file: %s !\n", file);
+		goto done;
+	}
+
+	stream = avformat_new_stream(fmt_ctxt, 0);
+	if (!stream) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to create a new stream !\n");
+		goto done;
+	}
+
+	codec_ctxt                = stream->codec;
+	codec_ctxt->codec_id      = out_fmt->video_codec;
+	codec_ctxt->codec_type    = AVMEDIA_TYPE_VIDEO;
+	codec_ctxt->pix_fmt       = swsofmt;
+	codec_ctxt->width         = picture.width;
+	codec_ctxt->height        = picture.height;
+	codec_ctxt->time_base.num = 1;
+	codec_ctxt->time_base.den = 25;
+
+	codec = avcodec_find_encoder(codec_ctxt->codec_id);
+	if (!codec) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to find encoder !\n");
+		goto done;
+	}
+
+	if (avcodec_open2(codec_ctxt, codec, NULL) < 0) {
+		//av_log(NULL, AV_LOG_ERROR, "failed to open encoder !\n");
+		goto done;
+	}
+
+	while (retry-- && !got) {
+		if (avcodec_encode_video2(codec_ctxt, &packet, &picture, &got) < 0) {
+			//av_log(NULL, AV_LOG_ERROR, "failed to do picture encoding !\n");
+			goto done;
+		}
+
+		if (got) {
+			ret = avformat_write_header(fmt_ctxt, NULL);
+			if (ret < 0) {
+				//av_log(NULL, AV_LOG_ERROR, "error occurred when opening output file !\n");
+				goto done;
+			}
+			av_write_frame(fmt_ctxt, &packet);
+			av_write_trailer(fmt_ctxt);
+		}
+	}
+
+	// ok
+	ret = 0;
+
+done:
+	avcodec_close(codec_ctxt);
+	if (fmt_ctxt)
+	{
+		avio_close(fmt_ctxt->pb);
+	}
+	avformat_free_context(fmt_ctxt);
+	av_packet_unref(&packet);
+	//    av_frame_unref(&picture);
+	sws_freeContext(sws_ctx);
+
+	return ret;
+}
+
+
 LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread( LPVOID _pParam )
 {
 	if (_pParam)
 	{
+		AVPixelFormat FFVFormat = AV_PIX_FMT_RGB24;
 		PhotoShotThreadInfo* pThreadInfo = (PhotoShotThreadInfo*)_pParam;
-		LPSaveJpg	  pSaveImage=Create_SaveJpgDll();
-		if(pSaveImage)
+		switch (pThreadInfo->renderFormat )
 		{
-			//YUV -> JPG
-			pSaveImage->SaveBufferToJpg((BYTE*)pThreadInfo->pYuvBuf, pThreadInfo->width, pThreadInfo->height, pThreadInfo->strPath,-1,-1);
-
-			Release_SaveJpgDll(pSaveImage);
-			pSaveImage=NULL;
+		case D3D_FORMAT_YUY2:
+			FFVFormat = AV_PIX_FMT_YUYV422;
+			break;
+		case D3D_FORMAT_YV12:
+			FFVFormat = AV_PIX_FMT_YUV420P;
+			break;;
+		case	D3D_FORMAT_UYVY:
+			FFVFormat = AV_PIX_FMT_UYVY422;
+			break;
+		case	D3D_FORMAT_A8R8G8B8	:
+			FFVFormat = AV_PIX_FMT_ARGB;
+			break;
+		case	D3D_FORMAT_X8R8G8B8:	
+			FFVFormat = AV_PIX_FMT_RGBA;
+			break;
+		case	D3D_FORMAT_RGB565:
+			break;
+		case	D3D_FORMAT_RGB555	:	
+			break;
+		case GDI_FORMAT_RGB24:
+			FFVFormat = AV_PIX_FMT_RGB24;
+			break;
 		}
+		int ret = take_snapshot(pThreadInfo->strPath, pThreadInfo->width, pThreadInfo->height, pThreadInfo->pYuvBuf, FFVFormat);
+		if (ret)
+		{
+		}
+
 		delete[] pThreadInfo->pYuvBuf;
 		delete pThreadInfo;
 	}
@@ -1745,20 +1913,34 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 #endif
 		D3D_OSD	osd;
 		memset(&osd, 0x00, sizeof(D3D_OSD));
-		MByteToWChar(sztmp, osd.string, sizeof(osd.string)/sizeof(osd.string[0]));
-		if (pThread->renderFormat == GDI_FORMAT_RGB24)
-		{
-			SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*7, (int)(float)((height)*0.046f));//40);
-		}
-		else
-		{
-			SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*20, (int)(float)((height)*0.046f));//40);
-		}
-		osd.color = RGB(0xff,0xff,0x00);
-		osd.shadowcolor = RGB(0x15,0x15,0x15);
-		osd.alpha = 180;
-
 		int showOSD = pThread->showStatisticalInfo;
+		if (pThread->showStatisticalInfo)
+		{
+			MByteToWChar(sztmp, osd.string, sizeof(osd.string)/sizeof(osd.string[0]));
+			if (pThread->renderFormat == GDI_FORMAT_RGB24)
+			{
+				SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*7, (int)(float)((height)*0.046f));//40);
+			}
+			else
+			{
+				SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*20, (int)(float)((height)*0.046f));//40);
+			}
+			osd.color = RGB(0x00,0xff,0x00);
+			//osd.shadowcolor = RGB(0x15,0x15,0x15);
+			osd.shadowcolor = RGB(0x00,0x00,0x00);
+			osd.alpha = 180;
+		}
+		if (pThread->showOSD)
+		{
+			showOSD = pThread->showOSD;
+			MByteToWChar(pThread->osd.stOSD, osd.string, sizeof(osd.string)/sizeof(osd.string[0]));
+
+			CopyRect(&osd.rect, &pThread->osd.rect);
+			osd.color = pThread->osd.color;
+			osd.shadowcolor = pThread->osd.shadowcolor;
+			osd.alpha = pThread->osd.alpha;
+
+		}
 
 		int ret = 0;
 

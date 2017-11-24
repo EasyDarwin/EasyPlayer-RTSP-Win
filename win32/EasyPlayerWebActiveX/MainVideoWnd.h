@@ -25,7 +25,13 @@ public:
 private:
 	//IDB_PNG_EASYLOGO
 	CImageEx	* m_pEasyLogo;
+	BOOL m_bFuulScreen ;
+	CRect m_rcVideoSingle;
+	CWnd* m_pMainCtrl;
 
 public:
 	virtual BOOL OnInitDialog();
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	void SetFullScreen();
+
 };

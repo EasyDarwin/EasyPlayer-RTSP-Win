@@ -347,6 +347,18 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			EasyPlayer_SetFrameCache(m_ChannelId, iPos);		//设置缓存
 			EasyPlayer_PlaySound(m_ChannelId);
 
+			EASY_PALYER_OSD osd;
+			osd.alpha = 255;
+			osd.color = RGB(0,255,0);
+			osd.rect.left = 800;
+			osd.rect.right = 5000;
+			osd.rect.top = 100;
+			osd.rect.bottom = 500;
+			osd.shadowcolor = RGB(0,0,0);
+			char* ss =  "我了个去啊";
+			strcpy(osd.stOSD ,ss);
+			EasyPlayer_ShowOSD(m_ChannelId, 1,  osd);
+
 			CString strFilePath = GET_MODULE_FILE_INFO.strPath;
 			char sFilePath[MAX_PATH];
 			__WCharToMByte(strFilePath.GetBuffer(strFilePath.GetLength()), sFilePath, sizeof(sFilePath)/sizeof(sFilePath[0]));

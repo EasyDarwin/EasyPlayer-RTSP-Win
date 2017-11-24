@@ -25,18 +25,37 @@
 #include "libEasyAACEncoder/EasyAACEncoderAPI.h"
 #pragma comment(lib, "libEasyAACEncoder/libEasyAACEncoder.lib")
 
-// 增加MP4box和SaveJPG库的支持 [9/20/2016 dingshuai]
-// JPGSave
-#include "SaveJPGDll/SaveJpg_Interface.h"
-#pragma comment(lib, "SaveJPGDll/SaveJpgDll.lib")
+// 增加MP4box库的支持 [9/20/2016 dingshuai]
 //gpac write mp4 file
 #include "EasyMP4Writer/EasyMP4Writer.h"
 
+#ifdef __cplusplus 
 extern "C"
 {
+#endif
 #include "mp4creator\libmp4creator.h"
 //#pragma comment(lib, "libMp4Creator.lib")
-}
+
+#include "libavutil/avstring.h"
+#include "libavutil/eval.h"
+#include "libavutil/mathematics.h"
+#include "libavutil/pixdesc.h"
+#include "libavutil/imgutils.h"
+#include "libavutil/dict.h"
+#include "libavutil/parseutils.h"
+#include "libavutil/samplefmt.h"
+#include "libavutil/avassert.h"
+#include "libavutil/time.h"
+#include "libavformat/avformat.h"
+#include "libavdevice/avdevice.h"
+#include "libswscale/swscale.h"
+#include "libavutil/opt.h"
+#include "libavcodec/avfft.h"
+#include "libswresample/swresample.h"
+
+#ifdef __cplusplus 
+	}
+#endif
 
 #define		MAX_CHANNEL_NUM		64		//可以解码显示的最大通道数
 #define		MAX_DECODER_NUM		5		//一个播放线程中最大解码器个数
@@ -124,6 +143,9 @@ typedef struct __PLAY_THREAD_OBJ
 	HWND			hWnd;				//显示视频的窗口句柄
 	int				channelId;			//通道号
 	int				showStatisticalInfo;//显示统计信息
+	int				showOSD;//显示OSD信息
+	//OSD自定义叠加
+	EASY_PALYER_OSD osd;
 
 	int				frameCache;		//帧缓存(用于调整流畅度),由上层应用设置
 	int				initQueue;		//初始化队列标识
@@ -160,8 +182,6 @@ typedef struct __PLAY_THREAD_OBJ
 	int				manuScreenshot;//=1 开启抓图
 	//MP4Creator写MP4
 	MP4C_Handler	mp4cHandle;
-	//存储JPG库
-	LPSaveJpg	   m_pSaveImage;
 	//MP4Box Writer
 	EasyMP4Writer* m_pMP4Writer;
 	int				vidFrameNum;
@@ -171,7 +191,7 @@ typedef struct __PLAY_THREAD_OBJ
 	//录像缓存帧队列
 	int				initRecQueue;		//初始化队列标识
 	SS_QUEUE_OBJ_T	*pRecAVQueue;		//接收rtsp的帧队列
-	CRITICAL_SECTION	critRecQueue;
+	CRITICAL_SECTION	critRecQueue;	
 
 }PLAY_THREAD_OBJ;
 
@@ -196,6 +216,7 @@ typedef struct tagPhotoShotThreadInfo
 	int width;
 	int height;
 	char strPath[512];
+	int renderFormat;
 }PhotoShotThreadInfo;
 
 class CChannelManager
@@ -210,6 +231,7 @@ public:
 	int		OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback=NULL, void *userPtr=NULL, bool bHardDecode=true);
 	void 	CloseStream(int channelId);
 	int		ShowStatisticalInfo(int channelId, int _show);
+	int		ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd);
 	int		SetFrameCache(int channelId, int _cache);
 	int		SetShownToScale(int channelId, int ShownToScale);
 	int		SetDecodeType(int channelId, int _decodeKeyframeOnly);

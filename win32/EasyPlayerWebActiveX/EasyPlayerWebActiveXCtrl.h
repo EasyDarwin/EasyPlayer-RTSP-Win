@@ -52,12 +52,13 @@ protected:
 // 调度和事件 ID
 public:
 	enum {
+		eventidOnPlayEvent = 1L,
+		dispidSetOSD = 4L,
 		dispidClose = 3L,
 		dispidConfig = 2L,
 		dispidStart = 1L
 	};
 
-private:
 	CMainVideoWnd m_pActiveDlg; 
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -65,7 +66,9 @@ public:
 protected:
 	LONG Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord);
 	void Config(LPCTSTR sFrameCache, LPCTSTR sPlaySound, LPCTSTR sShowToScale, LPCTSTR sShowStatisticInfo);
+	void SetOSD(LPCTSTR show, LPCTSTR alpha, LPCTSTR red, LPCTSTR green, LPCTSTR blue, LPCTSTR left, LPCTSTR top, LPCTSTR right, LPCTSTR bottom, LPCTSTR strOSD);
 	void Close(void);
+	static int CALLBACK EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
 
 private:
 	EasyPlayerManager m_player;
@@ -86,5 +89,10 @@ private:
 public:
 	virtual void OnSetClientSite();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
+	void OnPlayEvent(LPCTSTR sPlayerErrorString)
+	{
+		FireEvent(eventidOnPlayEvent, EVENT_PARAM(VTS_BSTR), sPlayerErrorString);
+	}
 };
 

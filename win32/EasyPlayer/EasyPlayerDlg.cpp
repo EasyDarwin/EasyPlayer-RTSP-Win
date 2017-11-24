@@ -283,7 +283,7 @@ void	CEasyPlayerDlg::CreateComponents()
 		pComboxRenderFormat->AddString(TEXT("RGB565"));
 		pComboxRenderFormat->AddString(TEXT("GDI"));
 
-		pComboxRenderFormat->SetCurSel(0);
+		pComboxRenderFormat->SetCurSel(3);
 	}
 }
 void	CEasyPlayerDlg::UpdateComponents()

@@ -69,3 +69,8 @@ int EasyPlayerManager::InRunning()
 {
 	return m_sSourceInfo.rtspSourceId;
 }
+
+void EasyPlayerManager::SetOSD(int show, EASY_PALYER_OSD osd)
+{
+	EasyPlayer_ShowOSD(m_sSourceInfo.rtspSourceId, show,  osd);
+}

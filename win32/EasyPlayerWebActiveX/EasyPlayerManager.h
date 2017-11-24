@@ -49,6 +49,7 @@ public:
 	void Config(int nFrameCache,  BOOL bPlaySound, BOOL bShowToScale = TRUE, BOOL  bShowStatisticInfo = FALSE);
 	//¹Ø±ÕÁ÷
 	void	Close();
+	void SetOSD(int show, EASY_PALYER_OSD osd);
 	int InRunning();
 
 	//Member Var

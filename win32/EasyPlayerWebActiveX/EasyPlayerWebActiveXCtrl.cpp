@@ -35,6 +35,8 @@ BEGIN_DISPATCH_MAP(CEasyPlayerWebActiveXCtrl, COleControl)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Start", dispidStart, Start, VT_I4, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Config", dispidConfig, Config, VT_EMPTY, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Close", dispidClose, Close, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "SetOSD", dispidSetOSD, SetOSD, VT_EMPTY, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
+
 END_DISPATCH_MAP()
 
 
@@ -42,6 +44,7 @@ END_DISPATCH_MAP()
 // 事件映射
 
 BEGIN_EVENT_MAP(CEasyPlayerWebActiveXCtrl, COleControl)
+	EVENT_CUSTOM_ID("OnPlayEvent", eventidOnPlayEvent, OnPlayEvent, VTS_BSTR)
 END_EVENT_MAP()
 
 
@@ -266,7 +269,35 @@ void CEasyPlayerWebActiveXCtrl::OnDestroy()
 
 }
 
-int StartStream();
+int CEasyPlayerWebActiveXCtrl::EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo)
+{
+	if (_frameType == EASY_SDK_EVENT_FRAME_FLAG)
+	{
+		//TRACE( "%s", pBuf  );
+		CEasyPlayerWebActiveXCtrl* pMaster = (CEasyPlayerWebActiveXCtrl*)_channelPtr;
+		if (pMaster && _frameInfo)
+		{
+			if (_frameInfo->codec == EASY_SDK_EVENT_CODEC_EXIT)
+			{
+					if (NULL !=pMaster->m_pActiveDlg)			
+						pMaster->m_pActiveDlg.Invalidate();
+			}
+			else if (_frameInfo->codec == EASY_SDK_EVENT_CODEC_ERROR)
+			{
+				CString sErrorMsg = (CString)pBuf;
+				pMaster->OnPlayEvent(sErrorMsg);
+				// 这里添加重连计时器  [11/22/2017 SwordTwelve]
+				// 
+
+
+			}
+// 			CString sErrorMsg = (CString)pBuf;
+// 			pMaster->OnPlayEvent(sErrorMsg);
+
+		}
+	}
+	return 0;
+}
 
 LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord)
 {
@@ -328,7 +359,8 @@ LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTS
 			break;
 		}
 
-		nRet = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , 1, szUserName , szPassword, nHardDecode);
+		nRet = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , 1, szUserName , szPassword, nHardDecode, &CEasyPlayerWebActiveXCtrl::EasyPlayerCallBack, this);
+
 	}
 	else
 	{
@@ -372,12 +404,90 @@ void CEasyPlayerWebActiveXCtrl::Config(LPCTSTR sFrameCache, LPCTSTR sPlaySound, 
 			__WCharToMByte(sShowStatisticInfo, szShowStatisticInfo, sizeof(szShowStatisticInfo)/sizeof(szShowStatisticInfo[0]));
 			bShowStatisticInfo = atoi(szShowStatisticInfo);
 		}
-
 		m_player.Config(nFrameCache, bPlaySound, bShowToScale, bShowStatisticInfo );
 	}
 	else
 	{
 		SetTimer( WM_TIMER_CONFIG_ID, 500, NULL );
+	}
+}
+
+
+void CEasyPlayerWebActiveXCtrl::SetOSD(LPCTSTR show, LPCTSTR alpha, LPCTSTR red, LPCTSTR green, LPCTSTR blue, 
+	LPCTSTR left, LPCTSTR top, LPCTSTR right, LPCTSTR bottom, LPCTSTR strOSD)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	if (m_bInit)
+	{
+		char szshow[128] = {0,};
+		char szalpha[128] = {0,};
+		char szred[128] = {0,};
+		char szgreen[128] = {0,};
+		char szblue[128] = {0,};
+
+		char szleft[128] = {0,};
+		char sztop[128] = {0,};
+		char szright[128] = {0,};
+		char szbottom[128] = {0,};
+
+		EASY_PALYER_OSD osd;
+		memset(&osd, 0x00, sizeof(osd));
+		int R,G,B = 0;
+		int bShow = 0;
+		if (wcslen(show) > 0)
+		{
+			__WCharToMByte(show, szshow, sizeof(szshow)/sizeof(szshow[0]));
+			bShow = atoi(szshow);
+		}
+		if (wcslen(alpha) > 0)
+		{
+			__WCharToMByte(alpha, szalpha, sizeof(szalpha)/sizeof(szalpha[0]));
+			osd.alpha = atoi(szalpha);
+		}
+		if (wcslen(red) > 0)
+		{
+			__WCharToMByte(red, szred, sizeof(szred)/sizeof(szred[0]));
+			R = atoi(szred);
+		}
+		if (wcslen(green) > 0)
+		{
+			__WCharToMByte(green, szgreen, sizeof(szgreen)/sizeof(szgreen[0]));
+			G = atoi(szgreen);
+		}
+		if (wcslen(blue) > 0)
+		{
+			__WCharToMByte(blue, szblue, sizeof(szblue)/sizeof(szblue[0]));
+			B = atoi(szblue);
+		}
+		if (wcslen(left) > 0)
+		{
+			__WCharToMByte(left, szleft, sizeof(szleft)/sizeof(szleft[0]));
+			osd.rect.left = atoi(szleft);
+		}
+		if (wcslen(top) > 0)
+		{
+			__WCharToMByte(top, sztop, sizeof(sztop)/sizeof(sztop[0]));
+			osd.rect.top = atoi(sztop);
+		}
+		if (wcslen(right) > 0)
+		{
+			__WCharToMByte(right, szright, sizeof(szright)/sizeof(szright[0]));
+			osd.rect.right = atoi(szright);
+		}
+		if (wcslen(bottom) > 0)
+		{
+			__WCharToMByte(bottom, szbottom, sizeof(szbottom)/sizeof(szbottom[0]));
+			osd.rect.bottom = atoi(szbottom);
+		}
+		osd.color = RGB(R,G,B);
+
+		if (wcslen(strOSD) > 0)
+		{
+			__WCharToMByte(strOSD, osd.stOSD, sizeof(osd.stOSD)/sizeof(osd.stOSD[0]));
+		}
+		m_player.SetOSD(bShow, osd);
+
 	}
 }
 
@@ -444,3 +554,4 @@ void CEasyPlayerWebActiveXCtrl::OnTimer(UINT_PTR nIDEvent)
 
 	COleControl::OnTimer(nIDEvent);
 }
+
