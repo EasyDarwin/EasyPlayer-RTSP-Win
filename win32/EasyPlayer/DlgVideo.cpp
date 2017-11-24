@@ -355,7 +355,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			osd.rect.top = 100;
 			osd.rect.bottom = 500;
 			osd.shadowcolor = RGB(0,0,0);
-			char* ss =  "我了个去啊";
+			char* ss =  "这是EasyPlayer-RTSP-Win播放器字幕叠加接口的效果！";
 			strcpy(osd.stOSD ,ss);
 			EasyPlayer_ShowOSD(m_ChannelId, 1,  osd);
 
