@@ -1,0 +1,111 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPlayerNetSDK", "EasyPlayerNetSDK\EasyPlayerNetSDK.csproj", "{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{48E8A6FA-B6AC-41CD-AA65-69122773C6DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{BB117C28-F97F-4938-8490-A75A0638D756}"
+	ProjectSection(SolutionItems) = preProject
+		Solution Items\Lib\avcodec-57.dll = Solution Items\Lib\avcodec-57.dll
+		Solution Items\Lib\avdevice-57.dll = Solution Items\Lib\avdevice-57.dll
+		Solution Items\Lib\avfilter-6.dll = Solution Items\Lib\avfilter-6.dll
+		Solution Items\Lib\avformat-57.dll = Solution Items\Lib\avformat-57.dll
+		Solution Items\Lib\avutil-55.dll = Solution Items\Lib\avutil-55.dll
+		Solution Items\Lib\D3DRender.dll = Solution Items\Lib\D3DRender.dll
+		Solution Items\Lib\D3DX9_43.dll = Solution Items\Lib\D3DX9_43.dll
+		Solution Items\Lib\dxva2.dll = Solution Items\Lib\dxva2.dll
+		Solution Items\Lib\EasyClient.dll = Solution Items\Lib\EasyClient.dll
+		Solution Items\Lib\FFDecoder.dll = Solution Items\Lib\FFDecoder.dll
+		Solution Items\Lib\FFEncoder.dll = Solution Items\Lib\FFEncoder.dll
+		Solution Items\Lib\gdiplus.dll = Solution Items\Lib\gdiplus.dll
+		Solution Items\Lib\ImageOle-new.dll = Solution Items\Lib\ImageOle-new.dll
+		Solution Items\Lib\ImageOle.dll = Solution Items\Lib\ImageOle.dll
+		Solution Items\Lib\IntelHardCodec.dll = Solution Items\Lib\IntelHardCodec.dll
+		Solution Items\Lib\libEasyAACEncoder.dll = Solution Items\Lib\libEasyAACEncoder.dll
+		Solution Items\Lib\libEasyPlayer.dll = Solution Items\Lib\libEasyPlayer.dll
+		Solution Items\Lib\libEasyPlayer.lib = Solution Items\Lib\libEasyPlayer.lib
+		Solution Items\Lib\libEasyPusher.dll = Solution Items\Lib\libEasyPusher.dll
+		Solution Items\Lib\libEasyRTSPClient-old.dll = Solution Items\Lib\libEasyRTSPClient-old.dll
+		Solution Items\Lib\libEasyRTSPClient.dll = Solution Items\Lib\libEasyRTSPClient.dll
+		Solution Items\Lib\libEasyRTSPClient.lib = Solution Items\Lib\libEasyRTSPClient.lib
+		Solution Items\Lib\libgcc_s_sjlj-1.dll = Solution Items\Lib\libgcc_s_sjlj-1.dll
+		Solution Items\Lib\libgpac.dll = Solution Items\Lib\libgpac.dll
+		Solution Items\Lib\libmfxsw32.dll = Solution Items\Lib\libmfxsw32.dll
+		Solution Items\Lib\libstdc++-6.dll = Solution Items\Lib\libstdc++-6.dll
+		Solution Items\Lib\npEasyPlayerPlugin.dll = Solution Items\Lib\npEasyPlayerPlugin.dll
+		Solution Items\Lib\opencv_core245.dll = Solution Items\Lib\opencv_core245.dll
+		Solution Items\Lib\opencv_highgui245.dll = Solution Items\Lib\opencv_highgui245.dll
+		Solution Items\Lib\opencv_imgproc245.dll = Solution Items\Lib\opencv_imgproc245.dll
+		Solution Items\Lib\savejpgdll.dll = Solution Items\Lib\savejpgdll.dll
+		Solution Items\Lib\swresample-2.dll = Solution Items\Lib\swresample-2.dll
+		Solution Items\Lib\swscale-4.dll = Solution Items\Lib\swscale-4.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{34BA85A8-A3D1-4DAF-B2C5-B577F7EEFEBC}"
+	ProjectSection(SolutionItems) = preProject
+		Solution Items\Include\EasyRTSPClientAPI.h = Solution Items\Include\EasyRTSPClientAPI.h
+		Solution Items\Include\EasyTypes.h = Solution Items\Include\EasyTypes.h
+		Solution Items\Include\libEasyPlayerAPI.h = Solution Items\Include\libEasyPlayerAPI.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{395A3C38-9151-4EA9-B979-A07A23A247D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{B57E32B5-0516-4C3A-9040-E93FA051A68C}"
+	ProjectSection(SolutionItems) = preProject
+		Solution Items\Content\Images\Easy_1024.png = Solution Items\Content\Images\Easy_1024.png
+		Solution Items\Content\Images\Easy_32.png = Solution Items\Content\Images\Easy_32.png
+		Solution Items\Content\Images\Easylogo-old.png = Solution Items\Content\Images\Easylogo-old.png
+		Solution Items\Content\Images\Easylogo.png = Solution Items\Content\Images\Easylogo.png
+		Solution Items\Content\Images\Easylogo111.png = Solution Items\Content\Images\Easylogo111.png
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{F90E8981-1B97-42B2-B439-2779F5B57E01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|x64.Build.0 = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Debug|x86.Build.0 = Debug|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|x64.ActiveCfg = Release|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|x64.Build.0 = Release|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|x86.ActiveCfg = Release|Any CPU
+		{4CCDF0E5-EEE4-45A6-A394-0B043B20E569}.Release|x86.Build.0 = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|x64.Build.0 = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Debug|x86.Build.0 = Debug|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|x64.ActiveCfg = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|x64.Build.0 = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|x86.ActiveCfg = Release|Any CPU
+		{F90E8981-1B97-42B2-B439-2779F5B57E01}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB117C28-F97F-4938-8490-A75A0638D756} = {48E8A6FA-B6AC-41CD-AA65-69122773C6DC}
+		{34BA85A8-A3D1-4DAF-B2C5-B577F7EEFEBC} = {48E8A6FA-B6AC-41CD-AA65-69122773C6DC}
+		{395A3C38-9151-4EA9-B979-A07A23A247D5} = {48E8A6FA-B6AC-41CD-AA65-69122773C6DC}
+		{B57E32B5-0516-4C3A-9040-E93FA051A68C} = {395A3C38-9151-4EA9-B979-A07A23A247D5}
+	EndGlobalSection
+EndGlobal
