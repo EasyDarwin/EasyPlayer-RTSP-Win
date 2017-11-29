@@ -14,6 +14,7 @@
     <ProjectGuid>{C36D2FB3-54B5-4C2C-8600-CD17F063992A}</ProjectGuid>
     <RootNamespace>EasyPlayerWebActiveX</RootNamespace>
     <Keyword>MFCActiveXProj</Keyword>
+    <ProjectName>EasyPlayer-RTSPWebActiveX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -42,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.ocx</TargetExt>
-    <OutDir>..\bin\</OutDir>
+    <OutDir>..\..\..\Bin\C++\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -60,9 +61,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>.\EasyPlayerWebActiveX.def</ModuleDefinitionFile>
-      <OutputFile>..\bin\$(ProjectName).ocx</OutputFile>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>..\bin\libEasyPlayer.lib</AdditionalDependencies>
+      <OutputFile>..\..\..\Bin\C++\$(ProjectName).ocx</OutputFile>
+      <RegisterOutput>false</RegisterOutput>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
