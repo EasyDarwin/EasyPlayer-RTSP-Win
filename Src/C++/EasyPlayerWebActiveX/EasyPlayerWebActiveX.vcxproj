@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.ocx</TargetExt>
-    <OutDir>..\bin\</OutDir>
+    <OutDir>..\..\..\Bin\C++\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,10 +98,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>.\EasyPlayerWebActiveX.def</ModuleDefinitionFile>
-      <OutputFile>..\bin\$(ProjectName).ocx</OutputFile>
+      <OutputFile>..\..\..\Bin\C++\$(ProjectName).ocx</OutputFile>
       <RegisterOutput>true</RegisterOutput>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <AdditionalDependencies>..\bin\libEasyPlayer.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
