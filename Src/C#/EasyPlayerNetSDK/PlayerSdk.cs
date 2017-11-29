@@ -139,7 +139,7 @@ namespace EasyPlayerNetSDK
         /// <param name="bHardDecode">硬件解码1=是，0=否.</param>
         /// <returns>System.Int32.</returns>
         [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_OpenStreamExt")]
-        public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, IntPtr userPtr, MediaSourceCallBack callback, bool bHardDecode = true);
+        public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true);
 
         /// <summary>
         /// Easies the player_ close stream.

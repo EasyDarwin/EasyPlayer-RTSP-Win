@@ -19,7 +19,7 @@ namespace Client
         private int channelID = -1;
         private bool isTCP = false;
         private bool isHardEncode = false;
-
+        private PlayerSdk.RENDER_FORMAT RENDER_FORMAT = PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_RGB24_GDI;
         public PlayerForm()
         {
             InitializeComponent();
@@ -32,21 +32,26 @@ namespace Client
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void PlayerBtn_Click(object sender, EventArgs e)
         {
-            var sss = this.panel1.ClientRectangle;
             var isPlay = (sender as Button).Text == "播放";
             if (isPlay)
             {
                 string RTSPStreamURI = "rtsp://127.0.0.1:9555/ch1";
-                //string RTSPStreamURI = this.StreamURI.Text ?? "rtsp://admin:a1234567@192.168.90.32:554/h264/ch1/main/av_stream";
-                channelID = PlayerSdk.EasyPlayer_OpenStream(RTSPStreamURI, this.panel1.Handle, PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_RGB24_GDI, isTCP ? 1 : 0, "", "", IntPtr.Zero, callBack, isHardEncode);
+                channelID = PlayerSdk.EasyPlayer_OpenStream(RTSPStreamURI, this.panel1.Handle, RENDER_FORMAT, isTCP ? 1 : 0, "", "", callBack, IntPtr.Zero, isHardEncode);
                 if (channelID > 0)
+                {
+                    PlayerSdk.EasyPlayer_SetFrameCache(channelID, 3);
                     this.PlayerBtn.Text = "停止";
+                }
             }
             else
             {
                 int ret = PlayerSdk.EasyPlayer_CloseStream(channelID);
                 if (ret == 0)
+                {
                     this.PlayerBtn.Text = "播放";
+                    channelID = -1;
+                    this.panel1.Refresh();
+                }
             }
         }
 
@@ -221,7 +226,7 @@ namespace Client
                 (sender as ToolStripMenuItem).CheckState = CheckState.Unchecked;
             }
         }
-        
+
         private void PlayerForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
             if (isInit)
@@ -233,10 +238,28 @@ namespace Client
             if (PlayerSdk.EasyPlayer_Init() == 0)
                 isInit = true;
             callBack = new PlayerSdk.MediaSourceCallBack(MediaCallback);
-
+            this.DecodeType.SelectedItem = "GDI";
             isTCP = rtpoverType.CheckState == CheckState.Checked;
             isHardEncode = HardDecode.CheckState == CheckState.Checked;
             this.RightToLeft = RightToLeft.Inherit;
+        }
+
+        private void DecodeType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var text = (sender as ComboBox).Text;
+            switch (text.ToUpper())
+            {
+                case "GDI":
+                    RENDER_FORMAT = PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_RGB24_GDI; break;
+                case "RGB565":
+                    RENDER_FORMAT = PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_RGB565; break;
+                case "YV12":
+                    RENDER_FORMAT = PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_YV12; break;
+                case "YUY2":
+                    RENDER_FORMAT = PlayerSdk.RENDER_FORMAT.DISPLAY_FORMAT_YUY2; break;
+                default:
+                    break;
+            }
         }
     }
 }
