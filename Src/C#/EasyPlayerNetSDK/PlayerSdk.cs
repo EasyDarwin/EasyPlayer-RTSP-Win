@@ -115,14 +115,14 @@ namespace EasyPlayerNetSDK
         /// EasyPlayer初始化.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "EasyPlayer_InitExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "EasyPlayer_InitExt")]
         public static extern int EasyPlayer_Init();
 
         /// <summary>
         /// 资源释放.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "EasyPlayer_ReleaseExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "EasyPlayer_ReleaseExt")]
         public static extern void EasyPlayer_Release();
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace EasyPlayerNetSDK
         /// <param name="callback">数据回调.</param>
         /// <param name="bHardDecode">硬件解码1=是，0=否.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_OpenStreamExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_OpenStreamExt")]
         public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true);
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_CloseStreamExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_CloseStreamExt")]
         public static extern int EasyPlayer_CloseStream(int channelId);
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="cache">缓存的视频帧数.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetFrameCacheExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetFrameCacheExt")]
         public static extern int EasyPlayer_SetFrameCache(int channelId, int cache);
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="shownToScale">0=整个窗口区域显示，1=按比例显示.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetShownToScaleExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetShownToScaleExt")]
         public static extern int EasyPlayer_SetShownToScale(int channelId, int shownToScale);
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值</param>
         /// <param name="decodeKeyframeOnly">0=所有帧解码，1=只解码关键帧.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetDecodeTypeExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetDecodeTypeExt")]
         public static extern int EasyPlayer_SetDecodeType(int channelId, int decodeKeyframeOnly);
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="lpSrcRect">设置渲染区域的矩形结构体.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetRenderRectExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetRenderRectExt")]
         private static extern int EasyPlayer_SetRenderRect(int channelId, IntPtr lpSrcRect);
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="show">0=不显示，1=显示</param>
         /// <returns></returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_ShowStatisticalInfoExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_ShowStatisticalInfoExt")]
         public static extern int EasyPlayer_ShowStatisticalInfo(int channelId, int show);
 
         /// <summary>
@@ -215,14 +215,14 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_PlaySoundExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_PlaySoundExt")]
         public static extern int EasyPlayer_PlaySound(int channelId);
 
         /// <summary>
         /// 停止播放音频.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopSoundExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopSoundExt")]
         public static extern int EasyPlayer_StopSound();
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="shotPath">The shot path.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetManuPicShotPathExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetManuPicShotPathExt")]
         private static extern int EasyPlayer_SetManuPicShotPath(int channelId, string shotPath);
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StartManuPicShotExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StartManuPicShotExt")]
         private static extern int EasyPlayer_StartManuPicShot(int channelId);
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopManuPicShotExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopManuPicShotExt")]
         private static extern int EasyPlayer_StopManuPicShot(int channelId);
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StartManuRecordingExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StartManuRecordingExt")]
         private static extern int EasyPlayer_StartManuRecording(int channelId);
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace EasyPlayerNetSDK
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <param name="recordPath">The record path.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetManuRecordPathExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_SetManuRecordPathExt")]
         private static extern int EasyPlayer_SetManuRecordPath(int channelId, string recordPath);
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <param name="channelId">通道ID，EasyPlayer_OpenStream函数返回值.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"..\..\..\Solution Items\Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopManuRecordingExt")]
+        [DllImport(@"Lib\Wrap.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EasyPlayer_StopManuRecordingExt")]
         public static extern int EasyPlayer_StopManuRecording(int channelId);
     }
 }
