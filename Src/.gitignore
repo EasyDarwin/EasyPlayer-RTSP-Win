@@ -44,3 +44,9 @@ win32/binWebPlugin/EasyPlayerWebActiveX.ocx
 win32/EasyPlayerWebActiveX/EasyPlayerWebActiveXidl.h
 *.h264
 *.ocx
+*.h264
+*.pdb
+*.manifest
+*.ilk
+*.lib
+*.exp
