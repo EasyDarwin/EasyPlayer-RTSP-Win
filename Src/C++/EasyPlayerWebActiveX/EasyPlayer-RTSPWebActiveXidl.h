@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed Nov 29 11:13:06 2017
+/* at Fri Dec 01 10:12:29 2017
  */
 /* Compiler settings for EasyPlayerWebActiveX.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 

@@ -2,3 +2,6 @@
 *.pdb
 *.manifest
 *.h264
+
+*.exp
+*.lib
