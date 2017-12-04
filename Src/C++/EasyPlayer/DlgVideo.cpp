@@ -347,16 +347,17 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			EasyPlayer_SetFrameCache(m_ChannelId, iPos);		//设置缓存
 			EasyPlayer_PlaySound(m_ChannelId);
 
-#if 0
+#if 1	//OSD Example
 			EASY_PALYER_OSD osd;
 			osd.alpha = 255;
-			osd.color = RGB(0,255,0);
-			osd.rect.left = 800;
+			osd.size = 50;
+			osd.color = RGB(255,255,255);
+			osd.rect.left = 80;
 			osd.rect.right = 5000;
 			osd.rect.top = 100;
-			osd.rect.bottom = 500;
+			osd.rect.bottom = 800;
 			osd.shadowcolor = RGB(0,0,0);
-			char* ss =  "这是EasyPlayer-RTSP-Win播放器字幕叠加接口的效果！";
+			char* ss =  "这是EasyPlayer-RTSP-Win播放器 \r\n字幕叠加接口的效果！\r\n你非要换行我就换行嘛！！！";
 			strcpy(osd.stOSD ,ss);
 			EasyPlayer_ShowOSD(m_ChannelId, 1,  osd);
 #endif

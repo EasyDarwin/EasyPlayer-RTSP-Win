@@ -187,7 +187,18 @@ int	CChannelManager::ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd)
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].showOSD = _show;
-	memcpy(&pRealtimePlayThread[iNvsIdx].osd,  &osd, sizeof(EASY_PALYER_OSD));
+	//memcpy(&pRealtimePlayThread[iNvsIdx].osd,  &osd, sizeof(EASY_PALYER_OSD));
+	pRealtimePlayThread[iNvsIdx].osd.alpha = osd.alpha ;
+	pRealtimePlayThread[iNvsIdx].osd.size = osd.size;
+	pRealtimePlayThread[iNvsIdx].osd.color = osd.color;
+	pRealtimePlayThread[iNvsIdx].osd.rect.left = osd.rect.left ;
+	pRealtimePlayThread[iNvsIdx].osd.rect.right = osd.rect.right;
+	pRealtimePlayThread[iNvsIdx].osd.rect.top = osd.rect.top;
+	pRealtimePlayThread[iNvsIdx].osd.rect.bottom = osd.rect.bottom;
+	pRealtimePlayThread[iNvsIdx].osd.shadowcolor = osd.shadowcolor;
+
+	strcpy(pRealtimePlayThread[iNvsIdx].osd.stOSD , osd.stOSD );
+
 	return 0;
 }
 
@@ -1846,7 +1857,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			memset(&font, 0x00, sizeof(D3D_FONT));
 			font.bold	=	0x00;
 			wcscpy(font.name, TEXT("Arial Black"));
-			font.size	=	(int)(float)((width)*0.02f);// 32;
+
+			font.size	=	(int)(float)((width)*0.2f);// 32;
+			if (pThread->showOSD)
+			{
+				font.size	=	pThread->osd.size;// 32;
+			}
 			font.width	=	(int)(float)((font.size)/2.5f);//13;
 			if (NULL!=pThread->hWnd && (IsWindow(pThread->hWnd)) )
 			{

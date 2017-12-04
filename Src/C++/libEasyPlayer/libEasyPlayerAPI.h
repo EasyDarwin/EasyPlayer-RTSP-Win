@@ -38,6 +38,7 @@ typedef struct tagEASY_PALYER_OSD
 	DWORD	color;		//RGB(0xf9,0xf9,0xf9)
 	DWORD	shadowcolor;		//RGB(0x4d,0x4d,0x4d) 全为0背景透明
 	RECT	rect;		//OSD基于图像右上角显示区域
+	int			size;		//D3D Support
 }EASY_PALYER_OSD;
 
 typedef int (CALLBACK *MediaSourceCallBack)( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
