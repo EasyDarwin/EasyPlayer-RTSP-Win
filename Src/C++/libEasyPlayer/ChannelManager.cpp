@@ -163,7 +163,7 @@ void CChannelManager::CloseStream(int channelId)
 	EasyRTSP_Deinit(&pRealtimePlayThread[iNvsIdx].nvsHandle);
 	//关闭播放线程
 	ClosePlayThread(&pRealtimePlayThread[iNvsIdx]);
-	m_bIFrameArrive = false;
+	//m_bIFrameArrive = false;
 	LeaveCriticalSection(&crit);
 }
 
@@ -882,13 +882,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			continue;
 		}
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 		if (fES == NULL)
 		{
 			sprintf(fH264Name, "./test%d.h264", channelid);
 			fES = fopen(fH264Name, "wb");
 		}
-#endif
+//#endif
 		if (mediatype == MEDIA_TYPE_VIDEO)
 		{
 #ifdef _DEBUG1
@@ -896,12 +896,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 #endif
 			//==============================================
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
          if (NULL != fES)
             {
                 fwrite(pbuf, 1, frameinfo.length, fES);
             }
-#endif
+//#endif
 
 			//_TRACE("DECODE queue: %d\n", pChannelObj->pQueue->pQueHeader->videoframes);
 			if (pThread->frameQueue > MAX_CACHE_FRAME)
@@ -1148,7 +1148,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 					if (pThread->decodeYuvIdx >= MAX_YUV_FRAME_NUM)		pThread->decodeYuvIdx = 0;
 
 					//抓图
-					if (pThread->manuScreenshot == 0x01 )//Just support YUY2->jpg
+					if (pThread->manuScreenshot == 0x01 )//Just support jpg，png
 					{
 						unsigned int timestamp = (unsigned int)time(NULL);
 						time_t tt = timestamp;
@@ -1162,13 +1162,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 						PhotoShotThreadInfo* pShotThreadInfo = new PhotoShotThreadInfo;
 						sprintf(pShotThreadInfo->strPath , "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime) ;
 
-						int nYuvBufLen = frameinfo.width*frameinfo.height<<1;
+						int nYuvBufLen = frameinfo.width*frameinfo.height*3;// most size = RGB24, we donot support RGBA Render type
 						pShotThreadInfo->pYuvBuf = new unsigned char[nYuvBufLen];
 						pShotThreadInfo->width = frameinfo.width;
 						pShotThreadInfo->height = frameinfo.height;
 						pShotThreadInfo->renderFormat = pThread->renderFormat ;
 
-						memcpy(pShotThreadInfo->pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, nYuvBufLen);
+						memcpy(pShotThreadInfo->pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize-1);
 						CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpPhotoShotThread, pShotThreadInfo, 0, NULL);
 						pThread->manuScreenshot = 0;
 					}
@@ -1385,6 +1385,7 @@ int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Forma
 	av_image_fill_arrays(video.data, video.linesize, buffer, Format, w, h, 1);
 	video.width = w;
 	video.height = h;
+	video.format = Format;
 
 	// alloc picture
 	picture.format = swsofmt;
@@ -1507,7 +1508,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread( LPVOID _pParam )
 		case	D3D_FORMAT_RGB555	:	
 			break;
 		case GDI_FORMAT_RGB24:
-			FFVFormat = AV_PIX_FMT_RGB24;
+			FFVFormat = AV_PIX_FMT_BGR24;
 			break;
 		}
 		int ret = take_snapshot(pThreadInfo->strPath, pThreadInfo->width, pThreadInfo->height, pThreadInfo->pYuvBuf, FFVFormat);

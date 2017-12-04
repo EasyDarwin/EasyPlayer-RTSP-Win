@@ -138,7 +138,12 @@ BOOL CEasyPlayerDlg::OnInitDialog()
 			{
 				memset(szURL, 0x00, sizeof(szURL));
 				fgets(szURL, sizeof(szURL), f);
-
+				char* sEof = "\r\n";
+				char* pos = strstr(szURL, sEof);
+				if (pos)
+				{
+					szURL[pos-szURL] = 0;
+				}
 				if (0 != strcmp(szURL, "\0"))
 				{
 					pVideoWindow->pDlgVideo[idx++].SetURL(szURL);

@@ -15,7 +15,7 @@ using namespace Gdiplus;
 using namespace std;
 
 //FALSH ∂®“Â
-#import "Flash.ocx" named_guids
+//#import "Flash.ocx" named_guids
 //////////////////////////////////////////////////////////////////////////
 #ifndef SKINUI_CLASS
 #define SKINUI_CLASS

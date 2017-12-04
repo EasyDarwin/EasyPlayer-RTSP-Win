@@ -295,7 +295,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 		m_ChannelId = -1;
 		EasyPlayer_CloseStream(nChannelId);
 
-		if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
+ 		if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
 
 		if (NULL != pDlgRender)			pDlgRender->Invalidate();
 		if (NULL != pBtnPreview)		pBtnPreview->SetWindowText(TEXT("Play"));
@@ -347,6 +347,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			EasyPlayer_SetFrameCache(m_ChannelId, iPos);		//设置缓存
 			EasyPlayer_PlaySound(m_ChannelId);
 
+#if 0
 			EASY_PALYER_OSD osd;
 			osd.alpha = 255;
 			osd.color = RGB(0,255,0);
@@ -358,7 +359,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			char* ss =  "这是EasyPlayer-RTSP-Win播放器字幕叠加接口的效果！";
 			strcpy(osd.stOSD ,ss);
 			EasyPlayer_ShowOSD(m_ChannelId, 1,  osd);
-
+#endif
 			CString strFilePath = GET_MODULE_FILE_INFO.strPath;
 			char sFilePath[MAX_PATH];
 			__WCharToMByte(strFilePath.GetBuffer(strFilePath.GetLength()), sFilePath, sizeof(sFilePath)/sizeof(sFilePath[0]));
