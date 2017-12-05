@@ -1706,7 +1706,6 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 #endif
 
 	int	iDropFrame = 0;		//¶ªÖ¡»úÖÆ
-
 	int iDelay = 0;
 
 	_VS_BEGIN_TIME_PERIOD(1);
@@ -1928,35 +1927,83 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				nQueueFrame,  iQue1_DecodeQueue, iQue2_DisplayQueue,  iCache, 
 				fDisplayTimes, iDelay, (int)fDisplayTimes+(iDelay>0?iDelay:0), iOneFrameUsec, iDropFrame);
 #endif
-		D3D_OSD	osd;
-		memset(&osd, 0x00, sizeof(D3D_OSD));
+			D3D_OSD	osd[1024];
+			memset(osd, 0, 1024);
+			int osdLines = 0;
+
 		int showOSD = pThread->showStatisticalInfo;
 		if (pThread->showStatisticalInfo)
 		{
-			MByteToWChar(sztmp, osd.string, sizeof(osd.string)/sizeof(osd.string[0]));
+			osdLines = 1;
+			MByteToWChar(sztmp, osd[0].string, sizeof(osd[0].string)/sizeof(osd[0].string[0]));
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
-				SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*7, (int)(float)((height)*0.046f));//40);
+				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string)*7, (int)(float)((height)*0.046f));//40);
 			}
 			else
 			{
-				SetRect(&osd.rect, 2, 2, (int)wcslen(osd.string)*20, (int)(float)((height)*0.046f));//40);
+				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string)*20, (int)(float)((height)*0.1f));//40);
 			}
-			osd.color = RGB(0x00,0xff,0x00);
+			osd[0].color = RGB(0x00,0xff,0x00);
 			//osd.shadowcolor = RGB(0x15,0x15,0x15);
-			osd.shadowcolor = RGB(0x00,0x00,0x00);
-			osd.alpha = 180;
+			osd[0].shadowcolor = RGB(0x00,0x00,0x00);
+			osd[0].alpha = 180;
 		}
 		if (pThread->showOSD)
 		{
 			showOSD = pThread->showOSD;
-			MByteToWChar(pThread->osd.stOSD, osd.string, sizeof(osd.string)/sizeof(osd.string[0]));
+			std::string sOSD = pThread->osd.stOSD;
+			while (!sOSD.empty())
+			{
+				char* subOSD = (char*)sOSD.c_str();
+				int nOSDLen = sOSD.length();
+				int sublen = 0;
 
-			CopyRect(&osd.rect, &pThread->osd.rect);
-			osd.color = pThread->osd.color;
-			osd.shadowcolor = pThread->osd.shadowcolor;
-			osd.alpha = pThread->osd.alpha;
+				int nEofPos = sOSD.find("\r\n");
 
+				if (nEofPos>127)
+				{
+					subOSD[128] = 0;
+					sublen = 128;
+				}
+				if (pThread->renderFormat == GDI_FORMAT_RGB24)
+				{
+					CopyRect(&osd[osdLines].rect, &pThread->osd.rect);
+					osd[osdLines].rect.top = pThread->osd.rect.top+40*osdLines;
+					osd[osdLines].rect.bottom = pThread->osd.rect.bottom+40*osdLines;
+					if (nEofPos>=0)
+					{
+						subOSD[nEofPos] = 0;
+						sublen = nEofPos;
+					}
+				}
+				else
+				{
+					CopyRect(&osd[osdLines].rect, &pThread->osd.rect);
+					osd[osdLines].rect.top = pThread->osd.rect.top+pThread->osd.size*osdLines;
+					osd[osdLines].rect.bottom = pThread->osd.rect.bottom+pThread->osd.size*osdLines;
+					if (nEofPos>=0)
+					{
+						subOSD[nEofPos] = 0;
+						sublen = nEofPos;
+					}
+				}	
+
+				MByteToWChar(subOSD, osd[osdLines].string, sizeof(osd[osdLines].string)/sizeof(osd[osdLines].string[0]));
+
+				osd[osdLines].color = pThread->osd.color;
+				osd[osdLines].shadowcolor = pThread->osd.shadowcolor;
+				osd[osdLines].alpha = pThread->osd.alpha;
+				osdLines++;
+				if (nEofPos>=0)
+				{
+					sOSD = subOSD+nEofPos+2;
+				}
+				else
+				{
+					sOSD = "";
+				}
+			}
 		}
 
 		int ret = 0;
@@ -1970,7 +2017,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		{
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
-				RGB_DrawData(pThread->d3dHandle, pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, pThread->ShownToScale, RGB(0x3c,0x3c,0x3c), 0, showOSD, &osd);
+				RGB_DrawData(pThread->d3dHandle, pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, pThread->ShownToScale, RGB(0x3c,0x3c,0x3c), 0, osdLines, osd);
 				//D3D_RenderRGB24ByGDI(pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, showOSD, &osd);
 			
 				//int	D3DRENDER_API  RGB_DrawData(D3D_HANDLE handle, HWND hWnd, char *pBuff, int width, int height, int ShownToScale, COLORREF bkColor, int flip=0, int OSDNum=0, D3D_OSD *_osd = NULL);
@@ -1989,7 +2036,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				if (NULL != fOutput)	fwrite(pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, 1, width * height * 3 / 2, fOutput);
 #endif
 
-				D3D_UpdateData(pThread->d3dHandle, 0, (unsigned char*)pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, NULL, showOSD, &osd);
+				D3D_UpdateData(pThread->d3dHandle, 0, (unsigned char*)pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, NULL, osdLines, osd);
 				ret = D3D_Render(pThread->d3dHandle, pThread->hWnd, pThread->ShownToScale, &rcDst);
 				if (ret < 0)
 				{

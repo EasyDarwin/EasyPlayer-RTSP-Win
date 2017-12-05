@@ -19,7 +19,7 @@ CDlgRender::CDlgRender(CWnd* pParent /*=NULL*/)
 	hMenu		=	NULL;
 
 	m_pEasyLogo = NULL;
-
+	channelStatus.showOSD = 1;
 	mChannelId	=	0;
 }
 
@@ -61,7 +61,8 @@ void CDlgRender::OnLButtonDblClk(UINT nFlags, CPoint point)
 }
 
 #define	POP_MENU_RECORDING	10010
-#define	POP_MENU_SHOT				10011
+#define	POP_MENU_SHOT			10011
+#define POP_MENU_SHOWOSD	10012
 
 void CDlgRender::OnRButtonUp(UINT nFlags, CPoint point)
 {
@@ -72,6 +73,7 @@ void CDlgRender::OnRButtonUp(UINT nFlags, CPoint point)
 	{
 		AppendMenu(hMenu, MF_STRING|(channelStatus.recording==0x01?MF_CHECKED:MF_UNCHECKED), POP_MENU_RECORDING, TEXT("Recording"));
 		AppendMenu(hMenu, MF_STRING, POP_MENU_SHOT, TEXT("ScreenShot"));
+		AppendMenu(hMenu, MF_STRING|(channelStatus.showOSD==0x01?MF_CHECKED:MF_UNCHECKED), POP_MENU_SHOWOSD, TEXT("ShowOSD"));
 
 		CPoint	pMousePosition;
 		GetCursorPos(&pMousePosition);
@@ -110,6 +112,27 @@ BOOL CDlgRender::OnCommand(WPARAM wParam, LPARAM lParam)
 				// 				if (channelStatus.shoting == 0x01)			EasyPlayer_StartManuPicShot(mChannelId);
 				// 				else											EasyPlayer_StopManuPicShot(mChannelId);
 			}
+		}
+		break;
+	case POP_MENU_SHOWOSD:
+		if (mChannelId > 0)
+		{
+			channelStatus.showOSD = (channelStatus.showOSD==0x00?0x01:0x00);
+#if 1	//OSD Example
+			EASY_PALYER_OSD osd;
+			osd.alpha = 255;
+			osd.size = 35;
+			osd.color = RGB(255,0,255);
+			osd.rect.left = 10;
+			osd.rect.right = 5000;
+			osd.rect.top = 100;
+			osd.rect.bottom = 800;
+			osd.shadowcolor = RGB(0,0,0);
+			char* ss =  "这是EasyPlayer-RTSP-Win播放器 \r\n的字幕叠加接口的效果！！\r\n以\"\\r\\n\"为换行结束符号\r\n注意：每行的长度不能超过128个字节\r\n总的OSD长度不能超过1024个字节";
+			strcpy(osd.stOSD ,ss);
+			EasyPlayer_ShowOSD(mChannelId, channelStatus.showOSD,  osd);
+#endif
+
 		}
 		break;
 	default:

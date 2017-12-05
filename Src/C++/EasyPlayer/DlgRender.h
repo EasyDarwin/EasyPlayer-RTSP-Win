@@ -6,6 +6,7 @@ typedef struct __CHANNEL_STATUS
 {
 	
 	int			recording;
+	int			showOSD;
 
 }CHANNELSTATUS;
 // CDlgRender ¶Ô»°¿ò

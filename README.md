@@ -30,6 +30,7 @@ Windows：vs2010编译；
 
 ![EasyPlayer](http://www.easydarwin.org/github/images/easyplayer/easyplayerios20170313.png)
 
+
 - iOS Pro全功能版：[https://itunes.apple.com/us/app/easyplayerpro/id1205087581?l=zh&ls=1&mt=8](https://itunes.apple.com/us/app/easyplayerpro/id1205087581?l=zh&ls=1&mt=8)
 
 ![EasyPlayer Pro 版](http://www.easydarwin.org/github/images/easyplayer/easyplayerproios20170313.png)
@@ -43,7 +44,22 @@ Windows：vs2010编译；
 ![EasyPlayer iOS](http://www.easydarwin.org/github/images/easyplayeriosdemo20170310.jpg)
 
 
-##更新记录##
+## WIKI 文档 ##
+- [libEasyPlayer RTSP播放器库API接口说明](https://github.com/EasyDSS/EasyPlayer-RTSP-Win/wiki/libEasyPlayer-RTSP%E6%92%AD%E6%94%BE%E5%99%A8%E5%BA%93API%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E)
+
+- [EasyPlayer插件使用说明](https://github.com/EasyDSS/EasyPlayer-RTSP-Win/wiki/EasyPlayer%E6%8F%92%E4%BB%B6%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
+
+
+
+## 更新记录 ##
+
+### Windows v2.0.17.1205 (2017-12-05) ###
+
+* 修复停止播放导致其他路播放视频卡顿的问题
+* 简化抓图代码，修复软解只能用YUY2才能抓图的问题
+* 增加C# EasyPlayer版本
+* 增加字幕叠加接口演示
+* 修复ActiveX插件页面刷新有几率导致浏览器崩溃的问题
 
 ### Android v1.1.17.0110 (2017-01-10) ###
 
@@ -56,7 +72,7 @@ Windows：vs2010编译；
 
 ### Windows v1.2.16.1111 (2016-11-11) ###
 
-* 修复停止模仿慢的问题
+* 修复停止播放慢的问题
 * 增加RTSP播放错误返回处理
 * 增加播放日志输出
 
@@ -102,7 +118,6 @@ Windows：vs2010编译；
 * 增加SkinUI皮肤库，通过xml配置界面资源，将界面和代码独立开来，方便代码阅读和移植;
 * 更新libEasyPlayer库，支持声音和视频的播放;
 * 增加EasyPlayer IE浏览器插件，测试页面在bin目录下，**Win8及以上系统请使用全路径注册**;
-
 
 ## 商业授权 ##
 EasyPlayer是一款非常稳定的RTSP播放器，各平台版本需要经过授权才能商业使用，商业授权方案可以邮件发送至[support@easydarwin.org](mailto:support@easydarwin.org "EasyDarwin support mail")或者通过电话Tel：**13718530929** 进行更深入的技术与合作咨询；
