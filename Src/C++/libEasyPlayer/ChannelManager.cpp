@@ -188,16 +188,23 @@ int	CChannelManager::ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd)
 
 	pRealtimePlayThread[iNvsIdx].showOSD = _show;
 	//memcpy(&pRealtimePlayThread[iNvsIdx].osd,  &osd, sizeof(EASY_PALYER_OSD));
-	pRealtimePlayThread[iNvsIdx].osd.alpha = osd.alpha ;
-	pRealtimePlayThread[iNvsIdx].osd.size = osd.size;
-	pRealtimePlayThread[iNvsIdx].osd.color = osd.color;
-	pRealtimePlayThread[iNvsIdx].osd.rect.left = osd.rect.left ;
-	pRealtimePlayThread[iNvsIdx].osd.rect.right = osd.rect.right;
-	pRealtimePlayThread[iNvsIdx].osd.rect.top = osd.rect.top;
-	pRealtimePlayThread[iNvsIdx].osd.rect.bottom = osd.rect.bottom;
-	pRealtimePlayThread[iNvsIdx].osd.shadowcolor = osd.shadowcolor;
+	if (_show)
+	{
+		pRealtimePlayThread[iNvsIdx].osd.alpha = osd.alpha ;
+		if ( pRealtimePlayThread[iNvsIdx].osd.size != osd.size )
+		{
+			pRealtimePlayThread[iNvsIdx].resetD3d = true;
+		}
+		pRealtimePlayThread[iNvsIdx].osd.size = osd.size;
+		pRealtimePlayThread[iNvsIdx].osd.color = osd.color;
+		pRealtimePlayThread[iNvsIdx].osd.rect.left = osd.rect.left ;
+		pRealtimePlayThread[iNvsIdx].osd.rect.right = osd.rect.right;
+		pRealtimePlayThread[iNvsIdx].osd.rect.top = osd.rect.top;
+		pRealtimePlayThread[iNvsIdx].osd.rect.bottom = osd.rect.bottom;
+		pRealtimePlayThread[iNvsIdx].osd.shadowcolor = osd.shadowcolor;
 
-	strcpy(pRealtimePlayThread[iNvsIdx].osd.stOSD , osd.stOSD );
+		strcpy(pRealtimePlayThread[iNvsIdx].osd.stOSD , osd.stOSD );
+	}
 
 	return 0;
 }
@@ -894,12 +901,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 		}
 
 //#ifdef _DEBUG
+#if 0
 		if (fES == NULL)
 		{
 			sprintf(fH264Name, "./test%d.h264", channelid);
 			fES = fopen(fH264Name, "wb");
 		}
-//#endif
+#endif
 		if (mediatype == MEDIA_TYPE_VIDEO)
 		{
 #ifdef _DEBUG1
@@ -908,11 +916,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			//==============================================
 
 //#ifdef _DEBUG
+#if 0
          if (NULL != fES)
             {
                 fwrite(pbuf, 1, frameinfo.length, fES);
             }
-//#endif
+#endif
 
 			//_TRACE("DECODE queue: %d\n", pChannelObj->pQueue->pQueHeader->videoframes);
 			if (pThread->frameQueue > MAX_CACHE_FRAME)
@@ -1839,6 +1848,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			{
 				D3D_Release(&pThread->d3dHandle);
 			}
+			pThread->d3dHandle = NULL;
+			deviceLostTime = (unsigned int)time(NULL)-2;
+
 		}
 		width = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width;
 		height= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height;
