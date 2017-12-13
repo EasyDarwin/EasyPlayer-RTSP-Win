@@ -420,6 +420,10 @@ int CDlgVideo::EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameT
 			}
 
 		}
+		else if(_frameInfo && EASY_SDK_DECODE_VIDEO_FLAG == _frameInfo->codec )
+		{
+
+		}
 	}
 	return 0;
 }

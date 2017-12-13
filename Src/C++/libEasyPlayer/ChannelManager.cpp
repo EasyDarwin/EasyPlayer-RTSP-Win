@@ -1411,10 +1411,12 @@ int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Forma
 	picture.format = swsofmt;
 	picture.width  = w > 0 ? w : video.width;
 	picture.height = h > 0 ? h : video.height;
-	if (av_frame_get_buffer(&picture, 32) < 0) {
-		//av_log(NULL, AV_LOG_ERROR, "failed to allocate picture !\n", file);
-		goto done;
-	}
+
+	int numBytes = av_image_get_buffer_size(swsofmt, picture.width, picture.height , 1);
+
+	buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
+
+	av_image_fill_arrays(picture.data, picture.linesize, buffer, swsofmt, picture.width, picture.height, 1);
 
 	// scale picture
 	sws_ctx = sws_getContext(video.width, video.height, (AVPixelFormat)Format/*video->format*/,
@@ -1493,8 +1495,9 @@ done:
 	}
 	avformat_free_context(fmt_ctxt);
 	av_packet_unref(&packet);
-	//    av_frame_unref(&picture);
+
 	sws_freeContext(sws_ctx);
+	av_free(buffer);
 
 	return ret;
 }
@@ -1680,6 +1683,63 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 	return 0;
 }
 
+bool CChannelManager::ConvertImage(AVPixelFormat eInFormat, int iInWidth, int iInHeight, void* ptInData,
+	AVPixelFormat eOutFormat, int iOutWidth, int iOutHeight, unsigned char** pOutData)
+{
+
+	// init ffmpeg
+	//av_register_all();
+
+	SwsContext* ptImgConvertCtx;    // Frame conversion context
+
+	AVFrame video;
+	int numBytesIn;
+	//numBytesIn = av_image_get_buffer_size(eOutFormat, iOutWidth, iOutHeight, 1);
+
+//	uint8_t* out_buffer = (uint8_t *)av_malloc(numBytesIn * sizeof(uint8_t));
+
+	av_image_fill_arrays(video.data, video.linesize, *pOutData, eOutFormat, iOutWidth, iOutHeight, 1);
+	video.width = iOutWidth;
+	video.height = iOutHeight;
+	video.format = eOutFormat;
+
+	AVFrame ptPictureIn= {};
+	ptPictureIn.format = eInFormat;
+	ptPictureIn.width  = iInWidth > 0 ? iInWidth : video.width;
+	ptPictureIn.height = iInHeight > 0 ? iInHeight : video.height;
+// 	if (av_frame_get_buffer(&ptPictureIn, 32) < 0) {
+// 		//av_log(NULL, AV_LOG_ERROR, "failed to allocate picture !\n", file);
+// 	}
+	av_image_fill_arrays(ptPictureIn.data, ptPictureIn.linesize, (const uint8_t*)ptInData, eInFormat, iInWidth, iInHeight, 1);
+
+
+	//Initialize convert context
+	//------------------
+	ptImgConvertCtx = sws_getContext(iInWidth, iInHeight, eInFormat,     // (source format)
+		iOutWidth, iOutHeight, eOutFormat,  // (dest format)
+		SWS_FAST_BILINEAR, NULL, NULL, NULL);
+
+
+	// Do conversion:
+	//------------------
+	int iRes = sws_scale(ptImgConvertCtx,
+		ptPictureIn.data, //src
+		ptPictureIn.linesize,
+		0,
+		iInHeight,
+		video.data,//dst
+		video.linesize);
+
+	//Free memory
+	sws_freeContext(ptImgConvertCtx);
+
+	//Check result:
+	if (iRes == iOutHeight)
+		return true;
+
+	return false;
+}
+
 LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 {
 	PLAY_THREAD_OBJ *pThread = (PLAY_THREAD_OBJ*)_pParam;
@@ -1716,6 +1776,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 	int	iDropFrame = 0;		//丢帧机制
 	int iDelay = 0;
+	char* m_RGB24 = NULL;
 
 	_VS_BEGIN_TIME_PERIOD(1);
 	QueryPerformanceFrequency(&pThread->cpuFreq);
@@ -1832,6 +1893,17 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			lastFrameInfo.height!= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height)
 		{
 			pThread->resetD3d = true;
+			int nRGB24Len = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width*pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height * 3+1;
+			if(m_RGB24)
+			{
+				delete[] m_RGB24;
+				m_RGB24 = NULL;
+			}
+			if (!m_RGB24)
+			{
+				m_RGB24 = new char[nRGB24Len];
+				memset(m_RGB24, 0, nRGB24Len);
+			}
 		}
 
 		EnterCriticalSection(&pThread->crit);			//Lock
@@ -2027,6 +2099,80 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		else							iDropFrame = 0;
 		if (iDropFrame < 0x02)
 		{
+#if 1
+			// 解码数据显示+回调  [12/13/2017 Dingshuai]
+			//pRealtimePlayThread[iNvsIdx].pCallback = callback;
+			if (pThread&&pThread->pCallback&&iDispalyYuvIdx>=0)
+			{
+				// 硬件编码出来是NV12，外部为了显示方便应该转成I420 [12/6/2016 dingshuai]
+				//外部显示
+				int FFVFormat = 0;
+				switch (pThread->renderFormat)
+				{
+#if 0
+				case DISPLAY_FORMAT_NV12:
+					FFVFormat = AV_PIX_FMT_NV12;//AV_PIX_FMT_NV12
+					if (nDevId == 1)
+					{
+						static FILE *fOutput = NULL;
+						if (NULL == fOutput)
+						{
+							char sztmp[128] = { 0, };
+							sprintf(sztmp, "D:\\%dx%d.yv12", width, height);
+							fOutput = fopen(sztmp, "wb");
+						}
+						if (NULL != fOutput)	fwrite(pBuffer, 1, width * height * 3 / 2, fOutput);
+					}
+
+					break;
+#endif
+				case DISPLAY_FORMAT_YV12:
+					{
+						FFVFormat = AV_PIX_FMT_YUV420P;
+					}
+					break;
+				case DISPLAY_FORMAT_YUY2:
+					FFVFormat = AV_PIX_FMT_YUYV422;
+					break;
+				case DISPLAY_FORMAT_UYVY:
+					FFVFormat = AV_PIX_FMT_UYVY422;
+					break;
+				case DISPLAY_FORMAT_A8R8G8B8:
+					FFVFormat = AV_PIX_FMT_ARGB;
+					break;
+				case DISPLAY_FORMAT_X8R8G8B8:
+					break;
+				case DISPLAY_FORMAT_RGB565:
+					break;
+				case DISPLAY_FORMAT_RGB555:
+					break;
+				case DISPLAY_FORMAT_RGB24_GDI:
+					FFVFormat = AV_PIX_FMT_BGR24;
+					break;
+				}
+				int width = lastFrameInfo.width;
+				int height = lastFrameInfo.height;
+
+				//if (FFVFormat == AV_PIX_FMT_RGB24)
+				//{
+				//	memcpy(m_RGB24, pBuf, nBufLen);
+				//}
+				//else
+				{
+					AVPixelFormat outPixelFormat = AV_PIX_FMT_RGB24;
+
+					//rgb/yuv Convert to RGBA
+					ConvertImage((AVPixelFormat)FFVFormat, width, height, (unsigned char*)pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, outPixelFormat, width, height, (unsigned char**)&m_RGB24);
+				}
+
+				// 获取解码后的YUV/RGB数据的大小
+				//int nYuvFrameLen = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
+				lastFrameInfo.length =  pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
+
+				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG,  m_RGB24 , (RTSP_FRAME_INFO*)(&lastFrameInfo));
+			}
+#endif
+
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
 				RGB_DrawData(pThread->d3dHandle, pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, pThread->ShownToScale, RGB(0x3c,0x3c,0x3c), 0, osdLines, osd);
@@ -2155,6 +2301,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	{
 		D3D_Release(&pThread->d3dHandle);
 	}
+	if(m_RGB24)
+	{
+		delete[] m_RGB24;
+		m_RGB24 = NULL;
+	}
+
 	pThread->rtpTimestamp = 0;
 
 	pThread->displayThread.flag	=	0x00;

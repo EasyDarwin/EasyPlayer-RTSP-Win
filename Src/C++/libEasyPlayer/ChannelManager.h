@@ -261,6 +261,8 @@ public:
 
 
 	int		ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAME_INFO *frameinfo);
+	static bool ConvertImage(AVPixelFormat eInFormat, int iInWidth, int iInHeight, void* ptInData,
+		AVPixelFormat eOutFormat, int iOutWidth, int iOutHeight, unsigned char** pOutData);
 
 protected:
 	bool				GetD3DSupportFormat();			//获取D3D支持的格式
