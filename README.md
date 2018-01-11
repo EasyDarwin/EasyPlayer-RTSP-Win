@@ -1,4 +1,4 @@
-# EasyPlayer #
+# EasyPlayer-RTSP-Win #
 
 EasyPlayer **RTSP Windows** 播放器是由EasyDarwin团队开发和维护的一个完善的RTSP流媒体播放器项目，视频编码支持**H.264**，**H.265**，**MPEG4**，**MJPEG**，音频支持**G711A**，**G711U**，**G726**，**AAC**，支持RTSP over TCP/UDP协议，支持**软/硬解码**，是一套极佳的安防流媒体平台播放组件！EasyPlayer Windows版本经过了很多年的发展和迭代，在很多商业项目中使用，已经非常稳定、完整，功能包括：直播、录像、抓图，应该说是目前市面上功能性、稳定性和完整性最强的一款RTSP播放器！
 
@@ -22,7 +22,7 @@ EasyPlayer **RTSP Windows** 播放器是由EasyDarwin团队开发和维护的一
 
 ## 最新版本下载 ##
 
-- Windows RTSP播放器：[https://github.com/EasyDarwin/EasyPlayer/releases](https://github.com/EasyDarwin/EasyPlayer/releases "EasyPlayer_Win")
+- Windows RTSP播放器：[https://github.com/EasyDSS/EasyPlayer-RTSP-Win/releases](https://github.com/EasyDSS/EasyPlayer-RTSP-Win/releases "EasyPlayer-RTSP")
 
 
 ## DEMO效果 ##
@@ -55,7 +55,7 @@ EasyPlayer **RTSP Windows** 播放器是由EasyDarwin团队开发和维护的一
 
 **EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
 
-Copyright &copy; EasyDarwin Team 2012-2017
+Copyright &copy; EasyDarwin Team 2012-2018
 
 ![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
 
