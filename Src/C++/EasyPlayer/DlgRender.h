@@ -44,4 +44,6 @@ private:
 public:
 	afx_msg void OnPaint();
 	virtual BOOL OnInitDialog();
+	void SetChannelStatus(int recording,int	showOSD);
+
 };

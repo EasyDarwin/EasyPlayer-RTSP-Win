@@ -252,7 +252,10 @@ void	CEasyPlayerDlg::CreateComponents()
 
 	pChkShownToScale.SetParentBack(hParentDC);
 	pChkShownToScale.SetSize(68,15);
-	//pChkShownToScale.SetCheck(BST_CHECKED);
+	if (shownToScale)
+	{
+		pChkShownToScale.SetCheck(BST_CHECKED);
+	}
 
 	pChkShownToScale.SetWindowText(TEXT("°´±ÈÀýÏÔÊ¾"));
 
@@ -585,7 +588,6 @@ void CEasyPlayerDlg::OnBnClickedCheckShowntoscale()
 	if (NULL == pVideoWindow)					return;
 	if (NULL == pVideoWindow->pDlgVideo)		return;
 
-	static int shownToScale = 0x00;
 	shownToScale = (shownToScale==0x00?0x01:0x00);
 
 	for (int i=0; i<_SURV_MAX_WINDOW_NUM; i++)

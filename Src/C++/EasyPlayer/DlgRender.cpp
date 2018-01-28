@@ -19,7 +19,7 @@ CDlgRender::CDlgRender(CWnd* pParent /*=NULL*/)
 	hMenu		=	NULL;
 
 	m_pEasyLogo = NULL;
-	channelStatus.showOSD = 1;
+	channelStatus.showOSD = 0;
 	mChannelId	=	0;
 }
 
@@ -172,4 +172,11 @@ BOOL CDlgRender::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
+}
+
+void CDlgRender::SetChannelStatus(int recording,int	showOSD)
+{
+	channelStatus.recording = recording;
+	channelStatus.showOSD = showOSD;
+
 }

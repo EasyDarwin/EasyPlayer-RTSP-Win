@@ -20,6 +20,8 @@ typedef struct __VIDEO_NODE_T
 	CDlgVideo	*pDlgVideo;
 }VIDEO_NODE_T;
 
+static int shownToScale = 0x01;
+
 // CEasyPlayerDlg ¶Ô»°¿ò
 class CEasyPlayerDlg : public CSkinDialog
 {

@@ -157,6 +157,8 @@ void CChannelManager::CloseStream(int channelId)
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return;
 
 	EnterCriticalSection(&crit);
+	// 如果正在录像，则关闭录像 [1/27/2018 SwprdTwelve]
+	StopManuRecording(channelId);
 
 	//关闭rtsp client
 	EasyRTSP_CloseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);

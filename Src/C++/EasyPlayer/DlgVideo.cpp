@@ -297,7 +297,12 @@ void CDlgVideo::OnBnClickedButtonPreview()
 
  		if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
 
-		if (NULL != pDlgRender)			pDlgRender->Invalidate();
+		if (NULL != pDlgRender)	
+		{
+			//…Ë÷√¬ºœÒÕ£÷π◊¥Ã¨
+			pDlgRender->SetChannelStatus(0,pDlgRender->channelStatus.showOSD);
+			pDlgRender->Invalidate();
+		}
 		if (NULL != pBtnPreview)		pBtnPreview->SetWindowText(TEXT("Play"));
 	}
 	else
@@ -347,7 +352,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			EasyPlayer_SetFrameCache(m_ChannelId, iPos);		//…Ë÷√ª∫¥Ê
 			EasyPlayer_PlaySound(m_ChannelId);
 
-#if 1	//OSD Example
+#if 0	//OSD Example
 			EASY_PALYER_OSD osd;
 			osd.alpha = 255;
 			osd.size = 35;
@@ -364,6 +369,8 @@ void CDlgVideo::OnBnClickedButtonPreview()
 			CString strFilePath = GET_MODULE_FILE_INFO.strPath;
 			char sFilePath[MAX_PATH];
 			__WCharToMByte(strFilePath.GetBuffer(strFilePath.GetLength()), sFilePath, sizeof(sFilePath)/sizeof(sFilePath[0]));
+
+			EasyPlayer_SetShownToScale(m_ChannelId, shownToScale);
 
 			// …Ë÷√◊•Õº∫Õ¬º÷∆¥Ê∑≈¬∑æ∂ [10/10/2016 dingshuai]
 			EasyPlayer_SetManuRecordPath(m_ChannelId, sFilePath);
