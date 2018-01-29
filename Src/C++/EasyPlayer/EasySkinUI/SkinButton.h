@@ -42,6 +42,8 @@ protected:
 
 	LPCTSTR						m_lpszUrl;
 
+	int							m_fontIndex;
+
 	//函数定义
 public:
 	//构造函数

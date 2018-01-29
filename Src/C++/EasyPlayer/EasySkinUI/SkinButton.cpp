@@ -23,7 +23,7 @@ CSkinButton::CSkinButton()
 	m_bPushed = false;
 	m_lpszUrl = NULL;
 	m_bCurPushState = false;
-
+	m_fontIndex = -1;
 }
 
 CSkinButton::~CSkinButton()
@@ -747,6 +747,11 @@ void CSkinButton::SetAttribute( LPCTSTR pstrName, LPCTSTR pstrValue )
 	else if( _tcscmp(pstrName, _T("url")) == 0 )
 	{ 
 		m_lpszUrl = pstrValue;
+	}
+	else if(_tcscmp(pstrName, _T("font")) == 0 )
+	{
+		m_fontIndex = _ttoi(pstrValue);
+		SetCtrlFont( UIRenderEngine->GetFont(m_fontIndex-1));
 	}
 }
 
