@@ -35,7 +35,7 @@ namespace Client
             var isPlay = (sender as Button).Text == "播放";
             if (isPlay)
             {
-                string RTSPStreamURI = "rtsp://127.0.0.1:9555/ch1";
+                string RTSPStreamURI = this.StreamURI.Text;// "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
                 channelID = PlayerSdk.EasyPlayer_OpenStream(RTSPStreamURI, this.panel1.Handle, RENDER_FORMAT, isTCP ? 1 : 0, "", "", callBack, IntPtr.Zero, isHardEncode);
                 if (channelID > 0)
                 {
@@ -260,6 +260,11 @@ namespace Client
                 default:
                     break;
             }
+        }
+
+        private void rtpoverType_CheckStateChanged(object sender, EventArgs e)
+        {
+            isTCP = (sender as CheckBox).CheckState == CheckState.Checked;
         }
     }
 }

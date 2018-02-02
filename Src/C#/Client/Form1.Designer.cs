@@ -145,12 +145,15 @@ namespace Client
             // rtpoverType
             // 
             this.rtpoverType.AutoSize = true;
+            this.rtpoverType.Checked = true;
+            this.rtpoverType.CheckState = System.Windows.Forms.CheckState.Checked;
             this.rtpoverType.Location = new System.Drawing.Point(613, 601);
             this.rtpoverType.Name = "rtpoverType";
             this.rtpoverType.Size = new System.Drawing.Size(51, 21);
             this.rtpoverType.TabIndex = 5;
             this.rtpoverType.Text = "TCP";
             this.rtpoverType.UseVisualStyleBackColor = true;
+            this.rtpoverType.CheckStateChanged += new System.EventHandler(this.rtpoverType_CheckStateChanged);
             // 
             // HardDecode
             // 
