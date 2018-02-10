@@ -118,6 +118,16 @@ LIB_EASYPLAYER_API int EasyPlayer_ShowOSD(int channelId, int show, EASY_PALYER_O
 	return g_pChannelManager->ShowOSD(channelId, show,osd);
 }
 
+LIB_EASYPLAYER_API int EasyPlayer_GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo)
+{
+
+	if (NULL == g_pChannelManager)		return -1;
+
+	return g_pChannelManager->GetMediaInfo(channelId, mediaInfo);
+
+}
+
+
 
 LIB_EASYPLAYER_API int EasyPlayer_SetDragStartPoint(int channelId, POINT pt)
 {

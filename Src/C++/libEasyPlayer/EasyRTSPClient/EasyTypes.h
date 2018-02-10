@@ -158,5 +158,22 @@ typedef struct
 	float			bitrate;			/* 比特率 */
 	float			losspacket;			/* 丢包率 */
 }RTSP_FRAME_INFO;
+typedef struct tagMEDIA_INFO
+{
+	unsigned int	video_codec;		/* 音视频格式 */
+	unsigned char	fps;				/* 视频帧率 */
+	unsigned short	width;				/* 视频宽 */
+	unsigned short  height;				/* 视频高 */
+
+	unsigned int	audio_codec;		/* 音视频格式 */
+	unsigned int	sample_rate;		/* 音频采样率 */
+	unsigned int	channels;			/* 音频声道数 */
+	unsigned int	bits_per_sample;	/* 音频采样精度 */
+
+	unsigned int	reserved1;			/* 保留参数1 */
+	unsigned int	reserved2;			/* 保留参数2 */
+
+}MEDIA_INFO;
+
 
 #endif

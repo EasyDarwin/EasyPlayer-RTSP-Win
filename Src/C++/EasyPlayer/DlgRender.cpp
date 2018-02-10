@@ -117,6 +117,10 @@ BOOL CDlgRender::OnCommand(WPARAM wParam, LPARAM lParam)
 	case POP_MENU_SHOWOSD:
 		if (mChannelId > 0)
 		{
+			MEDIA_INFO mediaInfo;
+			memset(&mediaInfo, 0, sizeof(MEDIA_INFO));
+			EasyPlayer_GetMediaInfo(mChannelId, mediaInfo);
+
 			channelStatus.showOSD = (channelStatus.showOSD==0x00?0x01:0x00);
 #if 1	//OSD Example
 			EASY_PALYER_OSD osd;
@@ -128,9 +132,13 @@ BOOL CDlgRender::OnCommand(WPARAM wParam, LPARAM lParam)
 			osd.rect.top = 100;
 			osd.rect.bottom = 800;
 			osd.shadowcolor = RGB(0,0,0);
-			char* ss =  "这是EasyPlayer-RTSP-Win播放器 \r\n的字幕叠加接口的效果！！\r\n以\"\\r\\n\"为换行结束符号\r\n注意：每行的长度不能超过128个字节\r\n总的OSD长度不能超过1024个字节";
-			strcpy(osd.stOSD ,ss);
+			//char* ss =  "这是EasyPlayer-RTSP-Win播放器 \r\n的字幕叠加接口的效果！！\r\n以\"\\r\\n\"为换行结束符号\r\n注意：每行的长度不能超过128个字节\r\n总的OSD长度不能超过1024个字节";
+			char sMediaInfo[512] = {0,};
+			sprintf(sMediaInfo, "媒体信息：分辨率：%d*%d  fps: %d  音频采样率：%d 音频通道：%d  音频采样位宽： %d ",
+				mediaInfo.width, mediaInfo.height, mediaInfo.fps, mediaInfo.sample_rate, mediaInfo.channels, mediaInfo.bits_per_sample);
+			strcpy(osd.stOSD ,sMediaInfo);
 			EasyPlayer_ShowOSD(mChannelId, channelStatus.showOSD,  osd);
+
 #endif
 
 		}

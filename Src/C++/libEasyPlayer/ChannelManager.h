@@ -146,6 +146,8 @@ typedef struct __PLAY_THREAD_OBJ
 	int				showOSD;//显示OSD信息
 	//OSD自定义叠加
 	EASY_PALYER_OSD osd;
+	//缓存帧信息
+	MEDIA_INFO frameinfo;
 
 	int				frameCache;		//帧缓存(用于调整流畅度),由上层应用设置
 	int				initQueue;		//初始化队列标识
@@ -240,6 +242,7 @@ public:
 	int		SetDragStartPoint(int channelId, POINT pt);
 	int		SetDragEndPoint(int channelId, POINT pt);
 	int		ResetDragPoint(int channelId);
+	int		GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo);
 
 	//同一时间只支持一路声音播放
 	int		PlaySound(int channelId);

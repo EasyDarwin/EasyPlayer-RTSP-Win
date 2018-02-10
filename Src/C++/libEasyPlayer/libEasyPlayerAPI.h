@@ -55,6 +55,7 @@ LIB_EASYPLAYER_API int EasyPlayer_SetDecodeType(int channelId, int decodeKeyfram
 LIB_EASYPLAYER_API int EasyPlayer_SetRenderRect(int channelId, LPRECT lpSrcRect);
 LIB_EASYPLAYER_API int EasyPlayer_ShowStatisticalInfo(int channelId, int show);
 LIB_EASYPLAYER_API int EasyPlayer_ShowOSD(int channelId, int show, EASY_PALYER_OSD osd);
+LIB_EASYPLAYER_API int EasyPlayer_GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo);
 
 LIB_EASYPLAYER_API int EasyPlayer_SetDragStartPoint(int channelId, POINT pt);
 LIB_EASYPLAYER_API int EasyPlayer_SetDragEndPoint(int channelId, POINT pt);

@@ -211,6 +211,27 @@ int	CChannelManager::ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd)
 	return 0;
 }
 
+int	CChannelManager::GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+
+	mediaInfo.video_codec = pRealtimePlayThread[iNvsIdx].frameinfo.video_codec ;
+	mediaInfo.fps = pRealtimePlayThread[iNvsIdx].frameinfo.fps		;
+	mediaInfo.width = pRealtimePlayThread[iNvsIdx].frameinfo.width	;
+	mediaInfo.height = pRealtimePlayThread[iNvsIdx].frameinfo.height  ;
+	mediaInfo.audio_codec = pRealtimePlayThread[iNvsIdx].frameinfo.audio_codec ;
+	mediaInfo.bits_per_sample = pRealtimePlayThread[iNvsIdx].frameinfo.bits_per_sample ;
+	mediaInfo.channels = pRealtimePlayThread[iNvsIdx].frameinfo.channels ;
+	mediaInfo.sample_rate = pRealtimePlayThread[iNvsIdx].frameinfo.sample_rate;
+
+	return 0;
+
+}
+
+
 int	CChannelManager::SetFrameCache(int channelId, int _cache)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
@@ -2379,6 +2400,13 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAM
 
 	if (mediatype == EASY_SDK_VIDEO_FRAME_FLAG)
 	{
+		if (frameinfo)
+		{
+			pRealtimePlayThread[_chid].frameinfo.video_codec = frameinfo->codec;
+			pRealtimePlayThread[_chid].frameinfo.fps = frameinfo->fps;
+			pRealtimePlayThread[_chid].frameinfo.width = frameinfo->width;
+			pRealtimePlayThread[_chid].frameinfo.height = frameinfo->height;
+		}
 		if (frameinfo->type==EASY_SDK_VIDEO_FRAME_I/*Key frame*/) 
 		{
 			m_bIFrameArrive = true;
@@ -2404,6 +2432,13 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAM
 	}
 	else if (mediatype == EASY_SDK_AUDIO_FRAME_FLAG)
 	{
+		if (frameinfo)
+		{
+			pRealtimePlayThread[_chid].frameinfo.audio_codec = frameinfo->codec;
+			pRealtimePlayThread[_chid].frameinfo.bits_per_sample = frameinfo->bits_per_sample;
+			pRealtimePlayThread[_chid].frameinfo.channels = frameinfo->channels;
+			pRealtimePlayThread[_chid].frameinfo.sample_rate = frameinfo->sample_rate;
+		}
 		if ( (NULL == pRealtimePlayThread[_chid].pAVQueue) )
 		{
 			pRealtimePlayThread[_chid].pAVQueue = new SS_QUEUE_OBJ_T();
