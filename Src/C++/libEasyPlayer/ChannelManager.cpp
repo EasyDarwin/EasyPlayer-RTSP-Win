@@ -1024,31 +1024,36 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				{
 					pThread->m_pMP4Writer = new EasyMP4Writer();
 				}
-				unsigned int timestamp = (unsigned int)time(NULL);
-				time_t tt = timestamp;
-				struct tm *_time = localtime(&tt);
-				char szTime[64] = {0,};
-				strftime(szTime, 32, "%Y%m%d%H%M%S", _time);
+// 				unsigned int timestamp = (unsigned int)time(NULL);
+// 				time_t tt = timestamp;
+// 				struct tm *_time = localtime(&tt);
+// 				char szTime[64] = {0,};
+// 				strftime(szTime, 32, "%Y%m%d%H%M%S", _time);
 
 				int nRecordPathLen = strlen(pThread->manuRecordingPath);
 				if (nRecordPathLen==0 || (pThread->manuRecordingPath[nRecordPathLen-1] != '/' && pThread->manuRecordingPath[nRecordPathLen-1] != '\\') )
 				{
-					pThread->manuRecordingPath[nRecordPathLen] = '/';
+					pThread->manuRecordingPath[nRecordPathLen] = '\\';
 				}
-				
-				char sFileName[512] = {0,};
-				sprintf(sFileName, "%sch%d_%s.mp4", pThread->manuRecordingPath, pThread->channelId, szTime);
+				string strRecordPath = pThread->manuRecordingPath;
+				strRecordPath += "Record\\";
+
+// 				char sFileName[512] = {0,};
+// 				sprintf(sFileName, "%sch%d_%s.mp4", pThread->manuRecordingPath, pThread->channelId, szTime);
 				 
-				if (!pThread->m_pMP4Writer->CreateMP4File(sFileName, ZOUTFILE_FLAG_FULL))
+				char sFileName[64] = {0,};
+				sprintf(sFileName, "channel%d", channelid);
+
+				char subDir[64] = { 0 };
+				sprintf(subDir, "%s\\", sFileName);
+
+				//自定义Duration
+				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, sFileName, 30*60, 1))
 				{
 					delete pThread->m_pMP4Writer;
 					pThread->m_pMP4Writer = NULL;
 					//return -1;
 				}		
-				else
-				{
-
-				}
 				//LeaveCriticalSection(&pThread->critRecQueue);
 			}
 			if ( NULL != pThread->m_pMP4Writer)//录制
@@ -1619,7 +1624,6 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 		long long nTimeStamp = frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
 		byte*pdata=NULL;
 		int datasize=0;
-		bool keyframe=false;
 		try
 		{	
 			if (mediatype == MEDIA_TYPE_VIDEO)
@@ -1628,10 +1632,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 				datasize = frameinfo.length;
 				int nVideoWidth     = frameinfo.width;
 				int nVideoHeight    = frameinfo.height;
-				keyframe = frameinfo.type==EASY_SDK_VIDEO_FRAME_I?true:false;
 				if (pThread->m_pMP4Writer)
 				{
-					pThread->m_pMP4Writer->WriteMp4File((unsigned char*)pdata, datasize, keyframe,  nTimeStamp, nVideoWidth, nVideoHeight);
+					pThread->m_pMP4Writer->VideoMux( frameinfo.codec, frameinfo.type, (unsigned char*)pdata, datasize,  nTimeStamp, nVideoWidth, nVideoHeight);
 				}
 			}
 			else //音频
@@ -1683,11 +1686,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 
 				if (pThread->m_pMP4Writer)
 				{
-					if (pThread->m_pMP4Writer->CanWrite())
-					{
-						pThread->m_pMP4Writer->WriteAACToMp4File((unsigned char*)pdata, 
+						pThread->m_pMP4Writer->AudioMux((unsigned char*)pdata, 
 							datasize, nTimeStamp, sampleRate, channels, bits_per_sample);
-					}
 				}
 			}
 		}
@@ -2643,7 +2643,7 @@ int	CChannelManager::StopManuRecording(int channelId)
 	}
 	if(pRealtimePlayThread[iNvsIdx].m_pMP4Writer)
 	{
-		pRealtimePlayThread[iNvsIdx].m_pMP4Writer->SaveFile();
+		pRealtimePlayThread[iNvsIdx].m_pMP4Writer->ReleaseMP4Writer();
 		delete pRealtimePlayThread[iNvsIdx].m_pMP4Writer;
 		pRealtimePlayThread[iNvsIdx].m_pMP4Writer = NULL;
 	}

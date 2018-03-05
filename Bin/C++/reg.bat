@@ -1,2 +1,2 @@
 
-regsvr32 "%~dp0EasyPlayerWebActiveX.ocx" 
+regsvr32 "%~dp0EasyPlayer-RTSPWebActiveX.ocx" 
