@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CDlgVideo, CDialogEx)
 	ON_WM_RBUTTONUP()
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_CHECK_RTPTRANSMODE, &CDlgVideo::OnBnClickedCheckRtptransmode)
+	ON_BN_CLICKED(IDC_BUTTON_SEEK, &CDlgVideo::OnBnClickedButtonSeek)
 END_MESSAGE_MAP()
 
 
@@ -168,13 +169,15 @@ void	CDlgVideo::InitialComponents()
 {
 	pDlgRender	=	NULL;
 	pEdtURL		=	NULL;
-// 	pEdtUsername=	NULL;
-// 	pEdtPassword=	NULL;
+	pEdtStartTime=	NULL;
+	pEdtEndTime=	NULL;
+	pEdtSeekTime = NULL;
 	pChkOSD		=	NULL;
 	pSliderCache=	NULL;
 	pBtnPreview	=	NULL;
 	pChkRTPTransMode = NULL;
 	pChkDecodeMode = NULL;
+	pBtnSeek = NULL;
 }
 
 void	CDlgVideo::CreateComponents()
@@ -187,20 +190,23 @@ void	CDlgVideo::CreateComponents()
 	}
 
 	__CREATE_WINDOW(pEdtURL,		CEdit,		IDC_EDIT_RTSP_URL);
-// 	__CREATE_WINDOW(pEdtUsername,	CEdit,		IDC_EDIT_USERNAME);
-// 	__CREATE_WINDOW(pEdtPassword,	CEdit,		IDC_EDIT_PASSWORD);
+	__CREATE_WINDOW(pEdtStartTime,	CEdit,		IDC_EDIT_STARTTIME);
+	__CREATE_WINDOW(pEdtEndTime,	CEdit,		IDC_EDIT_ENDTIME);
+	__CREATE_WINDOW(pEdtSeekTime,	CEdit,		IDC_EDIT_SEEKTIME);
+	
 	__CREATE_WINDOW(pChkOSD,		CButton,	IDC_CHECK_OSD);
 	__CREATE_WINDOW(pSliderCache,	CSliderCtrl,IDC_SLIDER_CACHE);
 	__CREATE_WINDOW(pBtnPreview,	CButton,	IDC_BUTTON_PREVIEW);
 	__CREATE_WINDOW(pChkRTPTransMode	,	CButton,	IDC_CHECK_RTPTRANSMODE);
 	__CREATE_WINDOW(pChkDecodeMode	,	CButton,	IDC_CHECK_DECODEMODE);
-	
-	if (NULL != pEdtURL)		pEdtURL->SetWindowText(TEXT("rtsp://"));
-// 	if (NULL != pEdtUsername)	pEdtUsername->SetWindowText(TEXT("admin"));
-// 	if (NULL != pEdtPassword)	pEdtPassword->SetWindowText(TEXT("admin"));
+	__CREATE_WINDOW(pBtnSeek	,	CButton,	IDC_BUTTON_SEEK);
+
+	if (NULL != pEdtURL)			pEdtURL->SetWindowText(TEXT("rtsp://"));
+	if (NULL != pEdtStartTime)	pEdtStartTime->SetWindowText(TEXT("20180510T093050Z"));
+	if (NULL != pEdtEndTime)	pEdtEndTime->SetWindowText( TEXT("20180510T103050Z"));
+	if (NULL != pEdtSeekTime)	pEdtSeekTime->SetWindowText( TEXT("20180510T100050Z"));
 	if (NULL != pSliderCache)	pSliderCache->SetRange(1, 10);
 	if (NULL != pSliderCache)	pSliderCache->SetPos(3);
-
 	if (NULL != pBtnPreview)		pBtnPreview->SetWindowText(TEXT("Play"));
 
 	if (pChkRTPTransMode)
@@ -224,38 +230,50 @@ void	CDlgVideo::UpdateComponents()
 	if (NULL != pDlgRender)		pDlgRender->Invalidate();
 
 	CRect	rcURL;
-	rcURL.SetRect(rcClient.left, rcRender.bottom+2, rcClient.right-350, rcClient.bottom);
+	rcURL.SetRect(rcClient.left, rcRender.bottom+2, rcClient.right-600, rcClient.bottom);
 	__MOVE_WINDOW(pEdtURL, rcURL);
 	if (NULL != pEdtURL)		pEdtURL->Invalidate();
 
-// 	CRect	rcUsername;
-// 	rcUsername.SetRect(rcURL.right+2, rcURL.top, rcURL.right+2+50, rcURL.bottom);
-// 	__MOVE_WINDOW(pEdtUsername, rcUsername);
-// 	if (NULL != pEdtUsername)		pEdtUsername->Invalidate();
-// 
-// 	CRect	rcPassword;
-// 	rcPassword.SetRect(rcUsername.right+2, rcUsername.top, rcUsername.right+2+rcUsername.Width(), rcUsername.bottom);
-// 	__MOVE_WINDOW(pEdtPassword, rcPassword);
-// 	if (NULL != pEdtPassword)		pEdtPassword->Invalidate();
+	CRect	rcStartTime;
+	rcStartTime.SetRect(rcURL.right+2, rcURL.top, rcURL.right+2+105, rcURL.bottom);
+	__MOVE_WINDOW(pEdtStartTime, rcStartTime);
+	if (NULL != pEdtStartTime)		pEdtStartTime->Invalidate();
+
+	CRect	rcEndTime;
+	rcEndTime.SetRect(rcStartTime.right+2, rcStartTime.top, rcStartTime.right+2+rcStartTime.Width(), rcStartTime.bottom);
+	__MOVE_WINDOW(pEdtEndTime, rcEndTime);
+	if (NULL != pEdtEndTime)		pEdtEndTime->Invalidate();
+
+	CRect	rcSeekTime;
+	rcSeekTime.SetRect(rcEndTime.right+2, rcEndTime.top, rcEndTime.right+2+rcEndTime.Width(), rcEndTime.bottom);
+	__MOVE_WINDOW(pEdtSeekTime, rcSeekTime);
+	if (NULL != pEdtSeekTime)		pEdtSeekTime->Invalidate();
+
+	CRect	rcSeek;
+	rcSeek.SetRect(rcSeekTime.right+2, rcSeekTime.top, rcSeekTime.right+2+40, rcSeekTime.bottom);
+	__MOVE_WINDOW(pBtnSeek, rcSeek);
+	if (NULL != pBtnSeek)		pBtnSeek->Invalidate();
+	
+	//pBtnSeek
 
 	// RTP OVER TCP/UDP [8/17/2016 SwordTwelve]
 	CRect	rcRTPMode;
-	rcRTPMode.SetRect(rcURL.right+10, rcURL.top, rcURL.right+2+68, rcURL.bottom);
+	rcRTPMode.SetRect(rcSeek.right+10, rcSeek.top, rcSeek.right+2+50, rcSeek.bottom);
 	__MOVE_WINDOW(pChkRTPTransMode, rcRTPMode);
 	if (NULL != pChkRTPTransMode)		pChkRTPTransMode->Invalidate();	
 
 	CRect	rcOSD;
-	rcOSD.SetRect(rcRTPMode.right+10, rcRTPMode.top, rcRTPMode.right+2+58, rcRTPMode.bottom);
+	rcOSD.SetRect(rcRTPMode.right+10, rcRTPMode.top, rcRTPMode.right+2+50, rcRTPMode.bottom);
 	__MOVE_WINDOW(pChkOSD, rcOSD);
 	if (NULL != pChkOSD)		pChkOSD->Invalidate();
 
 	CRect	rcDecodeMode;
-	rcDecodeMode.SetRect(rcOSD.right+10, rcOSD.top, rcOSD.right+2+78, rcOSD.bottom);
+	rcDecodeMode.SetRect(rcOSD.right+10, rcOSD.top, rcOSD.right+2+50, rcOSD.bottom);
 	__MOVE_WINDOW(pChkDecodeMode, rcDecodeMode);
 	if (NULL != pChkDecodeMode)		pChkDecodeMode->Invalidate();	
 
 	CRect	rcCache;
-	rcCache.SetRect(rcDecodeMode.right+2, rcDecodeMode.top, rcDecodeMode.right+2+60, rcDecodeMode.bottom);
+	rcCache.SetRect(rcDecodeMode.right+2, rcDecodeMode.top, rcDecodeMode.right+2+50, rcDecodeMode.bottom);
 	__MOVE_WINDOW(pSliderCache, rcCache);
 	if (NULL != pSliderCache)		pSliderCache->Invalidate();
 
@@ -264,6 +282,7 @@ void	CDlgVideo::UpdateComponents()
 	__MOVE_WINDOW(pBtnPreview, rcPreview);
 	if (NULL != pBtnPreview)		pBtnPreview->Invalidate();
 }
+
 void	CDlgVideo::DeleteComponents()
 {
 	m_bDestoryWnd = true;
@@ -341,11 +360,21 @@ void CDlgVideo::OnBnClickedButtonPreview()
 				bHardDecode = false ;
 			}
 		}
-		
+
+		USES_CONVERSION;
+		CString sStartTime;
+		CString sEndTime;
+		if(pEdtStartTime)	
+			pEdtStartTime->GetWindowTextW(sStartTime);	
+		if(pEdtEndTime)
+			pEdtStartTime->GetWindowTextW(sEndTime);	//IDC_EDIT_USERNAME
+
+		char* startTime = T2A(sStartTime);
+		char* endTime = T2A(sEndTime);
+
 		HWND hWnd = NULL;
 		if (NULL != pDlgRender)	hWnd = pDlgRender->GetSafeHwnd();
-		m_ChannelId = EasyPlayer_OpenStream(szURL, hWnd, (RENDER_FORMAT)RenderFormat, nRtpOverTcp, szUsername, szPassword, &CDlgVideo::EasyPlayerCallBack, this ,bHardDecode);
-
+		m_ChannelId = EasyPlayer_OpenStream(szURL, hWnd, (RENDER_FORMAT)RenderFormat, nRtpOverTcp, szUsername, szPassword, &CDlgVideo::EasyPlayerCallBack, this, bHardDecode, NULL, NULL);
 		if (m_ChannelId > 0)
 		{
 			int iPos = pSliderCache->GetPos();
@@ -483,4 +512,21 @@ void CDlgVideo::OnBnClickedCheckRtptransmode()
 {
 	// TODO: Add your control notification handler code here
 
+}
+
+
+void CDlgVideo::OnBnClickedButtonSeek()
+{
+	UpdateData(TRUE);
+	CString strSeekTime;
+	if (NULL != pEdtSeekTime)	
+		pEdtSeekTime->GetWindowText( strSeekTime);
+	USES_CONVERSION;
+	char* playTime = T2A(strSeekTime);
+	int nRet = EasyPlayer_PlaybackSeek(m_ChannelId, playTime);
+	if(nRet == 0)
+	{
+
+
+	}
 }

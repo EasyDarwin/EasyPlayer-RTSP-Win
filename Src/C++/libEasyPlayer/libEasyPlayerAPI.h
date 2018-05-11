@@ -46,8 +46,10 @@ typedef int (CALLBACK *MediaSourceCallBack)( int _channelId, int *_channelPtr, i
 LIB_EASYPLAYER_API int EasyPlayer_Init();
 LIB_EASYPLAYER_API void EasyPlayer_Release();
 
+// 增加RTSP回放相关接口参数 [5/9/2018 SwordTwelve]
 LIB_EASYPLAYER_API int EasyPlayer_OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, 
-	int rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback=NULL, void *userPtr=NULL, bool bHardDecode=true);
+	int rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback=NULL, void *userPtr=NULL, 
+	bool bHardDecode=true, char* startTime = NULL, char* endTime=NULL, float fScale = 1.0f );
 LIB_EASYPLAYER_API void EasyPlayer_CloseStream(int channelId);
 LIB_EASYPLAYER_API int EasyPlayer_SetFrameCache(int channelId, int cache);
 LIB_EASYPLAYER_API int EasyPlayer_SetShownToScale(int channelId, int shownToScale);
@@ -72,5 +74,15 @@ LIB_EASYPLAYER_API int		EasyPlayer_SetManuPicShotPath(int channelId, const char*
 
 LIB_EASYPLAYER_API int		EasyPlayer_StartManuPicShot(int channelId);//pThread->manuScreenshot
 LIB_EASYPLAYER_API int		EasyPlayer_StopManuPicShot(int channelId);
+
+// 增加RTSP回放相关接口 [5/9/2018 SwordTwelve]
+//设置回放速度
+LIB_EASYPLAYER_API int		EasyPlayer_SetPlaybackSpeed(int channelId, float fSpeed);
+/* 跳转播放时间 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackSeek(int channelId, const char *playTime);
+/* 暂停播放 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackPause(int channelId);
+/* 恢复播放 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackResume(int channelId);
 
 #endif

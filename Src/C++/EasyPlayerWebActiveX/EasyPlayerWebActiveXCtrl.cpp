@@ -505,7 +505,7 @@ void CEasyPlayerWebActiveXCtrl::OnSetClientSite()
 	if (m_pClientSite) 
 	{
 		int ret = EasyPlayerManager::Init();
-#if 0
+#if 1
 		CString str = _T("");
 		str.Format(_T("Init = %d"), ret);
 		AfxMessageBox(str);
@@ -519,7 +519,7 @@ void CEasyPlayerWebActiveXCtrl::OnSetClientSite()
 		Close();
 		// 调用刷新会报错 [10/12/2017 dingshuai]
 		//EasyPlayerManager::UnInit();
-		//AfxMessageBox(_T("页面已经关闭，重新加载OCX"));
+		AfxMessageBox(_T("页面已经关闭，重新加载OCX"));
 		DestroyWindow();
 		m_bInit = false;
 

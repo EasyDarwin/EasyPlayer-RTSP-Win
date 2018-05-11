@@ -63,11 +63,12 @@ LIB_EASYPLAYER_API void EasyPlayer_Release()
 }
 
 
-LIB_EASYPLAYER_API int EasyPlayer_OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int rtpovertcp,const char *username, const char *password, MediaSourceCallBack callback, void *userPtr, bool bHardDecode)
+LIB_EASYPLAYER_API int EasyPlayer_OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, 
+	int rtpovertcp,const char *username, const char *password, MediaSourceCallBack callback, void *userPtr, bool bHardDecode, char* startTime, char* endTime, float fScale)
 {
 	if (NULL == g_pChannelManager)		return -1;
 
-	return g_pChannelManager->OpenStream(url, hWnd, renderFormat, rtpovertcp, username, password, callback, userPtr, bHardDecode);
+	return g_pChannelManager->OpenStream(url, hWnd, renderFormat, rtpovertcp, username, password, callback, userPtr, bHardDecode, startTime, startTime, fScale);
 }
 
 LIB_EASYPLAYER_API void EasyPlayer_CloseStream(int channelId)
@@ -200,4 +201,33 @@ LIB_EASYPLAYER_API int		EasyPlayer_StopManuPicShot(int channelId)
 {
 	if (NULL == g_pChannelManager)		return -1;
 	return g_pChannelManager->StopManuPicShot(channelId);
+}
+
+//设置回放速度
+LIB_EASYPLAYER_API int		EasyPlayer_SetPlaybackSpeed(int channelId, float fSpeed)
+{
+	if (NULL == g_pChannelManager)		return -1;
+	return g_pChannelManager->SetPlaybackSpeed(channelId, fSpeed);
+
+}
+/* 跳转播放时间 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackSeek(int channelId, const char *playTime)
+{
+	if (NULL == g_pChannelManager)		return -1;
+	return g_pChannelManager->PlaybackSeek(channelId, playTime);
+
+}
+/* 暂停播放 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackPause(int channelId)
+{
+	if (NULL == g_pChannelManager)		return -1;
+	return g_pChannelManager->PlaybackPause(channelId);
+
+}
+/* 恢复播放 */
+LIB_EASYPLAYER_API int		EasyPlayer_PlaybackResume(int channelId)
+{
+	if (NULL == g_pChannelManager)		return -1;
+	return g_pChannelManager->PlaybackResume(channelId);
+
 }

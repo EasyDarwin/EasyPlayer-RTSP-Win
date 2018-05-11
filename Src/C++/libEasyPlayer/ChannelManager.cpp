@@ -100,7 +100,8 @@ void CChannelManager::Release()
 }
 
 
-int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback, void *userPtr, bool bHardDecode)
+int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback, void *userPtr, 
+	bool bHardDecode, char* startTime, char* endTime, float fScale)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
 	if ( (NULL == url) || (0==strcmp(url, "\0")))		return -1;
@@ -131,7 +132,7 @@ int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT render
 		EasyRTSP_SetCallback(pRealtimePlayThread[iNvsIdx].nvsHandle, __RTSPSourceCallBack);
 		EasyRTSP_OpenStream(pRealtimePlayThread[iNvsIdx].nvsHandle, iNvsIdx, (char*)url, 
 			_rtpovertcp==0x01?EASY_RTP_OVER_TCP:EASY_RTP_OVER_UDP, mediaType, 
-			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000, 0, 0x01, 0);
+			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000, 0, 0x01, 0, startTime, endTime, fScale);
 
 		for (int nI=0; nI<MAX_DECODER_NUM; nI++)
 		{
@@ -168,6 +169,58 @@ void CChannelManager::CloseStream(int channelId)
 	//m_bIFrameArrive = false;
 	LeaveCriticalSection(&crit);
 }
+
+//pRealtimePlayThread[iNvsIdx].nvsHandle
+
+//设置回放速度
+//Easy_API int Easy_APICALL EasyRTSP_SetStreamSpeed(Easy_RTSP_Handle handle, float fSpeed);
+int CChannelManager::SetPlaybackSpeed(int channelId, float fSpeed)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	return EasyRTSP_SetStreamSpeed(pRealtimePlayThread[iNvsIdx].nvsHandle, fSpeed);
+}
+
+
+/* 跳转播放时间 */
+//Easy_API int Easy_APICALL EasyRTSP_SeekStream(Easy_RTSP_Handle handle, const char *playTime);
+int CChannelManager::PlaybackSeek(int channelId, const char *playTime)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+
+	return EasyRTSP_SeekStream(pRealtimePlayThread[iNvsIdx].nvsHandle, playTime);
+}
+
+/* 暂停 */
+//Easy_API int Easy_APICALL EasyRTSP_PauseStream(Easy_RTSP_Handle handle);
+int CChannelManager::PlaybackPause(int channelId)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+
+	return EasyRTSP_PauseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
+}
+
+
+/* 恢复播放 */
+//Easy_API int Easy_APICALL EasyRTSP_ResumeStream(Easy_RTSP_Handle handle);
+int CChannelManager::PlaybackResume(int channelId)
+{
+	if (NULL == pRealtimePlayThread)			return -1;
+
+	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
+	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+
+	return EasyRTSP_ResumeStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
+}
+
 
 
 int	CChannelManager::ShowStatisticalInfo(int channelId, int _show)

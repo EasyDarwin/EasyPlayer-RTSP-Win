@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="1024,700" clip="true" Resizing="true" DragMoving="true" bkcolor="#666666" mininfo="800,60" roundcorner="2,2">
+<Window size="1366,800" clip="true" Resizing="true" DragMoving="true" bkcolor="#666666" mininfo="800,60" roundcorner="2,2">
 	<Font name="幼圆" size="20" bold="true"/>
 	<Font name="微软雅黑" size="15" italic="true"/>
 	<Font name="微软雅黑" size="15" />

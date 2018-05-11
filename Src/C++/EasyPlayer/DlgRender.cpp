@@ -20,6 +20,8 @@ CDlgRender::CDlgRender(CWnd* pParent /*=NULL*/)
 
 	m_pEasyLogo = NULL;
 	channelStatus.showOSD = 0;
+	channelStatus.fSpeed = 1.0f;
+	channelStatus.bPause = false;
 	mChannelId	=	0;
 }
 
@@ -64,6 +66,12 @@ void CDlgRender::OnLButtonDblClk(UINT nFlags, CPoint point)
 #define	POP_MENU_SHOT			10011
 #define POP_MENU_SHOWOSD	10012
 
+#define  POP_MENU_SPEED2	    10013
+#define	POP_MENU_SPEED4		10014
+#define	POP_MENU_SPEED8		10015
+#define	POP_MENU_SPEED_4		10016
+#define	POP_MENU_PAUSE			10017
+
 void CDlgRender::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	ClosePopupMenu();
@@ -74,7 +82,12 @@ void CDlgRender::OnRButtonUp(UINT nFlags, CPoint point)
 		AppendMenu(hMenu, MF_STRING|(channelStatus.recording==0x01?MF_CHECKED:MF_UNCHECKED), POP_MENU_RECORDING, TEXT("Recording"));
 		AppendMenu(hMenu, MF_STRING, POP_MENU_SHOT, TEXT("ScreenShot"));
 		AppendMenu(hMenu, MF_STRING|(channelStatus.showOSD==0x01?MF_CHECKED:MF_UNCHECKED), POP_MENU_SHOWOSD, TEXT("ShowOSD"));
-
+		AppendMenu(hMenu, MF_STRING|(channelStatus.fSpeed==2.0f?MF_CHECKED:MF_UNCHECKED), POP_MENU_SPEED2	, TEXT("SpeedX2"));
+		AppendMenu(hMenu, MF_STRING|(channelStatus.fSpeed==4.0f?MF_CHECKED:MF_UNCHECKED), POP_MENU_SPEED4	, TEXT("SpeedX4"));
+		AppendMenu(hMenu, MF_STRING|(channelStatus.fSpeed==8.0f?MF_CHECKED:MF_UNCHECKED), POP_MENU_SPEED8	, TEXT("SpeedX8"));
+		AppendMenu(hMenu, MF_STRING|(channelStatus.fSpeed==-4.0f?MF_CHECKED:MF_UNCHECKED),POP_MENU_SPEED_4 ,  TEXT("SpeedX-4"));
+		AppendMenu(hMenu, MF_STRING|(channelStatus.bPause?MF_CHECKED:MF_UNCHECKED),	POP_MENU_PAUSE ,				  TEXT("Pause"));
+		
 		CPoint	pMousePosition;
 		GetCursorPos(&pMousePosition);
 		SetForegroundWindow();
@@ -140,7 +153,48 @@ BOOL CDlgRender::OnCommand(WPARAM wParam, LPARAM lParam)
 			EasyPlayer_ShowOSD(mChannelId, channelStatus.showOSD,  osd);
 
 #endif
-
+		}
+		break;
+	case	POP_MENU_SPEED2:
+		if (mChannelId > 0)
+		{
+			channelStatus.fSpeed = (channelStatus.fSpeed==2.0f?1.0f:2.0f);
+			EasyPlayer_SetPlaybackSpeed(mChannelId, channelStatus.fSpeed);
+		}
+		break;
+	case		POP_MENU_SPEED4:	
+		if (mChannelId > 0)
+		{
+			channelStatus.fSpeed = (channelStatus.fSpeed==4.0f?1.0f:4.0f);
+			EasyPlayer_SetPlaybackSpeed(mChannelId, channelStatus.fSpeed);
+		}
+		break;
+	case			POP_MENU_SPEED8:	
+		if (mChannelId > 0)
+		{
+			channelStatus.fSpeed = (channelStatus.fSpeed==8.0f?1.0f:8.0f);
+			EasyPlayer_SetPlaybackSpeed(mChannelId, channelStatus.fSpeed);
+		}
+		break;
+	case			POP_MENU_SPEED_4:	
+		if (mChannelId > 0)
+		{
+			channelStatus.fSpeed = (channelStatus.fSpeed==-4.0f?1.0f:(-4.0f));
+			EasyPlayer_SetPlaybackSpeed(mChannelId, channelStatus.fSpeed);
+		}
+		break;
+	case			POP_MENU_PAUSE	:
+		if (mChannelId > 0)
+		{
+			channelStatus.bPause = !(channelStatus.bPause);
+			if (channelStatus.bPause)
+			{
+				EasyPlayer_PlaybackPause(mChannelId);
+			} 
+			else
+			{
+				EasyPlayer_PlaybackResume(mChannelId);
+			}
 		}
 		break;
 	default:

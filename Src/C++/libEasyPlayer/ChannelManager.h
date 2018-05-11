@@ -230,7 +230,8 @@ public:
 	int		Initial();
 
 	//OpenStream 返回一个可用的通道ID
-	int		OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback=NULL, void *userPtr=NULL, bool bHardDecode=true);
+	int		OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback=NULL, void *userPtr=NULL, bool bHardDecode=true,
+		char* startTime = NULL, char* endTime = NULL, float fScale = 1.0f);
 	void 	CloseStream(int channelId);
 	int		ShowStatisticalInfo(int channelId, int _show);
 	int		ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd);
@@ -243,6 +244,15 @@ public:
 	int		SetDragEndPoint(int channelId, POINT pt);
 	int		ResetDragPoint(int channelId);
 	int		GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo);
+	//设置回放速度
+	int		SetPlaybackSpeed(int channelId, float fSpeed);
+	/* 跳转播放时间 */
+	int		PlaybackSeek(int channelId, const char *playTime);
+	/* 暂停播放 */
+	int		PlaybackPause(int channelId);
+	/* 恢复播放 */
+	int		PlaybackResume(int channelId);
+
 
 	//同一时间只支持一路声音播放
 	int		PlaySound(int channelId);

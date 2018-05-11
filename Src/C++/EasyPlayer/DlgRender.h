@@ -7,6 +7,9 @@ typedef struct __CHANNEL_STATUS
 	
 	int			recording;
 	int			showOSD;
+	float		fSpeed;
+	bool		bPause;
+
 
 }CHANNELSTATUS;
 // CDlgRender ¶Ô»°¿ò
