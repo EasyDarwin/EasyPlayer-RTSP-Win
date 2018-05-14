@@ -9,6 +9,9 @@
 
 #pragma once
 
+#define KEY "79393674363469576B5A73417275646170526852532F74555A584E304B56634D5671442F532B424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D"
+
+
 #include "../libEasyPlayer/libEasyPlayerAPI.h"
 
 //Gavin's Source Struct流信息结构
@@ -34,7 +37,7 @@ public:
 	//初始化
 	static int Init()
 	{
-		return EasyPlayer_Init();
+		return EasyPlayer_Init((char*)KEY);
 	}
 
 	// 释放
