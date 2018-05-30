@@ -138,7 +138,7 @@ namespace EasyPlayerNetSDK
         /// <param name="callback">数据回调.</param>
         /// <param name="bHardDecode">硬件解码1=是，0=否.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N@Z")]
+        [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N44M@Z")]
         public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true);
 
         /// <summary>
