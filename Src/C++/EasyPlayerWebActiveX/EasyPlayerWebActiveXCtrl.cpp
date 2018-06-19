@@ -505,7 +505,7 @@ void CEasyPlayerWebActiveXCtrl::OnSetClientSite()
 	if (m_pClientSite) 
 	{
 		int ret = EasyPlayerManager::Init();
-#if 1
+#if 0
 		CString str = _T("");
 		str.Format(_T("Init = %d"), ret);
 		AfxMessageBox(str);
