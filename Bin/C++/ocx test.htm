@@ -139,20 +139,34 @@
 		<OBJECT ID="EasyPlayerOcx" WIDTH="1280px" HEIGHT="600px" CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
 
 		</OBJECT>
-		<br> RTSP URL：
-		<input type="text" name="url" id="url" VALUE="rtsp://127.0.0.1:554/stream0.sdp" /> 用户名：
-		<input type="text" name="name" id="name" size=25 value="" /> 密码：
-		<input type="text" name="password" id="password" size=25 value="" /> 缓存：
-		<input type="range" max="10" min="1" name="cache" id="cache" size=25 value="3" />RenderFormat：
+		
+		<br><br>
+		RTSP URL：
+		<input type="text" name="url" id="url" size=128 VALUE="rtsp://127.0.0.1:554/stream0.sdp" /> 
+		<br>
+		
+		<!--
+		用户名[可选]：
+		<input type="text" name="name" id="name" size=25 value="" /> 密码[可选]：
+		<input type="text" name="password" id="password" size=25 value="" /> 
+		<br>
+		-->
+		缓存：
+		<input type="range" max="10" min="1" name="cache" id="cache" size=25 value="3" />
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		RenderFormat：
 		<input type="range" max="7" min="1" name="rendertype" id="rendertype" VALUE="0" /> 
 		<br>
-		播放声音：
+		播放声音:
 		<input type="checkbox" name="playsound" id="playsound" size=25 value="1" checked="checked"/> 
-		 采用硬解码：
-
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		 采用硬解码:
 		<input type="checkbox"  name="harddecode" id="harddecode" size=25 value="1" checked="checked"/> 
-		按比例显示：
-		<input type="checkbox" name="showtoscale" id="showtoscale" size=25 value="1" checked="checked" /> 显示码率信息：
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		按比例显示:
+		<input type="checkbox" name="showtoscale" id="showtoscale" size=25 value="1" checked="checked" />
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		显示码率信息:
 		<input type="checkbox" name="showsatic" id="showsatic" size=25 value="1" checked="checked" />
 		<br>
 		<div class="buttons">
