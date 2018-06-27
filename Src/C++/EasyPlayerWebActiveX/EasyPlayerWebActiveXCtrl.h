@@ -64,7 +64,7 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 protected:
-	LONG Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord);
+	LONG Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord, LPCTSTR sRtpOverTcp);
 	void Config(LPCTSTR sFrameCache, LPCTSTR sPlaySound, LPCTSTR sShowToScale, LPCTSTR sShowStatisticInfo);
 	void SetOSD(LPCTSTR show, LPCTSTR alpha, LPCTSTR red, LPCTSTR green, LPCTSTR blue, LPCTSTR left, LPCTSTR top, LPCTSTR right, LPCTSTR bottom, LPCTSTR strOSD);
 	void Close(void);
@@ -85,7 +85,7 @@ private:
 	BOOL bPlaySound ;
 	BOOL bShowToScale ;
 	BOOL bShowStatisticInfo ;
-
+	int nRtpOverTcp;
 public:
 	virtual void OnSetClientSite();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);

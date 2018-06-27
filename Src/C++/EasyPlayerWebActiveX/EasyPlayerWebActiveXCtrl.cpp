@@ -32,7 +32,7 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CEasyPlayerWebActiveXCtrl, COleControl)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
-	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Start", dispidStart, Start, VT_I4, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Start", dispidStart, Start, VT_I4, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Config", dispidConfig, Config, VT_EMPTY, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "Close", dispidClose, Close, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION_ID(CEasyPlayerWebActiveXCtrl, "SetOSD", dispidSetOSD, SetOSD, VT_EMPTY, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR)
@@ -171,6 +171,7 @@ CEasyPlayerWebActiveXCtrl::CEasyPlayerWebActiveXCtrl()
 	bPlaySound = TRUE;
 	bShowToScale = FALSE;
 	bShowStatisticInfo = TRUE;
+	nRtpOverTcp = 1;
 }
 
 
@@ -299,7 +300,7 @@ int CEasyPlayerWebActiveXCtrl::EasyPlayerCallBack( int _channelId, int *_channel
 	return 0;
 }
 
-LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord)
+LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTSTR sUserName, LPCTSTR sPassword, LPCTSTR sHardDecord, LPCTSTR sRtpOverTcp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	// TODO: 在此添加调度处理程序代码
@@ -307,6 +308,7 @@ LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTS
 	if (m_bInit)
 	{
 		char szRenderFormat[128] ;
+		char szRtpOverTcp[128] ;
 		char szHardDecord[128] ;
 		if (wcslen(sURL) < 1)		
 			return -1;
@@ -315,6 +317,7 @@ LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTS
 		{
 			__WCharToMByte(sRenderFormat, szRenderFormat, sizeof(szRenderFormat)/sizeof(szRenderFormat[0]));
 		}
+
 		if (wcslen(sUserName) > 0)
 		{
 			__WCharToMByte(sUserName, szUserName, sizeof(szUserName)/sizeof(szUserName[0]));
@@ -327,7 +330,12 @@ LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTS
 		{
 			__WCharToMByte(sHardDecord, szHardDecord, sizeof(szHardDecord)/sizeof(szHardDecord[0]));
 		}
-
+		if (wcslen(sRtpOverTcp) > 0)
+		{
+			__WCharToMByte(sRtpOverTcp, szRtpOverTcp, sizeof(szRtpOverTcp)/sizeof(szRtpOverTcp[0]));
+		}
+		
+		nRtpOverTcp = atoi(szRtpOverTcp);
 		nHardDecode = atoi(szHardDecord);
 		int nRenderType = atoi(szRenderFormat);
 		eRenderFormat = DISPLAY_FORMAT_YV12;
@@ -359,7 +367,7 @@ LONG CEasyPlayerWebActiveXCtrl::Start(LPCTSTR sURL, LPCTSTR sRenderFormat, LPCTS
 			break;
 		}
 
-		nRet = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , 1, szUserName , szPassword, nHardDecode, &CEasyPlayerWebActiveXCtrl::EasyPlayerCallBack, this);
+		nRet = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , nRtpOverTcp, szUserName , szPassword, nHardDecode, &CEasyPlayerWebActiveXCtrl::EasyPlayerCallBack, this);
 
 	}
 	else
@@ -536,7 +544,7 @@ void CEasyPlayerWebActiveXCtrl::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (m_bInit)
 			{
-				int ret = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , 1, szUserName , szPassword, nHardDecode);
+				int ret = m_player.Start(szURL, m_pActiveDlg.GetSafeHwnd(), eRenderFormat , nRtpOverTcp, szUserName , szPassword, nHardDecode);
 				KillTimer(WM_TIMER_START_ID);
 			}
 		}
