@@ -1,183 +1,79 @@
-Ôªø<HTML>
+<HTML>
+<HEAD>
+<TITLE>EasyPlayer</TITLE>
+<script type="text/javascript">
+	
 
-	<HEAD>
-		<TITLE>
-			EasyPlayer Plugin Example
-		</TITLE>
-		<script type="text/javascript">
+
+		function config(){
+		var obj = document.getElementById("EasyPlayerOcx");
+
+		var cache = document.getElementById("cache").value;
+		var playsound = document.getElementById("playsound").value;
+		var showtoscale= document.getElementById("showtoscale").value;
+		var showsatic = document.getElementById("showsatic").value;
+
+		obj.Config(cache, playsound, showtoscale, showsatic);
+		obj.SetOSD(1,255,0,0,255,100,100, 1000,150,"EasyPlayer-RTSP OSD≤‚ ‘");	
+				
+		//alert(cache+";"+playsound+";"+showtoscale+";"+showsatic);
+
+	}
+
+	function startplay(){
+		var obj = document.getElementById("EasyPlayerOcx");
+		var url = document.getElementById("url").value;
+		var rendertype = document.getElementById("rendertype").value;
+		var name= document.getElementById("name").value;
+		var password = document.getElementById("password").value;
+		var harddecode = document.getElementById("harddecode").value;
+	    var rtpovertcp = document.getElementById("rtpovertcp").value;
+
+		obj.Start(url, rendertype, name, password, harddecode,rtpovertcp);
+		config();
+
+		//alert(url+";"+rendertype+";"+name+";"+password);
+
+	}
+
+		function stopplay(){
+		//alert("Close()!!!!!");
+		var obj = document.getElementById("EasyPlayerOcx");
+
+		obj.Close();
+	}
 	
-	
-	
-			function config() {
-				var obj = document.getElementById("EasyPlayerOcx");
-	
-				var cache = document.getElementById("cache").value;
-				var playsound = document.getElementById("playsound").checked ? 1 : 0;
-				var showtoscale = document.getElementById("showtoscale").checked ? 1 : 0;
-				var showsatic = document.getElementById("showsatic").checked ? 1 : 0;
-	
-				obj.Config(cache, playsound, showtoscale, showsatic);
-				obj.SetOSD(1, 255, 0, 0, 255, 100, 100, 1000, 150, "EasyPlayer-RTSP OSDÊµãËØï");
-	
-				//alert(cache+";"+playsound+";"+showtoscale+";"+showsatic);
-	
-			}
-	
-			function startplay() {
-				var obj = document.getElementById("EasyPlayerOcx");
-				var url = document.getElementById("url").value;
-				var rendertype = document.getElementById("rendertype").checked ? 1 : 0;
-				var name = document.getElementById("name").value;
-				var password = document.getElementById("password").value;
-				var harddecode = document.getElementById("harddecode").checked ? 1 : 0;
-				var rtpovertcp = document.getElementById("rtpovertcp").checked ? 1 : 0;
-				obj.Start(url, rendertype, name, password, harddecode,rtpovertcp);
-				config();
-	
-				//alert(url+";"+rendertype+";"+name+";"+password);
-	
-			}
-	
-			function stopplay() {
-				//alert("Close()!!!!!");
-				var obj = document.getElementById("EasyPlayerOcx");
-	
-				obj.Close();
-			}
-	
-		</script>
-		<style>
-			input[type=range] {
-				border-radius: 10px;
-				border: none;
-				margin-top: 0;
-			}
-	
-			input[type=range]::-ms-track {
-				border-radius: 10px;
-				border-color: transparent;
-				color: transparent;
-			}
-	
-			input[type=range]::-ms-thumb {
-				border: solid 0.125em rgba(205, 224, 230, 0.5);
-				height: 10px;
-				width: 25px;
-				background: #f0f0f0;
-				box-shadow: 0 .125em .125em #3b4547;
-			}
-	
-			input[type=range]::-ms-fill-lower {
-				border-radius: 10px;
-				background: linear-gradient(to right, #059CFA, white 100%, white);
-			}
-	
-			input[type=range]::-ms-fill-upper {
-				border-radius: 10px;
-				background: #ffffff;
-			}
-	
-			input[type=range]:focus::-ms-fill-lower {
-				background: linear-gradient(to right, #059CFA, white 100%, white);
-			}
-	
-			input[type=range]:focus::-ms-fill-upper {
-				background: #ffffff;
-			}
-	
-			.buttons {
-				padding-top: 10px;
-				position: relative;
-				height: 35px;
-			}
-	
-			button {
-				color: #333;
-				background-color: #fff;
-				border-color: #ccc;
-				display: inline-block;
-				padding: 6px 12px;
-				margin-bottom: 0;
-				font-size: 12px;
-				font-weight: 400;
-				line-height: 1.42857143;
-				text-align: center;
-				white-space: nowrap;
-				vertical-align: middle;
-				touch-action: manipulation;
-				cursor: pointer;
-				user-select: none;
-				background-image: none;
-				border: 1px solid #ccc;
-				border-radius: 4px;
-				width: 65px;
-				height: 35px;
-				position: absolute;
-				bottom: 0px;
-				left: 50%;
-			}
-	
-			.start {
-				background: #286090;
-				color: #fff;
-				margin-left: -85px;
-			}
-	
-			.stop {
-				background: #e6e6e6;
-				color: #000;
-				margin-left: 0px;
-			}
-		</style>
-	</HEAD>
-	
-	<BODY>
-		<center>
-			<p></p>
-	
-	
-			<OBJECT ID="EasyPlayerOcx" WIDTH="1280px" HEIGHT="600px" CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
-	
-			</OBJECT>
-			
-			<br><br>
-			RTSP URLÔºö
-			<input type="text" name="url" id="url" size=128 VALUE="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" /> 
-			<br> <br>
-			
-			
-			Áî®Êà∑ÂêçÔºö
-			<input type="text" name="name" id="name" size=25 value="" /> ÂØÜÁ†ÅÔºö
-			<input type="text" name="password" id="password" size=25 value="" /> 
-			<br>
-			
-			ÁºìÂ≠òÔºö
-			<input type="range" max="10" min="1" name="cache" id="cache" size=25 value="3" />
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			RenderFormatÔºö
-			<input type="range" max="7" min="1" name="rendertype" id="rendertype" VALUE="0" /> 
-			<br>
-			RTP Over TCP:
-			<input type="checkbox" name="rtpovertcp" id="rtpovertcp" size=25 checked="checked" />
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			Êí≠ÊîæÂ£∞Èü≥:
-			<input type="checkbox" name="playsound" id="playsound" size=25 value="1" checked="checked"/> 
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			 ÈááÁî®Á°¨Ëß£Á†Å:
-			<input type="checkbox"  name="harddecode" id="harddecode" size=25 value="1" checked="checked"/> 
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			ÊåâÊØî‰æãÊòæÁ§∫:
-			<input type="checkbox" name="showtoscale" id="showtoscale" size=25 value="1" checked="checked" />
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			ÊòæÁ§∫Á†ÅÁéá‰ø°ÊÅØ:
-			<input type="checkbox" name="showsatic" id="showsatic" size=25 value="1" checked="checked" />
-			<br>
-			<div class="buttons">
-				<button class="start" type="button" onclick="startplay();">Start</button>
-				<button class="stop" type="button" onclick="stopplay();">Stop</button>
-			</div>
-	
-		</center>
-	</BODY>
-	
-	</HTML>
+</script>
+</HEAD>
+
+<BODY>
+<center>
+EasyPlayer Plugin Example
+<p></p>
+
+
+<OBJECT ID="EasyPlayerOcx" WIDTH=100% HEIGHT=100%
+ CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+
+</OBJECT>
+
+ΩÁ√Ê–≈œ¢<br>
+RTSP URL£∫<input type="text" name="url" id="url" VALUE="rtsp://127.0.0.1:554/stream0.sdp"/>
+RenderFormat£∫<input type="text" name="rendertype" id="rendertype" VALUE="0"/>
+”√ªß√˚£∫<input type="text" name="name" id="name" size=25 value=""/>
+√‹¬Î£∫<input type="text" name="password" id="password" size=25 value=""/>
+≤…”√”≤Ω‚¬Î£∫<input type="text" name="harddecode" id="harddecode" size=25 value="1"/>
+rtpovertcp£∫<input type="text" name="rtpovertcp" id="rtpovertcp" size=25 value="1"/>
+<br>
+ª∫¥Ê£∫<input type="text" name="cache" id="cache" size=25 value ="3"/>
+≤•∑≈…˘“Ù£∫<input type="text" name="playsound" id="playsound" size=25 value ="1"/>
+∞¥±»¿˝œ‘ æ£∫<input type="text" name="showtoscale" id="showtoscale" size=25 value ="1"/>
+œ‘ æ¬Î¬ –≈œ¢£∫<input type="text" name="showsatic" id="showsatic" size=25 value ="1"/><br>
+
+
+<button type="button" onclick="startplay();">Start</button>
+<button type="button" onclick="stopplay();">Stop</button>
+
+</center>
+</BODY>
+</HTML>

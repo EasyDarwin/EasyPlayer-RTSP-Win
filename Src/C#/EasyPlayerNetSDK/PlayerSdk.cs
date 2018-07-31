@@ -137,9 +137,13 @@ namespace EasyPlayerNetSDK
         /// <param name="userPtr">用户自定义指针.</param>
         /// <param name="callback">数据回调.</param>
         /// <param name="bHardDecode">硬件解码1=是，0=否.</param>
+        /// <param name="startTime">回放开始时间,直播流填null.</param>
+        /// <param name="endTime">回放结束时间，直播流填null.</param>
+        /// <param name="fScale">回放倍率，直播流无效.</param>
         /// <returns>System.Int32.</returns>
         [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N44M@Z")]
-        public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true);
+       //?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N44M@Z
+        public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true, string startTime = null, string endTime = null, float fScale = 1.0f);
 
         /// <summary>
         /// Easies the player_ close stream.

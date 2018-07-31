@@ -1189,7 +1189,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 			//½âÂë
 			EnterCriticalSection(&pThread->crit);
-			int nRet = 1;
+			int nRet = 1; 
 			if (pDecoderObj->pIntelDecoder)
 			{
 				if(frameinfo.length > 0)
