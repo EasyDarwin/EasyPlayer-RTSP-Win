@@ -26,9 +26,6 @@ public:
 	int		m_ChannelId;
 	CDlgRender	*pDlgRender;
 	CEdit	*pEdtURL;		//IDC_EDIT_RTSP_URL
-	CEdit	*pEdtStartTime;	//IDC_EDIT_USERNAME
-	CEdit	*pEdtEndTime;	//IDC_EDIT_PASSWORD
-	CEdit	*pEdtSeekTime;			//IDC_EDIT_SEEKTIME
 	CButton	*pChkOSD;		//IDC_CHECK_OSD
 	CButton	*pChkRTPTransMode;		//IDC_CHECK_RTPTRANSMODE
 	CButton* pChkDecodeMode;
@@ -62,7 +59,7 @@ public:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnBnClickedCheckRtptransmode();
-	afx_msg void OnBnClickedButtonSeek();
+//	afx_msg void OnBnClickedButtonSeek();
 
 public:
 	static int CALLBACK EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
