@@ -65,6 +65,7 @@ namespace Client
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Snop_MenuItem,
             this.Recode_MenuItem,
@@ -74,54 +75,54 @@ namespace Client
             this.RenderRect_MenuItem,
             this.PlaySound_MenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(137, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(154, 172);
             // 
             // Snop_MenuItem
             // 
             this.Snop_MenuItem.Name = "Snop_MenuItem";
-            this.Snop_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.Snop_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.Snop_MenuItem.Text = "截图";
             this.Snop_MenuItem.Click += new System.EventHandler(this.Snop_MenuItem_Click);
             // 
             // Recode_MenuItem
             // 
             this.Recode_MenuItem.Name = "Recode_MenuItem";
-            this.Recode_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.Recode_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.Recode_MenuItem.Text = "视频录像";
             this.Recode_MenuItem.Click += new System.EventHandler(this.Recode_MenuItem_Click);
             // 
             // OSDShow_MenuItem
             // 
             this.OSDShow_MenuItem.Name = "OSDShow_MenuItem";
-            this.OSDShow_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.OSDShow_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.OSDShow_MenuItem.Text = "OSD显示";
             this.OSDShow_MenuItem.Click += new System.EventHandler(this.OSDShow_MenuItem_Click);
             // 
             // FullWindos_MenuItem
             // 
             this.FullWindos_MenuItem.Name = "FullWindos_MenuItem";
-            this.FullWindos_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.FullWindos_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.FullWindos_MenuItem.Text = "比例显示";
             this.FullWindos_MenuItem.Click += new System.EventHandler(this.FullWindos_MenuItem_Click);
             // 
             // KeyFreamDecode_MenuItem
             // 
             this.KeyFreamDecode_MenuItem.Name = "KeyFreamDecode_MenuItem";
-            this.KeyFreamDecode_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.KeyFreamDecode_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.KeyFreamDecode_MenuItem.Text = "关键帧解码";
             this.KeyFreamDecode_MenuItem.Click += new System.EventHandler(this.KeyFreamDecode_MenuItem_Click);
             // 
             // RenderRect_MenuItem
             // 
             this.RenderRect_MenuItem.Name = "RenderRect_MenuItem";
-            this.RenderRect_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.RenderRect_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.RenderRect_MenuItem.Text = "渲染区域";
             this.RenderRect_MenuItem.Click += new System.EventHandler(this.RenderRect_MenuItem_Click);
             // 
             // PlaySound_MenuItem
             // 
             this.PlaySound_MenuItem.Name = "PlaySound_MenuItem";
-            this.PlaySound_MenuItem.Size = new System.Drawing.Size(136, 22);
+            this.PlaySound_MenuItem.Size = new System.Drawing.Size(153, 24);
             this.PlaySound_MenuItem.Text = "播放音频";
             this.PlaySound_MenuItem.Click += new System.EventHandler(this.PlaySound_MenuItem_Click);
             // 
@@ -130,7 +131,7 @@ namespace Client
             this.Label.AutoSize = true;
             this.Label.Location = new System.Drawing.Point(11, 601);
             this.Label.Name = "Label";
-            this.Label.Size = new System.Drawing.Size(88, 17);
+            this.Label.Size = new System.Drawing.Size(109, 20);
             this.Label.TabIndex = 4;
             this.Label.Text = "RTSP地址：";
             // 
@@ -138,9 +139,9 @@ namespace Client
             // 
             this.StreamURI.Location = new System.Drawing.Point(89, 599);
             this.StreamURI.Name = "StreamURI";
-            this.StreamURI.Size = new System.Drawing.Size(312, 23);
+            this.StreamURI.Size = new System.Drawing.Size(312, 26);
             this.StreamURI.TabIndex = 3;
-            this.StreamURI.Text = "rtsp://admin:a1234567@192.168.90.32:554/h264/ch1/main/av_stream";
+            this.StreamURI.Text = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
             // 
             // rtpoverType
             // 
@@ -149,7 +150,7 @@ namespace Client
             this.rtpoverType.CheckState = System.Windows.Forms.CheckState.Checked;
             this.rtpoverType.Location = new System.Drawing.Point(613, 601);
             this.rtpoverType.Name = "rtpoverType";
-            this.rtpoverType.Size = new System.Drawing.Size(51, 21);
+            this.rtpoverType.Size = new System.Drawing.Size(61, 24);
             this.rtpoverType.TabIndex = 5;
             this.rtpoverType.Text = "TCP";
             this.rtpoverType.UseVisualStyleBackColor = true;
@@ -160,7 +161,7 @@ namespace Client
             this.HardDecode.AutoSize = true;
             this.HardDecode.Location = new System.Drawing.Point(548, 602);
             this.HardDecode.Name = "HardDecode";
-            this.HardDecode.Size = new System.Drawing.Size(59, 21);
+            this.HardDecode.Size = new System.Drawing.Size(71, 24);
             this.HardDecode.TabIndex = 6;
             this.HardDecode.Text = "硬解";
             this.HardDecode.UseVisualStyleBackColor = true;
@@ -171,7 +172,7 @@ namespace Client
             this.CacheFream.Maximum = 30;
             this.CacheFream.Minimum = 6;
             this.CacheFream.Name = "CacheFream";
-            this.CacheFream.Size = new System.Drawing.Size(125, 45);
+            this.CacheFream.Size = new System.Drawing.Size(125, 56);
             this.CacheFream.TabIndex = 7;
             this.CacheFream.Value = 10;
             this.CacheFream.ValueChanged += new System.EventHandler(this.CacheFream_ValueChanged);
@@ -197,13 +198,13 @@ namespace Client
             "GDI"});
             this.DecodeType.Location = new System.Drawing.Point(425, 599);
             this.DecodeType.Name = "DecodeType";
-            this.DecodeType.Size = new System.Drawing.Size(92, 24);
+            this.DecodeType.Size = new System.Drawing.Size(92, 28);
             this.DecodeType.TabIndex = 10;
             this.DecodeType.SelectedIndexChanged += new System.EventHandler(this.DecodeType_SelectedIndexChanged);
             // 
             // PlayerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 623);
             this.Controls.Add(this.DecodeType);
