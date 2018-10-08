@@ -18,7 +18,7 @@
 	
 			function startplay(i) {
 				var url = document.getElementById("url"+i).value;
-				var rendertype = document.getElementById("rendertype"+i).checked ? 1 : 0;
+				var rendertype = document.getElementById("rendertype"+i).value;
 				var name = document.getElementById("name"+i).value;
 				var password = document.getElementById("password"+i).value;
 				var harddecode = document.getElementById("harddecode"+i).checked ? 1 : 0;
@@ -233,7 +233,7 @@
 					</div>
 					<div class="option">
 						RenderFormat:
-						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale1" size=25 value="1" />
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale1" size=25 value="7" />
 					</div>
 					<div class="option" id="cachebox">
 						缓存：
@@ -292,7 +292,7 @@
 					</div>
 					<div class="option">
 						RenderFormat:
-						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale2" size=25 value="1" />
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale2" size=25 value="7" />
 					</div>
 					<div class="option" id="cachebox">
 						缓存：
@@ -351,7 +351,7 @@
 					</div>
 					<div class="option">
 						RenderFormat:
-						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale3" size=25 value="1" />
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale3" size=25 value="7" />
 					</div>
 					<div class="option" id="cachebox">
 						缓存：
@@ -410,7 +410,7 @@
 					</div>
 					<div class="option">
 						RenderFormat:
-						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale4" size=25 value="1" />
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale4" size=25 value="7" />
 					</div>
 					<div class="option" id="cachebox">
 						缓存：

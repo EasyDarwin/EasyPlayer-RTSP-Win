@@ -26,7 +26,7 @@
 			function startplay() {
 				var obj = document.getElementById("EasyPlayerOcx");
 				var url = document.getElementById("url").value;
-				var rendertype = document.getElementById("rendertype").checked ? 1 : 0;
+				var rendertype = document.getElementById("rendertype").value;
 				var name = document.getElementById("name").value;
 				var password = document.getElementById("password").value;
 				var harddecode = document.getElementById("harddecode").checked ? 1 : 0;
@@ -155,7 +155,7 @@
 			<input type="range" max="10" min="1" name="cache" id="cache" size=25 value="3" />
 			&nbsp;&nbsp;&nbsp;&nbsp;
 			RenderFormat：
-			<input type="range" max="7" min="1" name="rendertype" id="rendertype" VALUE="0" /> 
+			<input type="range" max="7" min="1" name="rendertype" id="rendertype" VALUE="7" /> 
 			<br>
 			RTP Over TCP:
 			<input type="checkbox" name="rtpovertcp" id="rtpovertcp" size=25 checked="checked" />
