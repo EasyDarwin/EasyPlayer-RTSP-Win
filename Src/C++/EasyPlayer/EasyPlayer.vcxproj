@@ -103,7 +103,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
     <None Include="res\EasyPlayer.ico" />
     <None Include="res\EasyPlayer.rc2" />
   </ItemGroup>
