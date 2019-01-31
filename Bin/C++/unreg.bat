@@ -1,2 +1,2 @@
 
-regsvr32 /u EasyPlayerWebActiveX.ocx
+regsvr32 /u EasyPlayer-RTSPWebActiveX.ocx
