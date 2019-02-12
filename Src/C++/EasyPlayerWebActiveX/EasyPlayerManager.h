@@ -4,17 +4,17 @@
 	WEChat: EasyDarwin
 	Website: http://www.EasyDarwin.org
 */
-// RTSPÁ÷½ÓÊÕ(²¥·Å)¹ÜÀíÀà£¬½ÓÊÕÒôÊÓÆµÁ÷ [11/8/2015 Dingshuai]
+// RTSPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ [11/8/2015 Dingshuai]
 // Add by SwordTwelve
 
 #pragma once
 
-#define KEY "79393674363469576B5A7541725370636F395652792B784659584E3555477868655756794C564A55553141755A58686C567778576F50394C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35"
+#define KEY "79393674363469576B5A754144474A636F35337A4A65784659584E3555477868655756794C564A55553141755A58686C567778576F502B6C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35"
 
 
 #include "../libEasyPlayer/libEasyPlayerAPI.h"
 
-//Gavin's Source StructÁ÷ÐÅÏ¢½á¹¹
+//Gavin's Source Structï¿½ï¿½ï¿½ï¿½Ï¢ï¿½á¹¹
 typedef struct __EASY_LOCAL_SOURCE_T
 {	
 	int		rtspSourceId;
@@ -34,30 +34,30 @@ public:
 
 	//Member Function
 public:
-	//³õÊ¼»¯
+	//ï¿½ï¿½Ê¼ï¿½ï¿½
 	static int Init()
 	{
 		return EasyPlayer_Init((char*)KEY);
 	}
 
-	// ÊÍ·Å
+	// ï¿½Í·ï¿½
 	static void UnInit()
 	{
 		EasyPlayer_Release();
 	}
 
-	//´ò¿ªÁ÷
+	//ï¿½ï¿½ï¿½ï¿½
 	int Start(char* szURL, HWND hShowWnd, RENDER_FORMAT eRenderFormat, int rtpovertcp, const char *username, const char *password, int bHardDecode, MediaSourceCallBack callback=NULL, void *userPtr=NULL) ;
-	//ÉèÖÃ²ÎÊý
+	//ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½
 	void Config(int nFrameCache,  BOOL bPlaySound, BOOL bShowToScale = TRUE, BOOL  bShowStatisticInfo = FALSE);
-	//¹Ø±ÕÁ÷
+	//ï¿½Ø±ï¿½ï¿½ï¿½
 	void	Close();
 	void SetOSD(int show, EASY_PALYER_OSD osd);
 	int InRunning();
 
 	//Member Var
 private:
-	//½ÓÊÕµÄÁ÷ÐÅÏ¢
+	//ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 	EASY_LOCAL_SOURCE_T		m_sSourceInfo;
 
 };
