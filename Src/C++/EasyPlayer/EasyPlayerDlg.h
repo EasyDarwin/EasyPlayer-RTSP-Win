@@ -64,6 +64,9 @@ protected:
 	LRESULT OnWindowMaximized(WPARAM wParam, LPARAM lParam);
 	LRESULT OnLog(WPARAM wParam, LPARAM lParam);
 
+private:
+	int m_nValidTimes;
+
 public:
 	virtual BOOL DestroyWindow();
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);

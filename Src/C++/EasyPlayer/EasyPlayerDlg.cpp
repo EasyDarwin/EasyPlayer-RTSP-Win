@@ -64,7 +64,7 @@ CEasyPlayerDlg::CEasyPlayerDlg(CWnd* pParent /*=NULL*/)
 	: CSkinDialog(CEasyPlayerDlg::IDD, TEXT("Main_config.xml"), pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
+	m_nValidTimes = 0;
 	InitialComponents();
 
 	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)CrashHandler_Player);
@@ -74,8 +74,7 @@ void CEasyPlayerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CSkinDialog::DoDataExchange(pDX);
 
-
-		DDX_Control(pDX, IDC_CHECK_SHOWNTOSCALE, pChkShownToScale);
+	DDX_Control(pDX, IDC_CHECK_SHOWNTOSCALE, pChkShownToScale);
 }
 
 BEGIN_MESSAGE_MAP(CEasyPlayerDlg, CSkinDialog)
@@ -124,6 +123,10 @@ BOOL CEasyPlayerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+
+	CString strValidTime;
+	strValidTime.Format(_T("授权剩余时间 %d 天"), m_nValidTimes);
+	SetString(4, strValidTime );
 
 	CreateComponents();
 
@@ -234,7 +237,7 @@ void	CEasyPlayerDlg::InitialComponents()
 	pStaticCopyright	=	NULL;
 
 	RenderFormat	=	DISPLAY_FORMAT_RGB565;//RGB565
-	EasyPlayer_Init(KEY);
+	m_nValidTimes = EasyPlayer_Init(KEY);
 }
 
 void	CEasyPlayerDlg::CreateComponents()

@@ -14,6 +14,7 @@ CChannelManager	*g_pChannelManager = NULL;
 LIB_EASYPLAYER_API int EasyPlayer_Init(char* key)
 {
 	int isEasyRTSPClientActivated = EasyRTSP_Activate(key);
+#if 0
 	switch(isEasyRTSPClientActivated)
 	{
 	case EASY_ACTIVATE_INVALID_KEY:
@@ -35,9 +36,10 @@ LIB_EASYPLAYER_API int EasyPlayer_Init(char* key)
 		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_SUCCESS!\n");
 		break;
 	}
+#endif
 
-	if(EASY_ACTIVATE_SUCCESS != isEasyRTSPClientActivated)
-		return -1;
+	if(isEasyRTSPClientActivated <= 0)
+		return isEasyRTSPClientActivated;
 
 	if (NULL == g_pChannelManager)
 	{
@@ -47,7 +49,7 @@ LIB_EASYPLAYER_API int EasyPlayer_Init(char* key)
 
 	if (NULL == g_pChannelManager)		return -1;
 
-	return 0;
+	return isEasyRTSPClientActivated;
 }
 
 // Release

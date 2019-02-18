@@ -7,6 +7,7 @@
 	<String text="EasyPlayer RTSP播放器" font="1" color="#FFFFFF" pos="0,0,40,7,300,42" id="1"/>
 	<String text="Version: 2.3.19.0106 Powered by EasyDarwin Team QQ交流群：544917793" font="2" color="#FFFFFF" pos="3,3,810,25,0,0" id="2"/>
 	<String text="Log" font="3" color="#000000" pos="3,3,40,125,5,105" id="3"/>
+	<String text="" font="3" color="#000000" pos="2,2,5,25,205,0" id="4"/>
 
 	<Image path="Res\Skin\header.png" pos="0,3,0,0,0,0" id="1"/>
 	<Image path="Res\EasyTeam\Easy_32.png" pos="0,0,4,2,36,34" id="2" />
