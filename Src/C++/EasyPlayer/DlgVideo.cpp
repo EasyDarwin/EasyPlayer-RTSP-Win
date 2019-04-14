@@ -383,7 +383,7 @@ void CDlgVideo::LogErr(CString strLog)
 	}
 }
 
-int CDlgVideo::EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo)
+int CDlgVideo::EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo)
 {
 	if (_frameType == EASY_SDK_EVENT_FRAME_FLAG)
 	{

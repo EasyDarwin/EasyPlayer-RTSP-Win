@@ -139,7 +139,7 @@ typedef struct __PLAY_THREAD_OBJ
 	THREAD_OBJ		displayThread;			//显示线程
 	THREAD_OBJ		recordThread;			//录像线程
 	// 
-	Easy_RTSP_Handle		nvsHandle;
+	Easy_Handle		nvsHandle;
 	HWND			hWnd;				//显示视频的窗口句柄
 	int				channelId;			//通道号
 	int				showStatisticalInfo;//显示统计信息
@@ -273,7 +273,7 @@ public:
 	static LPTHREAD_START_ROUTINE __stdcall _lpRecordThread( LPVOID _pParam );
 
 
-	int		ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAME_INFO *frameinfo);
+	int		ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAME_INFO *frameinfo);
 	static bool ConvertImage(AVPixelFormat eInFormat, int iInWidth, int iInHeight, void* ptInData,
 		AVPixelFormat eOutFormat, int iOutWidth, int iOutHeight, unsigned char** pOutData);
 

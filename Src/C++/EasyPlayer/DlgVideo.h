@@ -62,5 +62,5 @@ public:
 //	afx_msg void OnBnClickedButtonSeek();
 
 public:
-	static int CALLBACK EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
+	static int CALLBACK EasyPlayerCallBack( int _channelId, int *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo);
 };

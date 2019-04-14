@@ -15,7 +15,7 @@
 
 #define	__DELETE_ARRAY(x)	{if (NULL!=x) {delete []x;x=NULL;}}
 
-int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo);
+int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo);
 
 CChannelManager	*pChannelManager = NULL;
 CChannelManager::CChannelManager(void)
@@ -132,7 +132,7 @@ int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT render
 		EasyRTSP_SetCallback(pRealtimePlayThread[iNvsIdx].nvsHandle, __RTSPSourceCallBack);
 		EasyRTSP_OpenStream(pRealtimePlayThread[iNvsIdx].nvsHandle, iNvsIdx, (char*)url, 
 			_rtpovertcp==0x01?EASY_RTP_OVER_TCP:EASY_RTP_OVER_UDP, mediaType, 
-			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000, 0, 0x01, 0, startTime, endTime, fScale);
+			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000, 0, 0x01, 0);
 
 		for (int nI=0; nI<MAX_DECODER_NUM; nI++)
 		{
@@ -180,7 +180,7 @@ int CChannelManager::SetPlaybackSpeed(int channelId, float fSpeed)
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
-	return EasyRTSP_SetStreamSpeed(pRealtimePlayThread[iNvsIdx].nvsHandle, fSpeed);
+	return 0;//EasyRTSP_SetStreamSpeed(pRealtimePlayThread[iNvsIdx].nvsHandle, fSpeed);
 }
 
 
@@ -193,7 +193,7 @@ int CChannelManager::PlaybackSeek(int channelId, const char *playTime)
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
 
-	return EasyRTSP_SeekStream(pRealtimePlayThread[iNvsIdx].nvsHandle, playTime);
+	return 0;//EasyRTSP_SeekStream(pRealtimePlayThread[iNvsIdx].nvsHandle, playTime);
 }
 
 /* ÔÝÍ£ */
@@ -205,7 +205,7 @@ int CChannelManager::PlaybackPause(int channelId)
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
 
-	return EasyRTSP_PauseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
+	return 0;//EasyRTSP_PauseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
 }
 
 
@@ -218,7 +218,7 @@ int CChannelManager::PlaybackResume(int channelId)
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
 
-	return EasyRTSP_ResumeStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
+	return 0;//EasyRTSP_ResumeStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
 }
 
 
@@ -2245,7 +2245,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				//int nYuvFrameLen = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
 				lastFrameInfo.length =  pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
 
-				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG,  m_RGB24 , (RTSP_FRAME_INFO*)(&lastFrameInfo));
+				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG,  m_RGB24 , (EASY_FRAME_INFO*)(&lastFrameInfo));
 			}
 #endif
 
@@ -2394,7 +2394,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	return 0;
 }
 
-int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *pbuf, RTSP_FRAME_INFO *frameinfo)
+int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *pbuf, EASY_FRAME_INFO *frameinfo)
 {
 	PLAY_THREAD_OBJ	*pPlayThread = (PLAY_THREAD_OBJ *)_chPtr;
 
@@ -2417,7 +2417,7 @@ int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *p
 	return 0;
 }
 
-int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, RTSP_FRAME_INFO* _frameInfo)
+int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo)
 {
 	PLAY_THREAD_OBJ	*pPlayThread = (PLAY_THREAD_OBJ *)_channelPtr;
 
@@ -2441,7 +2441,7 @@ int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frame
 }
 
 
-int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAME_INFO *frameinfo)
+int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAME_INFO *frameinfo)
 {
 	if (NULL == pRealtimePlayThread)			return 0;
 
@@ -2546,7 +2546,7 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, RTSP_FRAM
 			tmpFrameinfo.type   = 0xFF;
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)&tmpFrameinfo, sErrorString);
 			if (pMediaCallback)
-				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString,  (RTSP_FRAME_INFO*)&tmpFrameinfo);
+				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString,  (EASY_FRAME_INFO*)&tmpFrameinfo);
 		}
 		else if (NULL!=frameinfo && frameinfo->type==0xF1)
 		{

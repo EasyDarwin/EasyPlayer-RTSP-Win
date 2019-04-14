@@ -9,7 +9,7 @@
 
 #include "EasyTypes.h"
 
-#define	RTSP_PROG_NAME	"EasyRTSPClient v1.16.0721"
+#define	RTSP_PROG_NAME	"EasyRTSPClient v1.6.17.1117"
 
 /*
 	_channelId:		通道号,暂时不用
@@ -28,7 +28,11 @@ extern "C"
 	Easy_API int Easy_APICALL EasyRTSP_GetErrCode(Easy_RTSP_Handle handle);
 
 	/* 激活 */
+#ifdef ANDROID
+	Easy_API int Easy_APICALL EasyRTSP_Activate(char *license, char* userPtr);
+#else
 	Easy_API int Easy_APICALL EasyRTSP_Activate(char *license);
+#endif
 
 	/* 创建RTSPClient句柄  返回0表示成功，返回非0表示失败 */
 	Easy_API int Easy_APICALL EasyRTSP_Init(Easy_RTSP_Handle *handle);
@@ -40,10 +44,28 @@ extern "C"
 	Easy_API int Easy_APICALL EasyRTSP_SetCallback(Easy_RTSP_Handle handle, RTSPSourceCallBack _callback);
 
 	/* 打开网络流 */
-	Easy_API int Easy_APICALL EasyRTSP_OpenStream(Easy_RTSP_Handle handle, int _channelid, char *_url, EASY_RTP_CONNECT_TYPE _connType, unsigned int _mediaType, char *_username, char *_password, void *userPtr, int _reconn/*1000表示长连接,即如果网络断开自动重连, 其它值为连接次数*/, int outRtpPacket/*默认为0,即回调输出完整的帧, 如果为1,则输出RTP包*/, int heartbeatType/*0x00:不发送心跳 0x01:OPTIONS 0x02:GET_PARAMETER*/, int _verbosity/*日志打印输出等级，0表示不输出*/);
+	Easy_API int Easy_APICALL EasyRTSP_OpenStream(Easy_RTSP_Handle handle, int _channelid, char *_url, EASY_RTP_CONNECT_TYPE _connType, unsigned int _mediaType, 
+													char *_username, char *_password, void *userPtr, 
+													int _reconn/*1000表示长连接,即如果网络断开自动重连, 其它值为连接次数*/, 
+													int outRtpPacket/*默认为0,即回调输出完整的帧, 如果为1,则输出RTP包*/, 
+													int heartbeatType/*0x00:不发送心跳 0x01:OPTIONS 0x02:GET_PARAMETER*/, 
+													int _verbosity/*日志打印输出等级，0表示不输出*/,
+													char *startTime, char *endTime, float fScale);
 	
 	/* 关闭网络流 */
 	Easy_API int Easy_APICALL EasyRTSP_CloseStream(Easy_RTSP_Handle handle);
+
+	/*  设置播放速度 */
+	Easy_API int Easy_APICALL EasyRTSP_SetStreamSpeed(Easy_RTSP_Handle handle, float fSpeed);
+	
+	/* 跳转播放时间 */
+	Easy_API int Easy_APICALL EasyRTSP_SeekStream(Easy_RTSP_Handle handle, const char *playTime);
+
+	/* 暂停 */
+	Easy_API int Easy_APICALL EasyRTSP_PauseStream(Easy_RTSP_Handle handle);
+
+	/* 恢复播放 */
+	Easy_API int Easy_APICALL EasyRTSP_ResumeStream(Easy_RTSP_Handle handle);
 
 #ifdef __cplusplus
 }
