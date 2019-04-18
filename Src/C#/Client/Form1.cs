@@ -235,7 +235,7 @@ namespace Client
 
         private void PlayerForm_Load(object sender, System.EventArgs e)
         {
-            if (PlayerSdk.EasyPlayer_Init() == 0)
+            if (PlayerSdk.EasyPlayer_Init() >= 0)
                 isInit = true;
             callBack = new PlayerSdk.MediaSourceCallBack(MediaCallback);
             this.DecodeType.SelectedItem = "GDI";

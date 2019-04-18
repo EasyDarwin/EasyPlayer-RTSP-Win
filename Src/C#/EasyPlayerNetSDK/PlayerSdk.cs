@@ -116,7 +116,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <returns>System.Int32.</returns>
         [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_Init@@YAHPAD@Z")]
-        public static extern int EasyPlayer_Init(string key= "79393674363469576B5A754144474A636F35337A4A65784659584E3555477868655756794C564A55553141755A58686C567778576F502B6C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35");
+        public static extern int EasyPlayer_Init(string key= "6D75724D7A4969576B5A7541725370636F395652792B784659584E3555477868655756794C564A55553141755A58686C567778576F50394C2F69426C59584E35");
 
         /// <summary>
         /// 资源释放.
@@ -141,7 +141,8 @@ namespace EasyPlayerNetSDK
         /// <param name="endTime">回放结束时间，直播流填null.</param>
         /// <param name="fScale">回放倍率，直播流无效.</param>
         /// <returns>System.Int32.</returns>
-        [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N44M@Z")]
+        [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAUtagEASY_FRAME_INFO@@@ZPAX_N44M@Z")]
+        
        //?EasyPlayer_OpenStream@@YAHPBDPAUHWND__@@W4__RENDER_FORMAT@@H00P6GHHPAHHPADPAURTSP_FRAME_INFO@@@ZPAX_N44M@Z
         public static extern int EasyPlayer_OpenStream(string url, IntPtr hWnd, RENDER_FORMAT renderFormat, int rtpovertcp, string username, string password, MediaSourceCallBack callback, IntPtr userPtr, bool bHardDecode = true, string startTime = null, string endTime = null, float fScale = 1.0f);
 
