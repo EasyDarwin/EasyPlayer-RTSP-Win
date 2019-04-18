@@ -1969,7 +1969,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			lastFrameInfo.height!= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height)
 		{
 			pThread->resetD3d = true;
-			int nRGB24Len = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width*pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height * 3+1;
+			int nRGB24Len = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width*pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height * 4+1;
 			if(m_RGB24)
 			{
 				delete[] m_RGB24;
@@ -2235,7 +2235,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				//}
 				//else
 				{
-					AVPixelFormat outPixelFormat = AV_PIX_FMT_RGB24;
+					AVPixelFormat outPixelFormat = AV_PIX_FMT_BGR32;
 
 					//rgb/yuv Convert to RGBA
 					ConvertImage((AVPixelFormat)FFVFormat, width, height, (unsigned char*)pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, outPixelFormat, width, height, (unsigned char**)&m_RGB24);
@@ -2243,7 +2243,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 				// 获取解码后的YUV/RGB数据的大小
 				//int nYuvFrameLen = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
-				lastFrameInfo.length =  pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
+				lastFrameInfo.length =  width*height*4;//pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
 
 				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG,  m_RGB24 , (EASY_FRAME_INFO*)(&lastFrameInfo));
 			}
