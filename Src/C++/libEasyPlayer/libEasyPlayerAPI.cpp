@@ -14,29 +14,6 @@ CChannelManager	*g_pChannelManager = NULL;
 LIB_EASYPLAYER_API int EasyPlayer_Init(char* key)
 {
 	int isEasyRTSPClientActivated = EasyRTSP_Activate(key);
-#if 0
-	switch(isEasyRTSPClientActivated)
-	{
-	case EASY_ACTIVATE_INVALID_KEY:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_INVALID_KEY!\n");
-		break;
-	case EASY_ACTIVATE_TIME_ERR:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_TIME_ERR!\n");
-		break;
-	case EASY_ACTIVATE_PROCESS_NAME_LEN_ERR:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_PROCESS_NAME_LEN_ERR!\n");
-		break;
-	case EASY_ACTIVATE_PROCESS_NAME_ERR:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_PROCESS_NAME_ERR!\n");
-		break;
-	case EASY_ACTIVATE_VALIDITY_PERIOD_ERR:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_VALIDITY_PERIOD_ERR!\n");
-		break;
-	case EASY_ACTIVATE_SUCCESS:
-		printf("EasyRTSPClient_KEY is EASY_ACTIVATE_SUCCESS!\n");
-		break;
-	}
-#endif
 
 	if(isEasyRTSPClientActivated <= 0)
 		return isEasyRTSPClientActivated;
