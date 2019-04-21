@@ -1,6 +1,6 @@
 # EasyPlayer-RTSP-Win #
 
-EasyPlayer **RTSP Windows** 播放器是由[TSINGSEE青犀](http://www.tsingsee.com "TSINGSEE青犀云")开发和维护的一个完善的RTSP流媒体播放器项目，视频编码支持**H.264**，**H.265**，**MPEG4**，**MJPEG**，音频支持**G711A**，**G711U**，**G726**，**AAC**，支持RTSP over TCP/UDP协议，支持**软/硬解码**，是一套极佳的安防流媒体平台播放组件！EasyPlayer Windows版本经过了很多年的发展和迭代，在很多商业项目中使用，已经非常稳定、完整，功能包括：直播、录像、抓图，应该说是目前市面上功能性、稳定性和完整性最强的一款RTSP播放器！
+EasyPlayer **RTSP Windows** 播放器是由[TSINGSEE青犀开放平台](http://www.tsingsee.com "TSINGSEE青犀云")开发和维护的一个完善的RTSP流媒体播放器项目，视频编码支持**H.264**，**H.265**，**MPEG4**，**MJPEG**，音频支持**G711A**，**G711U**，**G726**，**AAC**，支持RTSP over TCP/UDP协议，支持**软/硬解码**，是一套极佳的安防流媒体平台播放组件！EasyPlayer Windows版本经过了很多年的发展和迭代，在很多商业项目中使用，已经非常稳定、完整，功能包括：直播、录像、抓图，应该说是目前市面上功能性、稳定性和完整性最强的一款RTSP播放器！
 
 > 国内大部分的RTSP/RTP协议的播放器都是基于ffmpeg做的(包括协议层和解码层)，但是在实际的RTSP/RTP项目实战过程中，由于各个厂家的自定义字段的不同，由诸多需要特殊兼容的地方，而这正是ffmpeg类播放器无法做到的，EasyPlayer依托于庞大的EasyDarwin用户群体，已经将国内几乎所有的摄像机厂家都适配了一遍，非常兼容，非常稳定！
 
