@@ -288,6 +288,8 @@ void	CEasyPlayerDlg::CreateComponents()
 		pComboxSplitScreen->AddString(TEXT("8画面"));
 		pComboxSplitScreen->AddString(TEXT("9画面"));
 		pComboxSplitScreen->AddString(TEXT("16画面"));
+		pComboxSplitScreen->AddString(TEXT("25画面"));
+		pComboxSplitScreen->AddString(TEXT("64画面"));
 		pComboxSplitScreen->SetCurSel(0);
 	}
 	if (NULL != pComboxRenderFormat)
@@ -571,6 +573,8 @@ void CEasyPlayerDlg::OnCbnSelchangeComboSplitScreen()
 	else if (nIdx == 1)	nSplitWindow = 8;
 	else if (nIdx == 2)	nSplitWindow = 9;
 	else if (nIdx == 3)	nSplitWindow = 16;
+	else if (nIdx == 4)	nSplitWindow = 25;
+	else if (nIdx == 5)	nSplitWindow = 64;
 
 	pVideoWindow->channels		=	nSplitWindow;
 	UpdateComponents();
