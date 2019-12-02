@@ -1356,6 +1356,10 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 					if ( pChannelManager->pAudioPlayThread->channelId == pThread->channelId)
 					{
+						if(frameinfo.sample_rate==8000)
+						{
+							frameinfo.channels=1;
+						}
 						DECODER_OBJ *pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_AUDIO, &frameinfo);
 						if (NULL == pDecoderObj)
 						{

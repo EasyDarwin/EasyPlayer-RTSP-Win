@@ -116,7 +116,7 @@ namespace EasyPlayerNetSDK
         /// </summary>
         /// <returns>System.Int32.</returns>
         [DllImport(@"Lib\libEasyPlayer-RTSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?EasyPlayer_Init@@YAHPAD@Z")]
-        public static extern int EasyPlayer_Init(string key= "6D75724D7A4969576B5A7341436D74646F7054317065784659584E3555477868655756794C564A55553141755A58686C567778576F502B6C2F69426C59584E35");
+        public static extern int EasyPlayer_Init(string key = "6D75724D7A4969576B5A7541725370636F3956524575314659584E35556C525455454E73615756756443356C65475570567778576F5036532F69426C59584E35");
 
         /// <summary>
         /// 资源释放.
