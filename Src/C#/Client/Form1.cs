@@ -235,6 +235,9 @@ namespace Client
 
         private void PlayerForm_Load(object sender, System.EventArgs e)
         {
+            //获取进程名
+            string str = this.GetType().Assembly.Location;
+            this.Text = str;
             int LimitDayOut = PlayerSdk.EasyPlayer_Init();
             if (LimitDayOut >= 0)
                 isInit = true;
