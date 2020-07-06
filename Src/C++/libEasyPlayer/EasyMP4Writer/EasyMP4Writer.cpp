@@ -1072,8 +1072,9 @@ int EasyMP4Writer::VideoMux(int nEncType, unsigned int uiFrameType, const u8 *da
 			time_t tt = timestamp;
 			struct tm *_time = localtime(&tt);
 			char szTime[64] = {0,};
-			strftime(szTime, 32, "%Y%m%d%H0000", _time);
 
+			//strftime(szTime, 32, "%Y%m%d%H0000", _time);//¡¾23/06/2020  Seven¡¿
+			strftime(szTime, 32, "%Y%m%d%H%M%S", _time);
 			char szStreamCacheName[512] = { 0 };
 			sprintf(szStreamCacheName, "%s_%s.mp4", m_strMediaName.c_str(), szTime);
 			string strFilePath = m_strWholeDir + szStreamCacheName;
