@@ -1,0 +1,483 @@
+﻿<HTML>
+
+	<HEAD>
+		<TITLE>
+				EasyPlayer Plugin muti-player Example
+		</TITLE>
+		<script type="text/javascript">
+	
+			function config(obj,i) {
+				var cache = document.getElementById("cache"+i).value;
+				var playsound = document.getElementById("playsound"+i).checked ? 1 : 0;
+				var showtoscale = document.getElementById("showtoscale"+i).value;
+				var showsatic = document.getElementById("showsatic"+i).checked ? 1 : 0;
+	
+				obj.Config(cache, playsound, showtoscale, showsatic);
+				//alert(cache+";"+playsound+";"+showtoscale+";"+showsatic);
+			}
+	
+			function startplay(i) {
+				var url = document.getElementById("url"+i).value;
+				var rendertype = document.getElementById("rendertype"+i).value;
+				var name = document.getElementById("name"+i).value;
+				var password = document.getElementById("password"+i).value;
+				var harddecode = document.getElementById("harddecode"+i).checked ? 1 : 0;
+				var rtpovertcp = document.getElementById("rtpovertcp"+i).checked ? 1 : 0;
+				var startNumber = i;
+				start(url, rendertype, name, password, harddecode,rtpovertcp,startNumber);
+				//alert(url+";"+rendertype+";"+name+";"+password);
+			}
+	
+			function stopplay(i) {
+				//alert("Close()!!!!!");
+				// for (var i = 1; i <= 4; ++i) {
+				var obj = document.getElementById("obj" + i);
+				obj.Close();
+				// }
+			}
+	
+			function start(url, rendertype, name, password, harddecode,rtpovertcp,startNumber) {
+				// for (var i = 1; i <= 4; ++i) {
+				var obj = document.getElementById("obj" + startNumber);
+				obj.Start(url, rendertype, name, password, harddecode,rtpovertcp);
+				config(obj,startNumber);
+				// }
+			}
+	
+		</script>
+		<style>
+			body {
+				background: #f0f0f0;
+			}
+	
+			.box {
+				width: 50%;
+				float: left;
+				position: relative;
+				min-height: 1px;
+				padding-right: 15px;
+				padding-left: 15px;
+				box-sizing: border-box;
+				padding-bottom: 15px;
+				padding-top: 15px;
+				border: 1px solid #ccc;
+			}
+	
+			.box:nth-of-type(2) {
+				border-left: none;
+			}
+	
+			.box:nth-of-type(3) {
+				border-top: none;
+			}
+	
+			.box:nth-of-type(4) {
+				border-top: none;
+				border-left: none;
+			}
+			.option {
+				text-align: right;
+				font-size: 14px;
+				padding-top: 15px;
+				width: 50%;
+				float: left;
+			}
+	
+			.option input {
+				width: 50%;
+			}
+	
+			input {
+				font-size: 14px;
+				color: #555;
+				background-image: none;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				margin-top: 15px;
+				padding: 6px 12px;
+			}
+	
+			#urlbox {
+				width: 100%;
+				text-align: center;
+			}
+	
+			#cachebox {
+				text-align: left;
+			}
+	
+			#passwordbox {
+				text-align: left;
+			}
+	
+			input[type=range] {
+				border-radius: 10px;
+				border: none;
+				margin-top: 0;
+			}
+	
+			input[type=range]::-ms-track {
+				border-radius: 10px;
+				border-color: transparent;
+				color: transparent;
+			}
+	
+			input[type=range]::-ms-thumb {
+				border: solid 0.125em rgba(205, 224, 230, 0.5);
+				height: 10px;
+				width: 25px;
+				background: #ffffff;
+				box-shadow: 0 .125em .125em #3b4547;
+			}
+	
+			input[type=range]::-ms-fill-lower {
+				border-radius: 10px;
+				background: linear-gradient(to right, #059CFA, white 100%, white);
+			}
+	
+			input[type=range]::-ms-fill-upper {
+				border-radius: 10px;
+				background: #ffffff;
+			}
+	
+			input[type=range]:focus::-ms-fill-lower {
+				background: linear-gradient(to right, #059CFA, white 100%, white);
+			}
+	
+			input[type=range]:focus::-ms-fill-upper {
+				background: #ffffff;
+			}
+	
+			.checks {
+				/* width: 50%; */
+				height: 200px;
+			}
+	
+			.check {
+				text-align: left;
+				width: 20%;
+				float: left;
+			}
+	
+			.buttons {
+				padding-top: 10px;
+				position: relative;
+				height: 35px;
+			}
+	
+			button {
+				color: #333;
+				background-color: #fff;
+				border-color: #ccc;
+				display: inline-block;
+				padding: 6px 12px;
+				margin-bottom: 0;
+				font-size: 12px;
+				font-weight: 400;
+				line-height: 1.42857143;
+				text-align: center;
+				white-space: nowrap;
+				vertical-align: middle;
+				touch-action: manipulation;
+				cursor: pointer;
+				user-select: none;
+				background-image: none;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				width: 65px;
+				height: 35px;
+				position: absolute;
+				bottom: 0px;
+				left: 50%;
+			}
+	
+			.start {
+				background: #286090;
+				color: #fff;
+				margin-left: -130px;
+			}
+	
+			.config {
+				background: #909399;
+				color: #fff;
+				margin-left: -35px
+			}
+	
+			.stop {
+				background: #e6e6e6;
+				color: #000;
+				margin-left: 65px;
+			}
+		</style>
+	</HEAD>
+	
+	<BODY>
+		<center>
+	
+	
+			<div class="box">
+				<OBJECT id="obj1" WIDTH=640px HEIGHT=480px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+				</OBJECT>
+				<div class="option" id="urlbox">
+					RTSP URL：
+					<input type="text" name="url" id="url1" VALUE="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" />
+				</div>
+				<div class="options">
+					<div class="option">
+						用户名：
+						<input type="text" name="name" id="name1" size=25 value="" />
+					</div>
+					<div class="option" id="passwordbox">
+						密码：
+						<input type="password" name="password" id="password1" size=25 value="" />
+					</div>
+					<div class="option">
+						RenderFormat:
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale1" size=25 value="7" />
+					</div>
+					<div class="option" id="cachebox">
+						缓存：
+						<input type="range" max="10" min="1" name="cache" id="cache1" size=25 value="3" />
+					</div>
+				</div>
+				<div class="checks">
+						<div class="check">
+								RTP Over TCP:
+								<input type="checkbox" name="rtpovertcp" id="rtpovertcp1" size=25 checked="checked" />
+			
+							</div>
+					<div class="check">
+						按比例显示:
+						<input type="checkbox" name="rendertype" id="rendertype1" checked="checked" />
+	
+					</div>
+					<div class="check">
+						采用硬解码
+						<input type="checkbox" name="harddecode" id="harddecode1" checked="checked" />
+	
+					</div>
+					<div class="check">
+						播放声音:
+						<input type="checkbox" name="playsound" id="playsound1" size=25 checked="checked" />
+	
+					</div>
+					<div class="check">
+						显示码率信息
+						<input type="checkbox" name="showsatic" id="showsatic1" checked="checked" />
+	
+					</div>
+				</div>
+	
+				<div class="buttons">
+					<button class="start" type="button" onclick="startplay(1);">Start</button>
+					<button class="config" type="button" onclick="config();">config</button>
+					<button class="stop" type="button" onclick="stopplay(1);">Stop</button>
+				</div>
+			</div>
+			<div class="box">
+				<OBJECT id="obj2" WIDTH=640px HEIGHT=480px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+				</OBJECT>
+				<div class="option" id="urlbox">
+					RTSP URL：
+					<input type="text" name="url" id="url2" VALUE="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" />
+				</div>
+				<div class="options">
+					<div class="option">
+						用户名：
+						<input type="text" name="name" id="name2" size=25 value="" />
+					</div>
+					<div class="option" id="passwordbox">
+						密码：
+						<input type="password" name="password" id="password2" size=25 value="" />
+					</div>
+					<div class="option">
+						RenderFormat:
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale2" size=25 value="7" />
+					</div>
+					<div class="option" id="cachebox">
+						缓存：
+						<input type="range" max="10" min="1" name="cache" id="cache2" size=25 value="3" />
+					</div>
+				</div>
+				<div class="checks">
+					<div class="check">
+					RTP Over TCP:
+					<input type="checkbox" name="rtpovertcp" id="rtpovertcp2" size=25 checked="checked" />
+
+				</div>
+					<div class="check">
+						按比例显示:
+						<input type="checkbox" name="rendertype" id="rendertype2" checked="checked" />
+	
+					</div>
+					<div class="check">
+						采用硬解码
+						<input type="checkbox" name="harddecode" id="harddecode2" checked="checked" />
+	
+					</div>
+					<div class="check">
+						播放声音:
+						<input type="checkbox" name="playsound" id="playsound2" size=25 checked="checked" />
+	
+					</div>
+					<div class="check">
+						显示码率信息
+						<input type="checkbox" name="showsatic" id="showsatic2" checked="checked" />
+	
+					</div>
+				</div>
+	
+				<div class="buttons">
+					<button class="start" type="button" onclick="startplay(2);">Start</button>
+					<button class="config" type="button" onclick="config();">config</button>
+					<button class="stop" type="button" onclick="stopplay(2);">Stop</button>
+				</div>
+			</div>
+			<div class="box">
+				<OBJECT id="obj3" WIDTH=640px HEIGHT=480px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+				</OBJECT>
+				<div class="option" id="urlbox">
+					RTSP URL：
+					<input type="text" name="url" id="url3" VALUE="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" />
+				</div>
+				<div class="options">
+					<div class="option">
+						用户名：
+						<input type="text" name="name" id="name3" size=25 value="" />
+					</div>
+					<div class="option" id="passwordbox">
+						密码：
+						<input type="password" name="password" id="password3" size=25 value="" />
+					</div>
+					<div class="option">
+						RenderFormat:
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale3" size=25 value="7" />
+					</div>
+					<div class="option" id="cachebox">
+						缓存：
+						<input type="range" max="10" min="1" name="cache" id="cache3" size=25 value="3" />
+					</div>
+				</div>
+				<div class="checks">
+					<div class="check">
+					RTP Over TCP:
+					<input type="checkbox" name="rtpovertcp" id="rtpovertcp3" size=25 checked="checked" />
+
+				</div>
+					<div class="check">
+						按比例显示:
+						<input type="checkbox" name="rendertype" id="rendertype3" checked="checked" />
+	
+					</div>
+					<div class="check">
+						采用硬解码
+						<input type="checkbox" name="harddecode" id="harddecode3" checked="checked" />
+	
+					</div>
+					<div class="check">
+						播放声音:
+						<input type="checkbox" name="playsound" id="playsound3" size=25 checked="checked" />
+	
+					</div>
+					<div class="check">
+						显示码率信息
+						<input type="checkbox" name="showsatic" id="showsatic3" checked="checked" />
+	
+					</div>
+				</div>
+	
+				<div class="buttons">
+					<button class="start" type="button" onclick="startplay(3);">Start</button>
+					<button class="config" type="button" onclick="config();">config</button>
+					<button class="stop" type="button" onclick="stopplay(3);">Stop</button>
+				</div>
+			</div>
+			<div class="box">
+				<OBJECT id="obj4" WIDTH=640px HEIGHT=480px CLASSID="CLSID:1EE1C648-F4A9-42F9-9AA7-2C8E3AF7B7FD">
+				</OBJECT>
+				<div class="option" id="urlbox">
+					RTSP URL：
+					<input type="text" name="url" id="url4" VALUE="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" />
+				</div>
+				<div class="options">
+					<div class="option">
+						用户名：
+						<input type="text" name="name" id="name4" size=25 value="" />
+					</div>
+					<div class="option" id="passwordbox">
+						密码：
+						<input type="password" name="password" id="password4" size=25 value="" />
+					</div>
+					<div class="option">
+						RenderFormat:
+						<input type="range" max="7" min="1" name="showtoscale" id="showtoscale4" size=25 value="7" />
+					</div>
+					<div class="option" id="cachebox">
+						缓存：
+						<input type="range" max="10" min="1" name="cache" id="cache" size=25 value="3" />
+					</div>
+				</div>
+				<div class="checks">
+					<div class="check">
+					RTP Over TCP:
+					<input type="checkbox" name="rtpovertcp" id="rtpovertcp4" size=25 checked="checked" />
+
+				</div>
+					<div class="check">
+						按比例显示:
+						<input type="checkbox" name="rendertype" id="rendertype4" checked="checked" />
+	
+					</div>
+					<div class="check">
+						采用硬解码
+						<input type="checkbox" name="harddecode" id="harddecode4" checked="checked" />
+	
+					</div>
+					<div class="check">
+						播放声音:
+						<input type="checkbox" name="playsound" id="playsound4" size=25 checked="checked" />
+	
+					</div>
+					<div class="check">
+						显示码率信息
+						<input type="checkbox" name="showsatic" id="showsatic4" checked="checked" />
+	
+					</div>
+				</div>
+	
+				<div class="buttons">
+					<button class="start" type="button" onclick="startplay(4);">Start</button>
+					<button class="config" type="button" onclick="config();">config</button>
+					<button class="stop" type="button" onclick="stopplay(4);">Stop</button>
+				</div>
+			</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+			<!-- 界面信息<br>
+	RTSP URL：<input type="text" name="url" id="url" VALUE="rtsp://127.0.0.1:10554/stream.sdp"/>
+	RenderFormat：<input type="text" name="rendertype" id="rendertype" VALUE="0"/>
+	
+	采用硬解码：<input type="text" name="harddecode" id="harddecode" size=25 value="0"/>
+	
+	<br>
+	缓存：<input type="text" name="cache" id="cache" size=25 value ="3"/>
+	播放声音：<input type="text" name="playsound" id="playsound" size=25 value ="0"/>
+	按比例显示：<input type="text" name="showtoscale" id="showtoscale" size=25 value ="1"/>
+	显示码率信息：<input type="text" name="showsatic" id="showsatic" size=25 value ="1"/><br> -->
+	
+	
+			<!-- <button type="button" onclick="startplay();">Start</button>
+	<button type="button" onclick="config();">config</button>
+	<button type="button" onclick="stopplay();">Stop</button> -->
+	
+		</center>
+	</BODY>
+	
+	</HTML>
