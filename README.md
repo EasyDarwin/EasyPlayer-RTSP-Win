@@ -92,7 +92,7 @@ EasyPlayer **RTSP Windows** 播放器是由[TSINGSEE青犀开放平台](http://w
 
 **EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
 
-Copyright &copy; EasyDarwin Team 2012-2019
+Copyright &copy; EasyDarwin Team 2012-2020
 
 ![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
 
