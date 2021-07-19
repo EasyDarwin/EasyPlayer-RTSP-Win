@@ -119,7 +119,7 @@ BOOL CEasyPlayerWebActiveXCtrl::CEasyPlayerWebActiveXCtrlFactory::UpdateRegistry
 
 
 
-// ÊÚÈ¨×Ö·û´®
+// °æÈ¨×Ö·û´®
 
 static const TCHAR _szLicFileName[] = _T("EasyPlayerWebActiveX.lic");
 

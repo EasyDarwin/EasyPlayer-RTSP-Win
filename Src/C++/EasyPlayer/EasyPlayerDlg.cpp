@@ -126,7 +126,7 @@ BOOL CEasyPlayerDlg::OnInitDialog()
 
 	CString strValidTime;
 	if(m_nValidTimes == EASY_ACTIVATE_SUCCESS)
-		strValidTime.Format(_T("EasyPlayer工具版，永久免费！"));
+		strValidTime.Format(_T("EasyPlayer，已经永久免费！"));
 	else
 		strValidTime.Format(_T("授权剩余时间 %d 天"), m_nValidTimes);
 	SetString(4, strValidTime );

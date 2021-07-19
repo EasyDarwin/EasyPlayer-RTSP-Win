@@ -75,24 +75,8 @@ EasyPlayer **RTSP Windows** 播放器是由[TSINGSEE青犀开放平台](http://w
 - EasyPlayerPro-iOS：[https://github.com/EasyDSS/EasyPlayerPro-iOS](https://github.com/EasyDSS/EasyPlayerPro-iOS "EasyPlayerPro-iOS")
 
 
-## 技术支持 ##
-
-- 邮件：[support@easydarwin.org](mailto:support@easydarwin.org) 
-
-- QQ交流群：<a href="http://jq.qq.com/?_wv=1027&k=2IDkJId" target="_blank" title="EasyPlayer">**544917793**</a>
-
-> EasyPlayer是一款非常稳定的全协议/全功能/全平台播放器，各平台版本需要经过授权才能商业使用，商业授权方案可以通过以上渠道进行更深入的技术与合作咨询；
-
-
 ## 获取更多信息 ##
 
 **EasyDarwin**开源流媒体服务器：[www.EasyDarwin.org](http://www.easydarwin.org)
 
-**EasyDSS**商用流媒体解决方案：[www.EasyDSS.com](http://www.easydss.com)
-
-**EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
-
-Copyright &copy; EasyDarwin Team 2012-2020
-
-![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
-
+Powered By [TSINGSEE Team](http://www.tsingsee.com "TSINGSEE")

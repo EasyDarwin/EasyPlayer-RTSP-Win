@@ -1,6 +1,8 @@
-
+*.ilk
 *.pdb
 *.manifest
 *.h264
 
 *.exp
+/Bin/C++/EasyPlayer-RTSPWebActiveX.lib
+/Bin/C++/EasyPlayerWebActiveX.lic
