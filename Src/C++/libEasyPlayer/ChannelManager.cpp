@@ -2708,6 +2708,15 @@ int	CChannelManager::StopManuRecording(int channelId)
 		delete pRealtimePlayThread[iNvsIdx].m_pMP4Writer;
 		pRealtimePlayThread[iNvsIdx].m_pMP4Writer = NULL;
 	}
-
+	if (pRealtimePlayThread[iNvsIdx].pRecAVQueue)
+	{
+		delete pRealtimePlayThread[iNvsIdx].pRecAVQueue;
+		pRealtimePlayThread[iNvsIdx].pRecAVQueue = NULL;
+	}
+	if (pRealtimePlayThread[iNvsIdx].pAVQueue)
+	{
+		delete pRealtimePlayThread[iNvsIdx].pAVQueue;
+		pRealtimePlayThread[iNvsIdx].pAVQueue = NULL;
+	}
 	return 1;
 }
