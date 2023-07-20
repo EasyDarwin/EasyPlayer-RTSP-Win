@@ -1756,9 +1756,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 
 		pThread->recordThread.flag	=	0x00;
 				
-		delete m_pAACEncBufer;
-		delete audio_buf;
-		delete pbuf;
+		delete []m_pAACEncBufer;
+		delete []audio_buf;
+		delete []pbuf;
 
 #ifdef _DEBUG
 	_TRACE("录像线程[%d]已退出 ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
