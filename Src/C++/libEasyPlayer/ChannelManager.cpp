@@ -48,7 +48,7 @@ int	CChannelManager::Initial()
 			
 			InitializeCriticalSection(&pRealtimePlayThread[i].critRecQueue);
 			InitializeCriticalSection(&pRealtimePlayThread[i].crit);
-			pRealtimePlayThread[i].renderFormat = GDI_FORMAT_RGB24;		//Ä¬ÈÏÎªGDIÏÔÊ¾
+			pRealtimePlayThread[i].renderFormat = GDI_FORMAT_RGB24;		//é»˜è®¤ä¸ºGDIæ˜¾ç¤º
 			pRealtimePlayThread[i].channelId = i+1;
 		}
 	}
@@ -85,7 +85,7 @@ void CChannelManager::Release()
 		}
 		__DELETE_ARRAY(pRealtimePlayThread);
 	}
-	//Ïú»ÙÒôÆµ²¥·ÅÏß³Ì
+	//é”€æ¯éŸ³é¢‘æ’­æ”¾çº¿ç¨‹
 	if (NULL != pAudioPlayThread)
 	{
 		if (NULL != pAudioPlayThread->pSoundPlayer)
@@ -122,7 +122,7 @@ int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT render
 		if (iNvsIdx == -1)		break;
 
 		EasyRTSP_Init(&pRealtimePlayThread[iNvsIdx].nvsHandle);
-		if (NULL == pRealtimePlayThread[iNvsIdx].nvsHandle)		break;	//ÍË³öwhileÑ­»·
+		if (NULL == pRealtimePlayThread[iNvsIdx].nvsHandle)		break;	//é€€å‡ºwhileå¾ªç¯
 		
 		memcpy(pRealtimePlayThread[iNvsIdx].url, url, strlen(url)+1);
 		pRealtimePlayThread[iNvsIdx].pCallback = callback;
@@ -158,13 +158,13 @@ void CChannelManager::CloseStream(int channelId)
 	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return;
 
 	EnterCriticalSection(&crit);
-	// Èç¹ûÕıÔÚÂ¼Ïñ£¬Ôò¹Ø±ÕÂ¼Ïñ [1/27/2018 SwprdTwelve]
+	// å¦‚æœæ­£åœ¨å½•åƒï¼Œåˆ™å…³é—­å½•åƒ [1/27/2018 SwprdTwelve]
 	StopManuRecording(channelId);
 
-	//¹Ø±Õrtsp client
+	//å…³é—­rtsp client
 	EasyRTSP_CloseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
 	EasyRTSP_Deinit(&pRealtimePlayThread[iNvsIdx].nvsHandle);
-	//¹Ø±Õ²¥·ÅÏß³Ì
+	//å…³é—­æ’­æ”¾çº¿ç¨‹
 	ClosePlayThread(&pRealtimePlayThread[iNvsIdx]);
 	//m_bIFrameArrive = false;
 	LeaveCriticalSection(&crit);
@@ -172,7 +172,7 @@ void CChannelManager::CloseStream(int channelId)
 
 //pRealtimePlayThread[iNvsIdx].nvsHandle
 
-//ÉèÖÃ»Ø·ÅËÙ¶È
+//è®¾ç½®å›æ”¾é€Ÿåº¦
 //Easy_API int Easy_APICALL EasyRTSP_SetStreamSpeed(Easy_RTSP_Handle handle, float fSpeed);
 int CChannelManager::SetPlaybackSpeed(int channelId, float fSpeed)
 {
@@ -184,7 +184,7 @@ int CChannelManager::SetPlaybackSpeed(int channelId, float fSpeed)
 }
 
 
-/* Ìø×ª²¥·ÅÊ±¼ä */
+/* è·³è½¬æ’­æ”¾æ—¶é—´ */
 //Easy_API int Easy_APICALL EasyRTSP_SeekStream(Easy_RTSP_Handle handle, const char *playTime);
 int CChannelManager::PlaybackSeek(int channelId, const char *playTime)
 {
@@ -196,7 +196,7 @@ int CChannelManager::PlaybackSeek(int channelId, const char *playTime)
 	return 0;//EasyRTSP_SeekStream(pRealtimePlayThread[iNvsIdx].nvsHandle, playTime);
 }
 
-/* ÔİÍ£ */
+/* æš‚åœ */
 //Easy_API int Easy_APICALL EasyRTSP_PauseStream(Easy_RTSP_Handle handle);
 int CChannelManager::PlaybackPause(int channelId)
 {
@@ -209,7 +209,7 @@ int CChannelManager::PlaybackPause(int channelId)
 }
 
 
-/* »Ö¸´²¥·Å */
+/* æ¢å¤æ’­æ”¾ */
 //Easy_API int Easy_APICALL EasyRTSP_ResumeStream(Easy_RTSP_Handle handle);
 int CChannelManager::PlaybackResume(int channelId)
 {
@@ -408,7 +408,7 @@ int		CChannelManager::ResetDragPoint(int channelId)
 	return 0;
 }
 
-//²¥·ÅÉùÒô		2014.12.01
+//æ’­æ”¾å£°éŸ³		2014.12.01
 int	CChannelManager::PlaySound(int channelId)
 {
 	int ret = -1;
@@ -419,7 +419,7 @@ int	CChannelManager::PlaySound(int channelId)
 		memset(pAudioPlayThread, 0x00, sizeof(AUDIO_PLAY_THREAD_OBJ));
 	}
 
-	ClearAllSoundData();		//Èç¹ûµ±Ç°ÕıÔÚ²¥·ÅÆäËüÒôÆµ,ÔòÇå¿Õ
+	ClearAllSoundData();		//å¦‚æœå½“å‰æ­£åœ¨æ’­æ”¾å…¶å®ƒéŸ³é¢‘,åˆ™æ¸…ç©º
 
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN + 1;
@@ -486,11 +486,11 @@ void CChannelManager::CloseRecordThread(PLAY_THREAD_OBJ*_pPlayThread)
 {
 	if (NULL == _pPlayThread)		return;
 
-	//¹Ø±ÕÂ¼ÏñÏß³Ì
+	//å…³é—­å½•åƒçº¿ç¨‹
 	if (_pPlayThread->recordThread.flag != 0x00)
 	{
 #ifdef _DEBUG
-		_TRACE("¹Ø±ÕÂ¼ÏñÏß³Ì[%d]\n", _pPlayThread->channelId);
+		_TRACE("å…³é—­å½•åƒçº¿ç¨‹[%d]\n", _pPlayThread->channelId);
 #endif
 		_pPlayThread->recordThread.flag = 0x03;
 		while (_pPlayThread->recordThread.flag!=0x00)	{ Sleep(100); }
@@ -534,11 +534,11 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 {
 	if (NULL == _pPlayThread)		return;
 
-	//¹Ø±Õ½âÂëÏß³Ì
+	//å…³é—­è§£ç çº¿ç¨‹
 	if (_pPlayThread->decodeThread.flag != 0x00)
 	{
 #ifdef _DEBUG
-		_TRACE("¹Ø±Õ²¥·ÅÏß³Ì[%d]\n", _pPlayThread->channelId);
+		_TRACE("å…³é—­æ’­æ”¾çº¿ç¨‹[%d]\n", _pPlayThread->channelId);
 #endif
 		_pPlayThread->decodeThread.flag = 0x03;
 		while (_pPlayThread->decodeThread.flag!=0x00)	{Sleep(100);}
@@ -548,7 +548,7 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		CloseHandle(_pPlayThread->decodeThread.hThread);
 		_pPlayThread->decodeThread.hThread = NULL;
 	}
-	for (int i=0; i<MAX_DECODER_NUM; i++)		//¹Ø±Õ½âÂëÆ÷
+	for (int i=0; i<MAX_DECODER_NUM; i++)		//å…³é—­è§£ç å™¨
 	{
 		if (NULL != _pPlayThread->decoderObj[i].ffDecoder)
 		{
@@ -565,7 +565,7 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		_pPlayThread->decoderObj[i].yuv_size = 0;
 	}
 
-	//¹Ø±Õ²¥·ÅÏß³Ì
+	//å…³é—­æ’­æ”¾çº¿ç¨‹
 	if (_pPlayThread->displayThread.flag != 0x00)
 	{
 		_pPlayThread->displayThread.flag = 0x03;
@@ -583,7 +583,7 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		_pPlayThread->yuvFrame[i].Yuvsize = 0;
 	}
 
-	//ÊÍ·Å¶ÓÁĞ
+	//é‡Šæ”¾é˜Ÿåˆ—
 	if (NULL != _pPlayThread->pAVQueue)
 	{
 		SSQ_Deinit(_pPlayThread->pAVQueue);
@@ -748,13 +748,13 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					}
 
 					FFD_Init(&_pPlayThread->decoderObj[i].ffDecoder);
-					//H265 codecID¸Ä³ÉFFMPEGĞÂ°æµÄ
+					//H265 codecIDæ”¹æˆFFMPEGæ–°ç‰ˆçš„
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
 					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
 				}
 				if (NULL == _pPlayThread->decoderObj[i].pIntelDecoder && _pPlayThread->decoderObj[i].bHardDecode)
 				{
-					//Ó²¼ş½âÂë³õÊ¼»¯
+					//ç¡¬ä»¶è§£ç åˆå§‹åŒ–
 					_pPlayThread->decoderObj[iIdx].pIntelDecoder = Create_IntelHardDecoder();
 					int nRet =_pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
 					if (nRet<0)
@@ -770,7 +770,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 			{
 				if (NULL == _pPlayThread->decoderObj[i].pIntelDecoder && _pPlayThread->decoderObj[i].bHardDecode)
 				{
-					//Ó²¼ş½âÂë³õÊ¼»¯
+					//ç¡¬ä»¶è§£ç åˆå§‹åŒ–
 					_pPlayThread->decoderObj[iIdx].pIntelDecoder = Create_IntelHardDecoder();
 					int nRet =_pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
 					if (nRet<0)
@@ -797,7 +797,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					}
 
 					FFD_Init(&_pPlayThread->decoderObj[iIdx].ffDecoder);
-					//H265 codecID¸Ä³ÉFFMPEGĞÂ°æµÄ
+					//H265 codecIDæ”¹æˆFFMPEGæ–°ç‰ˆçš„
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
 					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
 
@@ -834,7 +834,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 #endif
 					}
 
-					//H265 codecID¸Ä³ÉFFMPEGĞÂ°æµÄ
+					//H265 codecIDæ”¹æˆFFMPEGæ–°ç‰ˆçš„
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
 					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
 					//FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[iIdx].ffDecoder, _frameinfo->width, _frameinfo->height, _frameinfo->codec, nDecoder);
@@ -915,7 +915,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 	pThread->decodeThread.flag	=	0x02;
 
 #ifdef _DEBUG
-	_TRACE("½âÂëÏß³Ì[%d]ÒÑÆô¶¯. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("è§£ç çº¿ç¨‹[%d]å·²å¯åŠ¨. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	//SetThreadAffinityMask(GetCurrentThread(), 1);
@@ -987,7 +987,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 		if (mediatype == MEDIA_TYPE_VIDEO)
 		{
 #ifdef _DEBUG1
-			_TRACE("½âÂëÏß³Ì[%d]½âÂë...%d   %d x %d\n", pThread->id, channelid, frameinfo.width, frameinfo.height);
+			_TRACE("è§£ç çº¿ç¨‹[%d]è§£ç ...%d   %d x %d\n", pThread->id, channelid, frameinfo.width, frameinfo.height);
 #endif
 			//==============================================
 
@@ -1002,8 +1002,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			//_TRACE("DECODE queue: %d\n", pChannelObj->pQueue->pQueHeader->videoframes);
 			if (pThread->frameQueue > MAX_CACHE_FRAME)
 			{
-				//_TRACE("[ch%d]»º´æÖ¡Êı[%d]>Éè¶¨Ö¡Êı[%d].  Çå¿Õ¶ÓÁĞ²¢µÈ´ıÏÂÒ»¸öKey frame.\n", pThread->renderCh, pThread->framequeue, MAX_CACHE_FRAME);
-				_TRACE("[ch%d]»º´æÖ¡Êı[%d]>Éè¶¨Ö¡Êı[%d].  Çå¿Õ¶ÓÁĞ²¢µÈ´ıÏÂÒ»¸öKey frame.\n", pThread->channelId, pThread->frameQueue, MAX_CACHE_FRAME);
+				//_TRACE("[ch%d]ç¼“å­˜å¸§æ•°[%d]>è®¾å®šå¸§æ•°[%d].  æ¸…ç©ºé˜Ÿåˆ—å¹¶ç­‰å¾…ä¸‹ä¸€ä¸ªKey frame.\n", pThread->renderCh, pThread->framequeue, MAX_CACHE_FRAME);
+				_TRACE("[ch%d]ç¼“å­˜å¸§æ•°[%d]>è®¾å®šå¸§æ•°[%d].  æ¸…ç©ºé˜Ÿåˆ—å¹¶ç­‰å¾…ä¸‹ä¸€ä¸ªKey frame.\n", pThread->channelId, pThread->frameQueue, MAX_CACHE_FRAME);
 
 				SSQ_Clear(pThread->pAVQueue);
 				pThread->findKeyframe = 0x01;
@@ -1035,11 +1035,11 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				continue;
 			}
 
-			DECODER_OBJ *pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_VIDEO, &frameinfo);		//»ñÈ¡ÏàÓ¦µÄ½âÂëÆ÷
+			DECODER_OBJ *pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_VIDEO, &frameinfo);		//è·å–ç›¸åº”çš„è§£ç å™¨
 			if (NULL == pDecoderObj)
 			{
 #ifdef _DEBUG
-				_TRACE("[ch%d]»ñÈ¡½âÂëÆ÷Ê§°Ü.  %d x %d\n", pThread->channelId, frameinfo.width, frameinfo.height);
+				_TRACE("[ch%d]è·å–è§£ç å™¨å¤±è´¥.  %d x %d\n", pThread->channelId, frameinfo.width, frameinfo.height);
 #endif
 				_VS_BEGIN_TIME_PERIOD(1);
 				__VS_Delay(1);
@@ -1047,7 +1047,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				continue;
 			}
 
-			//Èç¹ûÒÑÉêÇëµÄÄÚ´æĞ¡ÓÚµ±Ç°ĞèÒªµÄÄÚ´æ´óĞ¡,ÔòÖØĞÂÉêÇë
+			//å¦‚æœå·²ç”³è¯·çš„å†…å­˜å°äºå½“å‰éœ€è¦çš„å†…å­˜å¤§å°,åˆ™é‡æ–°ç”³è¯·
 			if ( (pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize < pDecoderObj->yuv_size) && (NULL != pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf))
 			{
 				__DELETE_ARRAY(pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf);
@@ -1059,7 +1059,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			}
 			if (NULL == pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf)		continue;
 
-			while (pThread->yuvFrame[pThread->decodeYuvIdx].frameinfo.length > 0)		//µÈ´ı¸ÃÖ¡ÏÔÊ¾Íê³É
+			while (pThread->yuvFrame[pThread->decodeYuvIdx].frameinfo.length > 0)		//ç­‰å¾…è¯¥å¸§æ˜¾ç¤ºå®Œæˆ
 			{
 				if (pThread->decodeThread.flag == 0x03)		break;
 
@@ -1069,8 +1069,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			}
 			if (pThread->decodeThread.flag == 0x03)		break;
 
-			//¿ªÆôÂ¼Ïñ
-			if (pThread->manuRecording == 0x01 && NULL==pThread->m_pMP4Writer && frameinfo.type==EASY_SDK_VIDEO_FRAME_I)//¿ªÆôÂ¼ÖÆ
+			//å¼€å¯å½•åƒ
+			if (pThread->manuRecording == 0x01 && NULL==pThread->m_pMP4Writer && frameinfo.type==EASY_SDK_VIDEO_FRAME_I)//å¼€å¯å½•åˆ¶
 			{
 				//EnterCriticalSection(&pThread->critRecQueue);				
 				if (!pThread->m_pMP4Writer)
@@ -1100,7 +1100,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				char subDir[64] = { 0 };
 				sprintf(subDir, "%s\\", sFileName);
 
-				//×Ô¶¨ÒåDuration
+				//è‡ªå®šä¹‰Duration
 				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, sFileName, 30*60, 1))
 				{
 					delete pThread->m_pMP4Writer;
@@ -1109,9 +1109,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				}		
 				//LeaveCriticalSection(&pThread->critRecQueue);
 			}
-			if ( NULL != pThread->m_pMP4Writer)//Â¼ÖÆ
+			if ( NULL != pThread->m_pMP4Writer)//å½•åˆ¶
 			{
-				if (pThread->manuRecording == 0x01 )//¼ÌĞøMP4Ğ´Êı¾İ
+				if (pThread->manuRecording == 0x01 )//ç»§ç»­MP4å†™æ•°æ®
 				{
 #if 0
 					pThread->m_pMP4Writer->WriteMp4File((unsigned char*)pbuf, frameinfo.length, 
@@ -1140,12 +1140,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				}
 			}
 
-			// ²»ÔÙÖ§³ÖMP4CreatorÂ¼ÖÆmp4£¨Õâ¸ö¿âÈİÒ×³öÏÖ±ÀÀ££© [9/20/2016 dingshuai]
+			// ä¸å†æ”¯æŒMP4Creatorå½•åˆ¶mp4ï¼ˆè¿™ä¸ªåº“å®¹æ˜“å‡ºç°å´©æºƒï¼‰ [9/20/2016 dingshuai]
 #if 0
-			//ÊÖ¶¯Â¼Ïñ
+			//æ‰‹åŠ¨å½•åƒ
 			if (NULL != pThread->mp4cHandle)
 			{
-				//30fps * 60 seconds * 30 minutes  = ÊÖ¶¯Â¼Ïñ±ØĞëĞ¡ÓÚ30·ÖÖÓ
+				//30fps * 60 seconds * 30 minutes  = æ‰‹åŠ¨å½•åƒå¿…é¡»å°äº30åˆ†é’Ÿ
 				if (pThread->vidFrameNum >= 30*60*30 || (pThread->manuRecording == 0x00) )
 				{
 					MP4C_CloseMp4File(pThread->mp4cHandle);
@@ -1187,7 +1187,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				}
 			}
 
-			//½âÂë
+			//è§£ç 
 			EnterCriticalSection(&pThread->crit);
 			int nRet = 1; 
 			if (pDecoderObj->pIntelDecoder)
@@ -1203,21 +1203,21 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				nRet = FFD_DecodeVideo3(pDecoderObj->ffDecoder, pbuf, frameinfo.length, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, frameinfo.width, frameinfo.height, lTimestamp, lTimestamp);
 				if (0 != nRet)
 				{
-					if(nRet == -4)//-4±íÊ¾Îªµ±Ç°Ö¡ÉĞÎ´½âÂëÍê³É£¬²»×÷Îª´íÎóÅĞ¶Ï
+					if(nRet == -4)//-4è¡¨ç¤ºä¸ºå½“å‰å¸§å°šæœªè§£ç å®Œæˆï¼Œä¸ä½œä¸ºé”™è¯¯åˆ¤æ–­
 					{
-							_TRACE("ÊÓÆµÖ¡½âÂëÉĞÎ´Íê³É[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
+							_TRACE("è§†é¢‘å¸§è§£ç å°šæœªå®Œæˆ[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
 							(unsigned char)pbuf[0], (unsigned char)pbuf[1], (unsigned char)pbuf[2], (unsigned char)pbuf[3], (unsigned char)pbuf[4],
 							(unsigned char)pbuf[5], (unsigned char)pbuf[6], (unsigned char)pbuf[7], (unsigned char)pbuf[8], (unsigned char)pbuf[9]);
 					}
 					else
 					{
-						_TRACE("ÊÓÆµÖ¡½â½âÂëÊ§°Ü[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
+						_TRACE("è§†é¢‘å¸§è§£è§£ç å¤±è´¥[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
 							(unsigned char)pbuf[0], (unsigned char)pbuf[1], (unsigned char)pbuf[2], (unsigned char)pbuf[3], (unsigned char)pbuf[4],
 							(unsigned char)pbuf[5], (unsigned char)pbuf[6], (unsigned char)pbuf[7], (unsigned char)pbuf[8], (unsigned char)pbuf[9]);
 
-						if (frameinfo.type == EASY_SDK_VIDEO_FRAME_I)		//¹Ø¼üÖ¡
+						if (frameinfo.type == EASY_SDK_VIDEO_FRAME_I)		//å…³é”®å¸§
 						{
-							_TRACE("[ch%d]µ±Ç°¹Ø¼üÖ¡½âÂëÊ§°Ü...\n", pThread->channelId);
+							_TRACE("[ch%d]å½“å‰å…³é”®å¸§è§£ç å¤±è´¥...\n", pThread->channelId);
 	#ifdef _DEBUG
 							FILE *f = fopen("keyframe.txt", "wb");
 							if (NULL != f)
@@ -1248,8 +1248,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 					pThread->decodeYuvIdx ++;
 					if (pThread->decodeYuvIdx >= MAX_YUV_FRAME_NUM)		pThread->decodeYuvIdx = 0;
 
-					//×¥Í¼
-					if (pThread->manuScreenshot == 0x01 )//Just support jpg£¬png
+					//æŠ“å›¾
+					if (pThread->manuScreenshot == 0x01 )//Just support jpgï¼Œpng
 					{
 						unsigned int timestamp = (unsigned int)time(NULL);
 						time_t tt = timestamp;
@@ -1278,7 +1278,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 			LeaveCriticalSection(&pThread->crit);
 		}
-		else if (MEDIA_TYPE_AUDIO == mediatype)		//ÒôÆµ
+		else if (MEDIA_TYPE_AUDIO == mediatype)		//éŸ³é¢‘
 		{
 			if (NULL != pChannelManager)
 			{
@@ -1325,7 +1325,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 					}
 #endif
 
-					if (pThread->manuRecording == 0x01 && pThread&&pThread->m_pMP4Writer)//ÒôÆµĞ´ÈëMP4ÎÄ¼ş(now we support AAC, G711, G726)
+					if (pThread->manuRecording == 0x01 && pThread&&pThread->m_pMP4Writer)//éŸ³é¢‘å†™å…¥MP4æ–‡ä»¶(now we support AAC, G711, G726)
 					{
 #if 0
 						if (pThread->m_pMP4Writer->CanWrite())
@@ -1364,17 +1364,17 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 						if (NULL == pDecoderObj)
 						{
 #ifdef _DEBUG
-							_TRACE("[ch%d]»ñÈ¡ÒôÆµ½âÂëÆ÷Ê§°Ü: %d.\n", pThread->channelId, frameinfo.codec);
+							_TRACE("[ch%d]è·å–éŸ³é¢‘è§£ç å™¨å¤±è´¥: %d.\n", pThread->channelId, frameinfo.codec);
 #endif
 							continue;
 						}
 
 						memset(audio_buf, 0x00, audbuf_len);
 						int pcm_data_size = 0;
-						int ret = FFD_DecodeAudio(pDecoderObj->ffDecoder, (char*)pDecBuffer, nDecBufLen, (char *)audio_buf, &pcm_data_size);	//ÒôÆµ½âÂë(Ö§³Ög711(ulaw)ºÍAAC)
+						int ret = FFD_DecodeAudio(pDecoderObj->ffDecoder, (char*)pDecBuffer, nDecBufLen, (char *)audio_buf, &pcm_data_size);	//éŸ³é¢‘è§£ç (æ”¯æŒg711(ulaw)å’ŒAAC)
 						if (ret == 0)
 						{
-							//²¥·Å
+							//æ’­æ”¾
 							if (pChannelManager->pAudioPlayThread->audiochannels == 0)
 							{
 								pChannelManager->SetAudioParams(pDecoderObj->codec.channels, pDecoderObj->codec.samplerate, 16);//32);// 16);
@@ -1387,7 +1387,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 						else
 						{
 #ifdef _DEBUG
-							_TRACE("[ERROR]½âÂëÒôÆµÊ§°Ü....\n");
+							_TRACE("[ERROR]è§£ç éŸ³é¢‘å¤±è´¥....\n");
 #endif
 						}
 					}	
@@ -1446,13 +1446,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 	pThread->decodeThread.flag	=	0x00;
 
 #ifdef _DEBUG
-	_TRACE("½âÂëÏß³Ì[%d]ÒÑÍË³ö ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("è§£ç çº¿ç¨‹[%d]å·²é€€å‡º ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	return 0;
 }
 
-// ×¥Í¼º¯ÊıÊµÏÖ
+// æŠ“å›¾å‡½æ•°å®ç°
 int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Format)
 {
 	char              *fileext = NULL;
@@ -1639,7 +1639,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 	pThread->recordThread.flag	=	0x02;
 
 #ifdef _DEBUG
-	_TRACE("Â¼ÏñÏß³Ì[%d]ÒÑÆô¶¯. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("å½•åƒçº¿ç¨‹[%d]å·²å¯åŠ¨. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	EasyAACEncoder_Handle m_pAACEncoderHandle = NULL;
@@ -1685,7 +1685,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 		{	
 			if (mediatype == MEDIA_TYPE_VIDEO)
 			{
-				pdata = (byte*)pbuf;//»ñÈ¡µ½µÄ±àÂëÊı¾İ
+				pdata = (byte*)pbuf;//è·å–åˆ°çš„ç¼–ç æ•°æ®
 				datasize = frameinfo.length;
 				int nVideoWidth     = frameinfo.width;
 				int nVideoHeight    = frameinfo.height;
@@ -1694,9 +1694,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 					pThread->m_pMP4Writer->VideoMux( frameinfo.codec, frameinfo.type, (unsigned char*)pdata, datasize,  nTimeStamp, nVideoWidth, nVideoHeight);
 				}
 			}
-			else //ÒôÆµ
+			else //éŸ³é¢‘
 			{
-				pdata = (byte*)pbuf;//»ñÈ¡µ½µÄ±àÂëÊı¾İ
+				pdata = (byte*)pbuf;//è·å–åˆ°çš„ç¼–ç æ•°æ®
 				datasize = frameinfo.length;
 				int bits_per_sample = frameinfo.bits_per_sample;
 				int channels = frameinfo.channels;
@@ -1755,9 +1755,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 	}
 
 		pThread->recordThread.flag	=	0x00;
+				
+		delete m_pAACEncBufer;
+		delete audio_buf;
+		delete pbuf;
 
 #ifdef _DEBUG
-	_TRACE("Â¼ÏñÏß³Ì[%d]ÒÑÍË³ö ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("å½•åƒçº¿ç¨‹[%d]å·²é€€å‡º ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	return 0;
@@ -1828,7 +1832,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	pThread->displayThread.flag	=	0x02;
 
 #ifdef _DEBUG
-	_TRACE("ÏÔÊ¾Ïß³Ì[%d]ÒÑÆô¶¯. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("æ˜¾ç¤ºçº¿ç¨‹[%d]å·²å¯åŠ¨. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	int width = 0;
@@ -1848,13 +1852,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 //#ifdef _DEBUG
 #if 1
-	float	fDisplayTimes = 0.0f;		//ÏÔÊ¾ºÄÊ±Í³¼Æ
+	float	fDisplayTimes = 0.0f;		//æ˜¾ç¤ºè€—æ—¶ç»Ÿè®¡
 	int		displayFrameNum = 0;
 	int		nDisplayTotalTimes = 0;
 	unsigned int uiLastTotalTime = 0;
 #endif
 
-	int	iDropFrame = 0;		//¶ªÖ¡»úÖÆ
+	int	iDropFrame = 0;		//ä¸¢å¸§æœºåˆ¶
 	int iDelay = 0;
 	char* m_RGB24 = NULL;
 
@@ -1932,7 +1936,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		if (uiTmpTimestamp == 0)		uiTmpTimestamp= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp;
 		if (pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp <= uiTmpTimestamp)
 		{
-			_TRACE("µ±Ç°Ê±¼ä´Á[%u] <= ×îĞÂµÄÊ±¼ä´Á[%u].\n", pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp, uiTmpTimestamp);
+			_TRACE("å½“å‰æ—¶é—´æˆ³[%u] <= æœ€æ–°çš„æ—¶é—´æˆ³[%u].\n", pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp, uiTmpTimestamp);
 			uiTmpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp;
 		}
 
@@ -1948,8 +1952,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			pThread->frameQueue = pThread->pAVQueue->pQueHeader->videoframes;
 		}
 
-		int iQue1_DecodeQueue = pThread->frameQueue;		//Î´½âÂëµÄÖ¡Êı
-		int iQue2_DisplayQueue= iYuvFrameNum;				//ÒÑ½âÂëµÄÖ¡Êı
+		int iQue1_DecodeQueue = pThread->frameQueue;		//æœªè§£ç çš„å¸§æ•°
+		int iQue2_DisplayQueue= iYuvFrameNum;				//å·²è§£ç çš„å¸§æ•°
 
 		int nQueueFrame = iQue1_DecodeQueue + iQue2_DisplayQueue;
 
@@ -1968,7 +1972,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			GetClientRect(pThread->hWnd, &rcDst);
 		}
 
-		//Èç¹ûµ±Ç°·Ö±æÂÊºÍÖ®Ç°µÄ²»Í¬,ÔòÖØĞÂ³õÊ¼»¯d3d
+		//å¦‚æœå½“å‰åˆ†è¾¨ç‡å’Œä¹‹å‰çš„ä¸åŒ,åˆ™é‡æ–°åˆå§‹åŒ–d3d
 		if (lastFrameInfo.width != pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width ||
 			lastFrameInfo.height!= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height)
 		{
@@ -1991,7 +1995,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		if ( pThread->resetD3d )
 		{
 			pThread->resetD3d = false;
-			//¹Ø±Õd3d
+			//å…³é—­d3d
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
 				RGB_DeinitDraw(&pThread->d3dHandle);
@@ -2009,7 +2013,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 		LeaveCriticalSection(&pThread->crit);			//Unlock
 
-		//´´½¨D3dRender
+		//åˆ›å»ºD3dRender
 		if (pThread->renderFormat == GDI_FORMAT_RGB24)
 		{
 			if (NULL == pThread->d3dHandle)	RGB_InitDraw(&pThread->d3dHandle);
@@ -2052,7 +2056,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			{
 				_TRACE("DEVICE LOST...   times:%d\n", ((unsigned int)time(NULL)-deviceLostTime));
 				deviceLostTime = (unsigned int)time(NULL);
-				//Èç¹ûd3d ³õÊ¼»¯Ê§°Ü,ÔòÇå¿ÕÖ¡Í·ĞÅÏ¢,ÒÔ±ã½âÂëÏß³Ì¼ÌĞø½âÂëÏÂÒ»Ö¡
+				//å¦‚æœd3d åˆå§‹åŒ–å¤±è´¥,åˆ™æ¸…ç©ºå¸§å¤´ä¿¡æ¯,ä»¥ä¾¿è§£ç çº¿ç¨‹ç»§ç»­è§£ç ä¸‹ä¸€å¸§
 				pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec/1000;
 				memset(&pThread->yuvFrame[iDispalyYuvIdx].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 				_VS_BEGIN_TIME_PERIOD(1);
@@ -2071,7 +2075,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	
 		pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec/1000;
 
-		//Í³¼ÆĞÅÏ¢:  ±àÂë¸ñÊ½ ·Ö±æÂÊ Ö¡ÂÊ Ö¡ÀàĞÍ  ÂëÁ÷  »º´æÖ¡Êı
+		//ç»Ÿè®¡ä¿¡æ¯:  ç¼–ç æ ¼å¼ åˆ†è¾¨ç‡ å¸§ç‡ å¸§ç±»å‹  ç æµ  ç¼“å­˜å¸§æ•°
 		char sztmp[128] = {0,};
 #if 0
 		sprintf(sztmp, "%s[%d x %d]  FPS: %d[%s]    Bitrate: %.2fMbps   Cache: %d / %d",
@@ -2180,12 +2184,12 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		if (iDropFrame < 0x02)
 		{
 #if 1
-			// ½âÂëÊı¾İÏÔÊ¾+»Øµ÷  [12/13/2017 Dingshuai]
+			// è§£ç æ•°æ®æ˜¾ç¤º+å›è°ƒ  [12/13/2017 Dingshuai]
 			//pRealtimePlayThread[iNvsIdx].pCallback = callback;
 			if (pThread&&pThread->pCallback&&iDispalyYuvIdx>=0)
 			{
-				// Ó²¼ş±àÂë³öÀ´ÊÇNV12£¬Íâ²¿ÎªÁËÏÔÊ¾·½±ãÓ¦¸Ã×ª³ÉI420 [12/6/2016 dingshuai]
-				//Íâ²¿ÏÔÊ¾
+				// ç¡¬ä»¶ç¼–ç å‡ºæ¥æ˜¯NV12ï¼Œå¤–éƒ¨ä¸ºäº†æ˜¾ç¤ºæ–¹ä¾¿åº”è¯¥è½¬æˆI420 [12/6/2016 dingshuai]
+				//å¤–éƒ¨æ˜¾ç¤º
 				int FFVFormat = 0;
 				switch (pThread->renderFormat)
 				{
@@ -2245,7 +2249,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 					ConvertImage((AVPixelFormat)FFVFormat, width, height, (unsigned char*)pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, outPixelFormat, width, height, (unsigned char**)&m_RGB24);
 				}
 
-				// »ñÈ¡½âÂëºóµÄYUV/RGBÊı¾İµÄ´óĞ¡
+				// è·å–è§£ç åçš„YUV/RGBæ•°æ®çš„å¤§å°
 				//int nYuvFrameLen = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
 				lastFrameInfo.length =  pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
 
@@ -2279,13 +2283,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				if (ret < 0)
 				{
 					deviceLostTime = (unsigned int)time(NULL);
-					pThread->resetD3d = true;						//ĞèÒªÖØ½¨D3D
+					pThread->resetD3d = true;						//éœ€è¦é‡å»ºD3D
 				}
 			}
 		}
 		else
 		{
-			_TRACE("¶ªÖ¡...%d\n", iDropFrame);
+			_TRACE("ä¸¢å¸§...%d\n", iDropFrame);
 		}
 		
 		memset(&pThread->yuvFrame[iDispalyYuvIdx].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
@@ -2362,7 +2366,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 #endif
 
 			_VS_BEGIN_TIME_PERIOD(1);
-			//_TRACE("[ch%d]¹²ÓÃÊ±: %d\tÏÔÊ¾ºÄÊ±:%d\tÑÓÊ±:%d\t»º´æÖ¡Êı:%d\tµ±Ç°Ö¡´óĞ¡:%d  OneFrameUsec:%d\n", pThread->renderCh, iInterval+iDelay, iInterval, iDelay, nQueueFrame, frame_size, iOneFrameUsec);
+			//_TRACE("[ch%d]å…±ç”¨æ—¶: %d\tæ˜¾ç¤ºè€—æ—¶:%d\tå»¶æ—¶:%d\tç¼“å­˜å¸§æ•°:%d\tå½“å‰å¸§å¤§å°:%d  OneFrameUsec:%d\n", pThread->renderCh, iInterval+iDelay, iInterval, iDelay, nQueueFrame, frame_size, iOneFrameUsec);
 			if (iDelay>0 && iDelay<1500 && iCache>0 && iCache*2>nQueueFrame && iDropFrame==0)
 			{
 				__VS_Delay(iDelay);
@@ -2392,7 +2396,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	pThread->displayThread.flag	=	0x00;
 
 #ifdef _DEBUG
-	_TRACE("ÏÔÊ¾Ïß³Ì[%d]ÒÑÍË³ö. ThreadId:%d ..\n", pThread->channelId, GetCurrentThreadId());
+	_TRACE("æ˜¾ç¤ºçº¿ç¨‹[%d]å·²é€€å‡º. ThreadId:%d ..\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	return 0;
@@ -2519,7 +2523,7 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 // 	{
 // 		if (NULL == pbuf && NULL == frameinfo)
 // 		{
-// 			_TRACE("[ch%d]Á¬½ÓÖĞ...\n", _chid);
+// 			_TRACE("[ch%d]è¿æ¥ä¸­...\n", _chid);
 // 
 // 			MEDIA_FRAME_INFO	frameinfo;
 // 			memset(&frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
@@ -2529,15 +2533,15 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 // 		}
 // 		else if (NULL!=frameinfo && frameinfo->type==0xF1)
 // 		{
-// 			_TRACE("[ch%d]µô°ü[%.2f]...\n", _chid, frameinfo->losspacket);
+// 			_TRACE("[ch%d]æ‰åŒ…[%.2f]...\n", _chid, frameinfo->losspacket);
 // 
 // 			frameinfo->length = 1;
 // 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, "1");
 // 		}
 // 	}
-	else if (mediatype == EASY_SDK_EVENT_FRAME_FLAG)//»Øµ÷Á¬½Ó×´Ì¬ÊÂ¼ş
+	else if (mediatype == EASY_SDK_EVENT_FRAME_FLAG)//å›è°ƒè¿æ¥çŠ¶æ€äº‹ä»¶
 	{
-		// EasyRTSPClient¿ªÊ¼½øĞĞÁ¬½Ó£¬½¨Á¢EasyRTSPClientÁ¬½ÓÏß³Ì
+		// EasyRTSPClientå¼€å§‹è¿›è¡Œè¿æ¥ï¼Œå»ºç«‹EasyRTSPClientè¿æ¥çº¿ç¨‹
 		char*  fRTSPURL = pRealtimePlayThread[_chid].url;
 		char sErrorString[512];
 		if (NULL == pbuf && NULL == frameinfo)
@@ -2554,7 +2558,7 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 		}
 		else if (NULL!=frameinfo && frameinfo->type==0xF1)
 		{
-			sprintf(sErrorString, "Error:	 %s£º	[ch%d]µô°ü[%.2f]...\n",  fRTSPURL, _chid, frameinfo->losspacket);
+			sprintf(sErrorString, "Error:	 %sï¼š	[ch%d]æ‰åŒ…[%.2f]...\n",  fRTSPURL, _chid, frameinfo->losspacket);
 
 			frameinfo->length = 1;
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, sErrorString);
@@ -2562,16 +2566,16 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
 	}
 
-		// EasyRTSPClient RTSPClientÁ¬½Ó´íÎó£¬´íÎóÂëÍ¨¹ıEasyRTSP_GetErrCode()½Ó¿Ú»ñÈ¡£¬±ÈÈç404
+		// EasyRTSPClient RTSPClientè¿æ¥é”™è¯¯ï¼Œé”™è¯¯ç é€šè¿‡EasyRTSP_GetErrCode()æ¥å£è·å–ï¼Œæ¯”å¦‚404
 		else if (NULL != frameinfo && frameinfo->codec == EASY_SDK_EVENT_CODEC_ERROR)
 		{
-			sprintf(sErrorString, "Error:	  %s£º EasyRTSP_GetErrCode£º%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf?pbuf:"null" );
+			sprintf(sErrorString, "Error:	  %sï¼š EasyRTSP_GetErrCodeï¼š%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf?pbuf:"null" );
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, sErrorString);
 			if (pMediaCallback)
 				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
 		}
 
-		// EasyRTSPClientÁ¬½ÓÏß³ÌÍË³ö£¬´ËÊ±ÉÏ²ãÓ¦¸ÃÍ£Ö¹Ïà¹Øµ÷ÓÃ£¬¸´Î»Á¬½Ó°´Å¥µÈ×´Ì¬
+		// EasyRTSPClientè¿æ¥çº¿ç¨‹é€€å‡ºï¼Œæ­¤æ—¶ä¸Šå±‚åº”è¯¥åœæ­¢ç›¸å…³è°ƒç”¨ï¼Œå¤ä½è¿æ¥æŒ‰é’®ç­‰çŠ¶æ€
 		else if (NULL != frameinfo && frameinfo->codec == EASY_SDK_EVENT_CODEC_EXIT)
 		{
 			sprintf(sErrorString, "Exit:	%s,   Error:%d ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle));
@@ -2663,7 +2667,7 @@ int	CChannelManager::StartManuRecording(int channelId)
 
 	if (NULL == pRealtimePlayThread[iNvsIdx].mp4cHandle)
 	{
-		//³õÊ¼»¯Â¼Ïñ»º´æ¶ÓÁĞ
+		//åˆå§‹åŒ–å½•åƒç¼“å­˜é˜Ÿåˆ—
 		if (NULL == pRealtimePlayThread[iNvsIdx].pRecAVQueue)  
 		{
 			pRealtimePlayThread[iNvsIdx].pRecAVQueue = new SS_QUEUE_OBJ_T();
@@ -2679,7 +2683,7 @@ int	CChannelManager::StartManuRecording(int channelId)
 			pRealtimePlayThread[iNvsIdx].dwDisconnectTime=0;
 		}
 
-		//´´½¨Ïß³ÌÖ´ĞĞÂ¼Ïñ
+		//åˆ›å»ºçº¿ç¨‹æ‰§è¡Œå½•åƒ
 		CreateRecordThread(&pRealtimePlayThread[iNvsIdx]);
 		pRealtimePlayThread[iNvsIdx].manuRecording = 0x01;
 	}
