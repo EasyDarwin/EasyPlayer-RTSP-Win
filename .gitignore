@@ -6,3 +6,9 @@
 *.exp
 /Bin/C++/EasyPlayer-RTSPWebActiveX.lib
 /Bin/C++/EasyPlayerWebActiveX.lic
+/Src/C++/.vs/EasyPlayer-RTSP
+/Bin/C++/Record/channel0
+/Bin/C++/EasyPlayer-RTSP.exe
+/Bin/C++/EasyPlayer-RTSPWebActiveX.ocx
+/Bin/C++/libEasyPlayer-RTSP.dll
+/Bin/C++/libEasyPlayer-RTSP.lib

@@ -15,13 +15,13 @@
 
 #define	__DELETE_ARRAY(x)	{if (NULL!=x) {delete []x;x=NULL;}}
 
-int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo);
+int CALLBACK __RTSPSourceCallBack(int _channelId, void* _channelPtr, int _frameType, char* pBuf, EASY_FRAME_INFO* _frameInfo);
 
-CChannelManager	*pChannelManager = NULL;
+CChannelManager* pChannelManager = NULL;
 CChannelManager::CChannelManager(void)
 {
-	pRealtimePlayThread	=	NULL;
-	pAudioPlayThread	=	NULL;
+	pRealtimePlayThread = NULL;
+	pAudioPlayThread = NULL;
 	memset(&d3dAdapter, 0x00, sizeof(D3D_ADAPTER_T));
 	m_bIFrameArrive = false;
 	InitializeCriticalSection(&crit);
@@ -41,19 +41,19 @@ int	CChannelManager::Initial()
 		pRealtimePlayThread = new PLAY_THREAD_OBJ[MAX_CHANNEL_NUM];
 		if (NULL == pRealtimePlayThread)		return -1;
 
-		memset(&pRealtimePlayThread[0], 0x00, sizeof(PLAY_THREAD_OBJ)*MAX_CHANNEL_NUM);
+		memset(&pRealtimePlayThread[0], 0x00, sizeof(PLAY_THREAD_OBJ) * MAX_CHANNEL_NUM);
 
-		for (int i=0; i<MAX_CHANNEL_NUM; i++)
+		for (int i = 0; i < MAX_CHANNEL_NUM; i++)
 		{
-			
+
 			InitializeCriticalSection(&pRealtimePlayThread[i].critRecQueue);
 			InitializeCriticalSection(&pRealtimePlayThread[i].crit);
 			pRealtimePlayThread[i].renderFormat = GDI_FORMAT_RGB24;		//默认为GDI显示
-			pRealtimePlayThread[i].channelId = i+1;
+			pRealtimePlayThread[i].channelId = i + 1;
 		}
 	}
 
-	if (NULL == pChannelManager)		pChannelManager	=	this;
+	if (NULL == pChannelManager)		pChannelManager = this;
 
 	return 0;
 }
@@ -62,7 +62,7 @@ void CChannelManager::Release()
 {
 	if (NULL != pRealtimePlayThread)
 	{
-		for (int i=0; i<MAX_CHANNEL_NUM; i++)
+		for (int i = 0; i < MAX_CHANNEL_NUM; i++)
 		{
 			if (NULL != pRealtimePlayThread[i].nvsHandle)
 			{
@@ -73,8 +73,8 @@ void CChannelManager::Release()
 			ClosePlayThread(&pRealtimePlayThread[i]);
 			DeleteCriticalSection(&pRealtimePlayThread[i].crit);
 			DeleteCriticalSection(&pRealtimePlayThread[i].critRecQueue);
-			
-			for (int idx=0; idx<MAX_DECODER_NUM; idx++)
+
+			for (int idx = 0; idx < MAX_DECODER_NUM; idx++)
 			{
 				if (pRealtimePlayThread[i].decoderObj[idx].pIntelDecoder)
 				{
@@ -100,17 +100,17 @@ void CChannelManager::Release()
 }
 
 
-int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char *username, const char *password, MediaSourceCallBack callback, void *userPtr, 
+int	CChannelManager::OpenStream(const char* url, HWND hWnd, RENDER_FORMAT renderFormat, int _rtpovertcp, const char* username, const char* password, MediaSourceCallBack callback, void* userPtr,
 	bool bHardDecode, char* startTime, char* endTime, float fScale)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
-	if ( (NULL == url) || (0==strcmp(url, "\0")))		return -1;
+	if ((NULL == url) || (0 == strcmp(url, "\0")))		return -1;
 
 	int iNvsIdx = -1;
 	EnterCriticalSection(&crit);
 	do
 	{
-		for (int i=0; i<MAX_CHANNEL_NUM; i++)
+		for (int i = 0; i < MAX_CHANNEL_NUM; i++)
 		{
 			if (NULL == pRealtimePlayThread[i].nvsHandle)
 			{
@@ -123,18 +123,18 @@ int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT render
 
 		EasyRTSP_Init(&pRealtimePlayThread[iNvsIdx].nvsHandle);
 		if (NULL == pRealtimePlayThread[iNvsIdx].nvsHandle)		break;	//退出while循环
-		
-		memcpy(pRealtimePlayThread[iNvsIdx].url, url, strlen(url)+1);
+
+		memcpy(pRealtimePlayThread[iNvsIdx].url, url, strlen(url) + 1);
 		pRealtimePlayThread[iNvsIdx].pCallback = callback;
 		pRealtimePlayThread[iNvsIdx].pUserPtr = userPtr;
 
 		unsigned int mediaType = MEDIA_TYPE_VIDEO | MEDIA_TYPE_AUDIO;
 		EasyRTSP_SetCallback(pRealtimePlayThread[iNvsIdx].nvsHandle, __RTSPSourceCallBack);
-		EasyRTSP_OpenStream(pRealtimePlayThread[iNvsIdx].nvsHandle, iNvsIdx, (char*)url, 
-			_rtpovertcp==0x01?EASY_RTP_OVER_TCP:EASY_RTP_OVER_UDP, mediaType, 
-			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000,0, 0x00, 0);
+		EasyRTSP_OpenStream(pRealtimePlayThread[iNvsIdx].nvsHandle, iNvsIdx, (char*)url,
+			_rtpovertcp == 0x01 ? EASY_RTP_OVER_TCP : EASY_RTP_OVER_UDP, mediaType,
+			(char*)username, (char*)password, (int*)&pRealtimePlayThread[iNvsIdx], 1000, 0, 0x00, 0);
 
-		for (int nI=0; nI<MAX_DECODER_NUM; nI++)
+		for (int nI = 0; nI < MAX_DECODER_NUM; nI++)
 		{
 			pRealtimePlayThread[iNvsIdx].decoderObj[nI].bHardDecode = bHardDecode;
 		}
@@ -143,7 +143,7 @@ int	CChannelManager::OpenStream(const char *url, HWND hWnd, RENDER_FORMAT render
 		pRealtimePlayThread[iNvsIdx].renderFormat = (D3D_SUPPORT_FORMAT)renderFormat;
 		CreatePlayThread(&pRealtimePlayThread[iNvsIdx]);
 
-	}while (0);
+	} while (0);
 	LeaveCriticalSection(&crit);
 
 	if (iNvsIdx >= 0)	iNvsIdx += CHANNEL_ID_GAIN;
@@ -155,7 +155,7 @@ void CChannelManager::CloseStream(int channelId)
 	if (NULL == pRealtimePlayThread)			return;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return;
 
 	EnterCriticalSection(&crit);
 	// 如果正在录像，则关闭录像 [1/27/2018 SwprdTwelve]
@@ -179,19 +179,19 @@ int CChannelManager::SetPlaybackSpeed(int channelId, float fSpeed)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 	return 0;//EasyRTSP_SetStreamSpeed(pRealtimePlayThread[iNvsIdx].nvsHandle, fSpeed);
 }
 
 
 /* 跳转播放时间 */
 //Easy_API int Easy_APICALL EasyRTSP_SeekStream(Easy_RTSP_Handle handle, const char *playTime);
-int CChannelManager::PlaybackSeek(int channelId, const char *playTime)
+int CChannelManager::PlaybackSeek(int channelId, const char* playTime)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	return 0;//EasyRTSP_SeekStream(pRealtimePlayThread[iNvsIdx].nvsHandle, playTime);
 }
@@ -203,7 +203,7 @@ int CChannelManager::PlaybackPause(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	return 0;//EasyRTSP_PauseStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
 }
@@ -216,7 +216,7 @@ int CChannelManager::PlaybackResume(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	return 0;//EasyRTSP_ResumeStream(pRealtimePlayThread[iNvsIdx].nvsHandle);
 }
@@ -228,7 +228,7 @@ int	CChannelManager::ShowStatisticalInfo(int channelId, int _show)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].showStatisticalInfo = _show;
 	return 0;
@@ -239,26 +239,26 @@ int	CChannelManager::ShowOSD(int channelId, int _show, EASY_PALYER_OSD osd)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].showOSD = _show;
 	//memcpy(&pRealtimePlayThread[iNvsIdx].osd,  &osd, sizeof(EASY_PALYER_OSD));
 	if (_show)
 	{
-		pRealtimePlayThread[iNvsIdx].osd.alpha = osd.alpha ;
-		if ( pRealtimePlayThread[iNvsIdx].osd.size != osd.size )
+		pRealtimePlayThread[iNvsIdx].osd.alpha = osd.alpha;
+		if (pRealtimePlayThread[iNvsIdx].osd.size != osd.size)
 		{
 			pRealtimePlayThread[iNvsIdx].resetD3d = true;
 		}
 		pRealtimePlayThread[iNvsIdx].osd.size = osd.size;
 		pRealtimePlayThread[iNvsIdx].osd.color = osd.color;
-		pRealtimePlayThread[iNvsIdx].osd.rect.left = osd.rect.left ;
+		pRealtimePlayThread[iNvsIdx].osd.rect.left = osd.rect.left;
 		pRealtimePlayThread[iNvsIdx].osd.rect.right = osd.rect.right;
 		pRealtimePlayThread[iNvsIdx].osd.rect.top = osd.rect.top;
 		pRealtimePlayThread[iNvsIdx].osd.rect.bottom = osd.rect.bottom;
 		pRealtimePlayThread[iNvsIdx].osd.shadowcolor = osd.shadowcolor;
 
-		strcpy(pRealtimePlayThread[iNvsIdx].osd.stOSD , osd.stOSD );
+		strcpy(pRealtimePlayThread[iNvsIdx].osd.stOSD, osd.stOSD);
 	}
 
 	return 0;
@@ -269,15 +269,15 @@ int	CChannelManager::GetMediaInfo(int channelId, MEDIA_INFO& mediaInfo)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
-	mediaInfo.video_codec = pRealtimePlayThread[iNvsIdx].frameinfo.video_codec ;
-	mediaInfo.fps = pRealtimePlayThread[iNvsIdx].frameinfo.fps		;
-	mediaInfo.width = pRealtimePlayThread[iNvsIdx].frameinfo.width	;
-	mediaInfo.height = pRealtimePlayThread[iNvsIdx].frameinfo.height  ;
-	mediaInfo.audio_codec = pRealtimePlayThread[iNvsIdx].frameinfo.audio_codec ;
-	mediaInfo.bits_per_sample = pRealtimePlayThread[iNvsIdx].frameinfo.bits_per_sample ;
-	mediaInfo.channels = pRealtimePlayThread[iNvsIdx].frameinfo.channels ;
+	mediaInfo.video_codec = pRealtimePlayThread[iNvsIdx].frameinfo.video_codec;
+	mediaInfo.fps = pRealtimePlayThread[iNvsIdx].frameinfo.fps;
+	mediaInfo.width = pRealtimePlayThread[iNvsIdx].frameinfo.width;
+	mediaInfo.height = pRealtimePlayThread[iNvsIdx].frameinfo.height;
+	mediaInfo.audio_codec = pRealtimePlayThread[iNvsIdx].frameinfo.audio_codec;
+	mediaInfo.bits_per_sample = pRealtimePlayThread[iNvsIdx].frameinfo.bits_per_sample;
+	mediaInfo.channels = pRealtimePlayThread[iNvsIdx].frameinfo.channels;
 	mediaInfo.sample_rate = pRealtimePlayThread[iNvsIdx].frameinfo.sample_rate;
 
 	return 0;
@@ -290,7 +290,7 @@ int	CChannelManager::SetFrameCache(int channelId, int _cache)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].frameCache = _cache;
 	return 0;
@@ -300,7 +300,7 @@ int	CChannelManager::SetShownToScale(int channelId, int ShownToScale)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].ShownToScale = ShownToScale;
 	return 0;
@@ -310,7 +310,7 @@ int	CChannelManager::SetDecodeType(int channelId, int _decodeKeyframeOnly)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].decodeKeyFrameOnly = _decodeKeyframeOnly;
 	return 0;
@@ -320,7 +320,7 @@ int	CChannelManager::SetRenderRect(int channelId, LPRECT lpSrcRect)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (NULL == lpSrcRect)	SetRectEmpty(&pRealtimePlayThread[iNvsIdx].rcSrcRender);
 	else					CopyRect(&pRealtimePlayThread[iNvsIdx].rcSrcRender, lpSrcRect);
@@ -332,7 +332,7 @@ int	CChannelManager::DrawLine(int channelId, LPRECT lpRect)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (NULL == lpRect)		memset(&pRealtimePlayThread[iNvsIdx].d3d9Line, 0x00, sizeof(D3D9_LINE));
 	else
@@ -340,7 +340,7 @@ int	CChannelManager::DrawLine(int channelId, LPRECT lpRect)
 		memset(&pRealtimePlayThread[iNvsIdx].d3d9Line, 0x00, sizeof(D3D9_LINE));
 		pRealtimePlayThread[iNvsIdx].d3d9Line.dwColor = RGB(0x0F, 0xF0, 0x00);
 		pRealtimePlayThread[iNvsIdx].d3d9Line.pNodes[0].x = lpRect->left;
-		pRealtimePlayThread[iNvsIdx].d3d9Line.pNodes[0].y  = lpRect->top;
+		pRealtimePlayThread[iNvsIdx].d3d9Line.pNodes[0].y = lpRect->top;
 
 		pRealtimePlayThread[iNvsIdx].d3d9Line.pNodes[1].x = lpRect->right;
 		pRealtimePlayThread[iNvsIdx].d3d9Line.pNodes[1].y = lpRect->top;
@@ -361,7 +361,7 @@ int		CChannelManager::SetDragStartPoint(int channelId, POINT pt)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (pRealtimePlayThread[iNvsIdx].renderFormat == GDI_FORMAT_RGB24)
 	{
@@ -378,7 +378,7 @@ int		CChannelManager::SetDragEndPoint(int channelId, POINT pt)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (pRealtimePlayThread[iNvsIdx].renderFormat == GDI_FORMAT_RGB24)
 	{
@@ -395,7 +395,7 @@ int		CChannelManager::ResetDragPoint(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (pRealtimePlayThread[iNvsIdx].renderFormat == GDI_FORMAT_RGB24)
 	{
@@ -427,15 +427,15 @@ int	CChannelManager::PlaySound(int channelId)
 	if (pAudioPlayThread->channelId != iNvsIdx)
 	{
 		pAudioPlayThread->channelId = iNvsIdx;//channelId;
-	
+
 		if (NULL != pAudioPlayThread->pSoundPlayer)
 		{
 			pAudioPlayThread->pSoundPlayer->Close();
 		}
 
-		pAudioPlayThread->audiochannels	=	0;
-		pAudioPlayThread->samplerate	=	0;
-		pAudioPlayThread->bitpersample	=	0;
+		pAudioPlayThread->audiochannels = 0;
+		pAudioPlayThread->samplerate = 0;
+		pAudioPlayThread->bitpersample = 0;
 		ret = 0;
 	}
 
@@ -449,7 +449,7 @@ int	CChannelManager::StopSound()
 	{
 		pAudioPlayThread->pSoundPlayer->Close();
 	}
-	pAudioPlayThread->audiochannels  = 0;
+	pAudioPlayThread->audiochannels = 0;
 	pAudioPlayThread->channelId = -1;
 	return 0;
 }
@@ -467,13 +467,13 @@ void CChannelManager::ClearAllSoundData()
 	}
 }
 
-void CChannelManager::CreateRecordThread(PLAY_THREAD_OBJ	*_pPlayThread)
+void CChannelManager::CreateRecordThread(PLAY_THREAD_OBJ* _pPlayThread)
 {
 	if (_pPlayThread->recordThread.flag == 0x00)
 	{
 		_pPlayThread->recordThread.flag = 0x01;
 		_pPlayThread->recordThread.hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpRecordThread, _pPlayThread, 0, NULL);
-		while (_pPlayThread->recordThread.flag!=0x02 && _pPlayThread->recordThread.flag!=0x00)	{Sleep(100);}
+		while (_pPlayThread->recordThread.flag != 0x02 && _pPlayThread->recordThread.flag != 0x00) { Sleep(100); }
 		if (NULL != _pPlayThread->recordThread.hThread)
 		{
 			SetThreadPriority(_pPlayThread->recordThread.hThread, THREAD_PRIORITY_HIGHEST);
@@ -482,7 +482,7 @@ void CChannelManager::CreateRecordThread(PLAY_THREAD_OBJ	*_pPlayThread)
 	}
 }
 
-void CChannelManager::CloseRecordThread(PLAY_THREAD_OBJ*_pPlayThread)
+void CChannelManager::CloseRecordThread(PLAY_THREAD_OBJ* _pPlayThread)
 {
 	if (NULL == _pPlayThread)		return;
 
@@ -493,7 +493,7 @@ void CChannelManager::CloseRecordThread(PLAY_THREAD_OBJ*_pPlayThread)
 		_TRACE("关闭录像线程[%d]\n", _pPlayThread->channelId);
 #endif
 		_pPlayThread->recordThread.flag = 0x03;
-		while (_pPlayThread->recordThread.flag!=0x00)	{ Sleep(100); }
+		while (_pPlayThread->recordThread.flag != 0x00) { Sleep(100); }
 	}
 	if (NULL != _pPlayThread->recordThread.hThread)
 	{
@@ -502,7 +502,7 @@ void CChannelManager::CloseRecordThread(PLAY_THREAD_OBJ*_pPlayThread)
 	}
 }
 
-void CChannelManager::CreatePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
+void CChannelManager::CreatePlayThread(PLAY_THREAD_OBJ* _pPlayThread)
 {
 	if (NULL == _pPlayThread)		return;
 
@@ -512,7 +512,7 @@ void CChannelManager::CreatePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		_pPlayThread->decodeThread.flag = 0x01;
 
 		_pPlayThread->decodeThread.hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpDecodeThread, _pPlayThread, 0, NULL);
-		while (_pPlayThread->decodeThread.flag!=0x02 && _pPlayThread->decodeThread.flag!=0x00)	{Sleep(100);}
+		while (_pPlayThread->decodeThread.flag != 0x02 && _pPlayThread->decodeThread.flag != 0x00) { Sleep(100); }
 		if (NULL != _pPlayThread->decodeThread.hThread)
 		{
 			SetThreadPriority(_pPlayThread->decodeThread.hThread, THREAD_PRIORITY_HIGHEST);
@@ -522,7 +522,7 @@ void CChannelManager::CreatePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 	{
 		_pPlayThread->displayThread.flag = 0x01;
 		_pPlayThread->displayThread.hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpDisplayThread, _pPlayThread, 0, NULL);
-		while (_pPlayThread->displayThread.flag!=0x02 && _pPlayThread->displayThread.flag!=0x00)	{Sleep(100);}
+		while (_pPlayThread->displayThread.flag != 0x02 && _pPlayThread->displayThread.flag != 0x00) { Sleep(100); }
 		if (NULL != _pPlayThread->displayThread.hThread)
 		{
 			SetThreadPriority(_pPlayThread->displayThread.hThread, THREAD_PRIORITY_HIGHEST);
@@ -530,7 +530,7 @@ void CChannelManager::CreatePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 	}
 }
 
-void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
+void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ* _pPlayThread)
 {
 	if (NULL == _pPlayThread)		return;
 
@@ -541,14 +541,14 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		_TRACE("关闭播放线程[%d]\n", _pPlayThread->channelId);
 #endif
 		_pPlayThread->decodeThread.flag = 0x03;
-		while (_pPlayThread->decodeThread.flag!=0x00)	{Sleep(100);}
+		while (_pPlayThread->decodeThread.flag != 0x00) { Sleep(100); }
 	}
 	if (NULL != _pPlayThread->decodeThread.hThread)
 	{
 		CloseHandle(_pPlayThread->decodeThread.hThread);
 		_pPlayThread->decodeThread.hThread = NULL;
 	}
-	for (int i=0; i<MAX_DECODER_NUM; i++)		//关闭解码器
+	for (int i = 0; i < MAX_DECODER_NUM; i++)		//关闭解码器
 	{
 		if (NULL != _pPlayThread->decoderObj[i].ffDecoder)
 		{
@@ -569,14 +569,14 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 	if (_pPlayThread->displayThread.flag != 0x00)
 	{
 		_pPlayThread->displayThread.flag = 0x03;
-		while (_pPlayThread->displayThread.flag!=0x00)	{Sleep(100);}
+		while (_pPlayThread->displayThread.flag != 0x00) { Sleep(100); }
 	}
 	if (NULL != _pPlayThread->displayThread.hThread)
 	{
 		CloseHandle(_pPlayThread->displayThread.hThread);
 		_pPlayThread->displayThread.hThread = NULL;
 	}
-	for (int i=0; i<MAX_YUV_FRAME_NUM; i++)
+	for (int i = 0; i < MAX_YUV_FRAME_NUM; i++)
 	{
 		__DELETE_ARRAY(_pPlayThread->yuvFrame[i].pYuvBuf);
 		memset(&_pPlayThread->yuvFrame[i].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
@@ -591,11 +591,11 @@ void CChannelManager::ClosePlayThread(PLAY_THREAD_OBJ	*_pPlayThread)
 		_pPlayThread->pAVQueue = NULL;
 	}
 	_pPlayThread->initQueue = 0x00;
-	_pPlayThread->frameCache	=	NULL;
+	_pPlayThread->frameCache = NULL;
 
 	memset(&_pPlayThread->decodeThread, 0x00, sizeof(THREAD_OBJ));
 	memset(&_pPlayThread->displayThread, 0x00, sizeof(THREAD_OBJ));
-	_pPlayThread->hWnd	=	NULL;
+	_pPlayThread->hWnd = NULL;
 }
 
 
@@ -604,17 +604,17 @@ int	CChannelManager::SetAudioParams(unsigned int _channel, unsigned int _sampler
 {
 	if (NULL == pAudioPlayThread)		return -1;
 
-	WAVEFORMATEX wfx = {0,};
+	WAVEFORMATEX wfx = { 0, };
 	wfx.cbSize = sizeof(WAVEFORMATEX);
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
 	wfx.nSamplesPerSec = _samplerate;
 	wfx.wBitsPerSample = _bitpersample;
 	wfx.nChannels = _channel;
-	wfx.nBlockAlign =  wfx.nChannels * ( wfx.wBitsPerSample / 8 );//(wfx.wBitsPerSample*wfx.nChannels)>>3; //wfx.nChannels * ( wfx.wBitsPerSample / 8 );
+	wfx.nBlockAlign = wfx.nChannels * (wfx.wBitsPerSample / 8);//(wfx.wBitsPerSample*wfx.nChannels)>>3; //wfx.nChannels * ( wfx.wBitsPerSample / 8 );
 	wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-	wfx.nAvgBytesPerSec	= wfx.nSamplesPerSec * wfx.nChannels * wfx.wBitsPerSample / 8;
-	wfx.nBlockAlign		= wfx.nChannels * wfx.wBitsPerSample / 8;
+	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nChannels * wfx.wBitsPerSample / 8;
+	wfx.nBlockAlign = wfx.nChannels * wfx.wBitsPerSample / 8;
 
 	if (NULL == pAudioPlayThread->pSoundPlayer)
 	{
@@ -625,108 +625,108 @@ int	CChannelManager::SetAudioParams(unsigned int _channel, unsigned int _sampler
 		pAudioPlayThread->pSoundPlayer->Close();
 		pAudioPlayThread->pSoundPlayer->Open(wfx);
 	}
-	pAudioPlayThread->audiochannels	=	_channel;
+	pAudioPlayThread->audiochannels = _channel;
 	return 0;
 }
 
-void ParseDecoder2Render(int *_decoder, int _width, int _height, int renderFormat, int *yuvsize)
+void ParseDecoder2Render(int* _decoder, int _width, int _height, int renderFormat, int* yuvsize)
 {
 	if (NULL == _decoder)		return;
 	int nDecoder = 0x00;
 	int nYUVSize = 0x00;
 	if (renderFormat == D3D_FORMAT_UYVY)
 	{
-		nDecoder	=	17;	//PIX_FMT_UYVY422
-		nYUVSize	=	_width*_height*2+1;
+		nDecoder = 17;	//PIX_FMT_UYVY422
+		nYUVSize = _width * _height * 2 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_YV12)
 	{
-		nDecoder	=	0;//OUTPUT_PIX_FMT_YUV420P;
-		nYUVSize	=	_width*_height*3/2+1;
+		nDecoder = 0;//OUTPUT_PIX_FMT_YUV420P;
+		nYUVSize = _width * _height * 3 / 2 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_YUY2)
 	{
-		nDecoder	=	1;//OUTPUT_PIX_FMT_YUV422;
-		nYUVSize	=	_width*_height*2+1;
+		nDecoder = 1;//OUTPUT_PIX_FMT_YUV422;
+		nYUVSize = _width * _height * 2 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_RGB565)				//23 ok
 	{
-		nDecoder	=	44;
-		nYUVSize	=	_width*_height*2+1;
+		nDecoder = 44;
+		nYUVSize = _width * _height * 2 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_RGB555)				//23 ok
 	{
-		nDecoder	=	46;
-		nYUVSize	=	_width*_height*2+1;
+		nDecoder = 46;
+		nYUVSize = _width * _height * 2 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_X8R8G8B8)
 	{
-		nDecoder	=	30;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 30;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 	else if (renderFormat == D3D_FORMAT_A8R8G8B8)			//21 ok
 	{
-		nDecoder	=	30;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 30;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 	else if (renderFormat == (D3D_SUPPORT_FORMAT)22)		//22	ok
 	{
-		nDecoder	=	28;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 28;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 	else if (renderFormat == (D3D_SUPPORT_FORMAT)1498831189)
 	{
-		nDecoder	=	17;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 17;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 	else if (renderFormat == (D3D_SUPPORT_FORMAT)36)
 	{
-		nDecoder	=	32;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 32;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 	else if (renderFormat == (D3D_SUPPORT_FORMAT)20)
 	{
-		nDecoder	=	3;
-		nYUVSize	=	_width*_height*3+1;
+		nDecoder = 3;
+		nYUVSize = _width * _height * 3 + 1;
 	}
 	else if (renderFormat == GDI_FORMAT_RGB24)
 	{
-		nDecoder	=	3;
-		nYUVSize	=	_width*_height*3+1;
+		nDecoder = 3;
+		nYUVSize = _width * _height * 3 + 1;
 	}
 	else
 	{
-		nDecoder	=	28;
-		nYUVSize	=	_width*_height*4+1;
+		nDecoder = 28;
+		nYUVSize = _width * _height * 4 + 1;
 	}
 
 	if (NULL != _decoder)	*_decoder = nDecoder;
-	if (NULL != yuvsize)	*yuvsize  = nYUVSize;
+	if (NULL != yuvsize)	*yuvsize = nYUVSize;
 }
 
-DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, MEDIA_FRAME_INFO *_frameinfo)
+DECODER_OBJ* GetDecoder(PLAY_THREAD_OBJ* _pPlayThread, unsigned int mediaType, MEDIA_FRAME_INFO* _frameinfo)
 {
-	if (NULL == _pPlayThread || NULL==_frameinfo)									return NULL;
+	if (NULL == _pPlayThread || NULL == _frameinfo)									return NULL;
 
 
 	int iIdx = -1;
 	int iExist = -1;
-	for (int i=0; i<MAX_DECODER_NUM; i++)
+	for (int i = 0; i < MAX_DECODER_NUM; i++)
 	{
 		if (MEDIA_TYPE_VIDEO == mediaType)
 		{
-			if (_frameinfo->width < 1 || _frameinfo->height<1 || _frameinfo->codec<1)		return NULL;
+			if (_frameinfo->width < 1 || _frameinfo->height < 1 || _frameinfo->codec < 1)		return NULL;
 
 			if (_pPlayThread->decoderObj[i].codec.vidCodec == 0x00 &&
 				_pPlayThread->decoderObj[i].codec.width == 0x00 &&
-				_pPlayThread->decoderObj[i].codec.height== 0x00 && iIdx==-1)
+				_pPlayThread->decoderObj[i].codec.height == 0x00 && iIdx == -1)
 			{
 				iIdx = i;
 			}
 
 			if (_pPlayThread->decoderObj[i].codec.vidCodec == _frameinfo->codec &&
 				_pPlayThread->decoderObj[i].codec.width == _frameinfo->width &&
-				_pPlayThread->decoderObj[i].codec.height== _frameinfo->height)
+				_pPlayThread->decoderObj[i].codec.height == _frameinfo->height)
 			{
 				if (NULL == _pPlayThread->decoderObj[i].ffDecoder)
 				{
@@ -756,8 +756,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				{
 					//硬件解码初始化
 					_pPlayThread->decoderObj[iIdx].pIntelDecoder = Create_IntelHardDecoder();
-					int nRet =_pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
-					if (nRet<0)
+					int nRet = _pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
+					if (nRet < 0)
 					{
 						Release_IntelHardDecoder(_pPlayThread->decoderObj[iIdx].pIntelDecoder);
 						_pPlayThread->decoderObj[iIdx].pIntelDecoder = NULL;
@@ -766,14 +766,14 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				return &_pPlayThread->decoderObj[i];
 			}
 
-			if (iIdx>=0)
+			if (iIdx >= 0)
 			{
 				if (NULL == _pPlayThread->decoderObj[i].pIntelDecoder && _pPlayThread->decoderObj[i].bHardDecode)
 				{
 					//硬件解码初始化
 					_pPlayThread->decoderObj[iIdx].pIntelDecoder = Create_IntelHardDecoder();
-					int nRet =_pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
-					if (nRet<0)
+					int nRet = _pPlayThread->decoderObj[iIdx].pIntelDecoder->Init(_pPlayThread->hWnd);
+					if (nRet < 0)
 					{
 						Release_IntelHardDecoder(_pPlayThread->decoderObj[iIdx].pIntelDecoder);
 						_pPlayThread->decoderObj[iIdx].pIntelDecoder = NULL;
@@ -801,16 +801,16 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
 					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
 
-					if (NULL != _pPlayThread->decoderObj[iIdx].ffDecoder )
+					if (NULL != _pPlayThread->decoderObj[iIdx].ffDecoder)
 					{
 						EnterCriticalSection(&_pPlayThread->crit);
-						_pPlayThread->resetD3d	=	true;
+						_pPlayThread->resetD3d = true;
 						LeaveCriticalSection(&_pPlayThread->crit);
 
-						_pPlayThread->decoderObj[iIdx].codec.vidCodec	= _frameinfo->codec;
-						_pPlayThread->decoderObj[iIdx].codec.width	= _frameinfo->width;
+						_pPlayThread->decoderObj[iIdx].codec.vidCodec = _frameinfo->codec;
+						_pPlayThread->decoderObj[iIdx].codec.width = _frameinfo->width;
 						_pPlayThread->decoderObj[iIdx].codec.height = _frameinfo->height;
-						
+
 						return &_pPlayThread->decoderObj[iIdx];
 					}
 					else
@@ -838,8 +838,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
 					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
 					//FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[iIdx].ffDecoder, _frameinfo->width, _frameinfo->height, _frameinfo->codec, nDecoder);
-					_pPlayThread->decoderObj[iIdx].codec.vidCodec	= _frameinfo->codec;
-					_pPlayThread->decoderObj[iIdx].codec.width	= _frameinfo->width;
+					_pPlayThread->decoderObj[iIdx].codec.vidCodec = _frameinfo->codec;
+					_pPlayThread->decoderObj[iIdx].codec.width = _frameinfo->width;
 					_pPlayThread->decoderObj[iIdx].codec.height = _frameinfo->height;
 
 					return &_pPlayThread->decoderObj[iIdx];
@@ -848,18 +848,18 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 		}
 		else if (MEDIA_TYPE_AUDIO == mediaType)
 		{
-			if (_frameinfo->sample_rate < 1 || _frameinfo->channels<1 || _frameinfo->codec<1)		return NULL;
+			if (_frameinfo->sample_rate < 1 || _frameinfo->channels < 1 || _frameinfo->codec < 1)		return NULL;
 
 			if (_pPlayThread->decoderObj[i].codec.audCodec == 0x00 &&
 				_pPlayThread->decoderObj[i].codec.samplerate == 0x00 &&
-				_pPlayThread->decoderObj[i].codec.channels== 0x00 && iIdx==-1)
+				_pPlayThread->decoderObj[i].codec.channels == 0x00 && iIdx == -1)
 			{
 				iIdx = i;
 			}
 
 			if (_pPlayThread->decoderObj[i].codec.audCodec == _frameinfo->codec &&
 				_pPlayThread->decoderObj[i].codec.samplerate == _frameinfo->sample_rate &&
-				_pPlayThread->decoderObj[i].codec.channels== _frameinfo->channels)
+				_pPlayThread->decoderObj[i].codec.channels == _frameinfo->channels)
 			{
 				if (NULL == _pPlayThread->decoderObj[i].ffDecoder)
 				{
@@ -871,7 +871,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				return &_pPlayThread->decoderObj[i];
 			}
 
-			if (iIdx>=0)
+			if (iIdx >= 0)
 			{
 				if (NULL == _pPlayThread->decoderObj[iIdx].ffDecoder)
 				{
@@ -880,8 +880,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 
 					if (NULL != _pPlayThread->decoderObj[iIdx].ffDecoder)
 					{
-						_pPlayThread->decoderObj[iIdx].codec.audCodec	= _frameinfo->codec;
-						_pPlayThread->decoderObj[iIdx].codec.samplerate	= _frameinfo->sample_rate;
+						_pPlayThread->decoderObj[iIdx].codec.audCodec = _frameinfo->codec;
+						_pPlayThread->decoderObj[iIdx].codec.samplerate = _frameinfo->sample_rate;
 						_pPlayThread->decoderObj[iIdx].codec.channels = _frameinfo->channels;
 
 						return &_pPlayThread->decoderObj[iIdx];
@@ -894,8 +894,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				else
 				{
 					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
-					_pPlayThread->decoderObj[iIdx].codec.audCodec	= _frameinfo->codec;
-					_pPlayThread->decoderObj[iIdx].codec.samplerate	= _frameinfo->sample_rate;
+					_pPlayThread->decoderObj[iIdx].codec.audCodec = _frameinfo->codec;
+					_pPlayThread->decoderObj[iIdx].codec.samplerate = _frameinfo->sample_rate;
 					_pPlayThread->decoderObj[iIdx].codec.channels = _frameinfo->channels;
 
 					return &_pPlayThread->decoderObj[iIdx];
@@ -907,12 +907,12 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 	return NULL;
 }
 
-LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
+LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread(LPVOID _pParam)
 {
-	PLAY_THREAD_OBJ *pThread = (PLAY_THREAD_OBJ*)_pParam;
+	PLAY_THREAD_OBJ* pThread = (PLAY_THREAD_OBJ*)_pParam;
 	if (NULL == pThread)			return 0;
 
-	pThread->decodeThread.flag	=	0x02;
+	pThread->decodeThread.flag = 0x02;
 
 #ifdef _DEBUG
 	_TRACE("解码线程[%d]已启动. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
@@ -922,7 +922,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 	if (NULL != pThread->yuvFrame)
 	{
-		for (int i=0; i<MAX_YUV_FRAME_NUM; i++)
+		for (int i = 0; i < MAX_YUV_FRAME_NUM; i++)
 		{
 			memset(&pThread->yuvFrame[i].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 		}
@@ -930,13 +930,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 	unsigned int channelid = 0;
 	unsigned int mediatype = 0;
 	MEDIA_FRAME_INFO	frameinfo;
-	int buf_size = 1024*1024;
+	int buf_size = 1024 * 1024;
 	//int buf_size = 1920*1080*2;
 
-	char *pbuf = new char[buf_size];
+	char* pbuf = new char[buf_size];
 	if (NULL == pbuf)
 	{
-		pThread->decodeThread.flag	=	0x00;
+		pThread->decodeThread.flag = 0x00;
 		return 0;
 	}
 	memset(pbuf, 0x00, buf_size);
@@ -945,23 +945,23 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 	char* m_pAACEncBufer = new char[buf_size];
 	memset(m_pAACEncBufer, 0x00, buf_size);
 
-	pThread->decodeYuvIdx	=	0;
+	pThread->decodeYuvIdx = 0;
 	memset(&frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 
 	//#define AVCODEC_MAX_AUDIO_FRAME_SIZE	(192000)
 #define AVCODEC_MAX_AUDIO_FRAME_SIZE	(64000)
 	int audbuf_len = (AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2;
-	unsigned char *audio_buf = new unsigned char[audbuf_len+1];
+	unsigned char* audio_buf = new unsigned char[audbuf_len + 1];
 	memset(audio_buf, 0x00, audbuf_len);
 
-	FILE *fES = NULL;
+	FILE* fES = NULL;
 	char fH264Name[512];
 
 	while (1)
 	{
 		if (pThread->decodeThread.flag == 0x03)		break;
 
-		if (pThread->initQueue == 0x00 || NULL==pThread->pAVQueue)
+		if (pThread->initQueue == 0x00 || NULL == pThread->pAVQueue)
 		{
 			Sleep(1);
 			continue;
@@ -976,7 +976,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			continue;
 		}
 
-//#ifdef _DEBUG
+		//#ifdef _DEBUG
 #if 0
 		if (fES == NULL)
 		{
@@ -993,10 +993,10 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 //#ifdef _DEBUG
 #if 0
-         if (NULL != fES)
-            {
-                fwrite(pbuf, 1, frameinfo.length, fES);
-            }
+			if (NULL != fES)
+			{
+				fwrite(pbuf, 1, frameinfo.length, fES);
+			}
 #endif
 
 			//_TRACE("DECODE queue: %d\n", pChannelObj->pQueue->pQueHeader->videoframes);
@@ -1015,18 +1015,18 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				pThread->rtpTimestamp = 0;
 				pThread->decodeYuvIdx = 0;
 				pThread->findKeyframe = 0x01;
-				for (int i=0; i<MAX_YUV_FRAME_NUM; i++)
+				for (int i = 0; i < MAX_YUV_FRAME_NUM; i++)
 				{
 					memset(&pThread->yuvFrame[i].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 				}
 				LeaveCriticalSection(&pThread->crit);
 			}
 
-			if ( (pThread->findKeyframe==0x01) && (frameinfo.type==EASY_SDK_VIDEO_FRAME_I) )
+			if ((pThread->findKeyframe == 0x01) && (frameinfo.type == EASY_SDK_VIDEO_FRAME_I))
 			{
 				pThread->findKeyframe = 0x00;
 			}
-			else if (pThread->findKeyframe==0x01)
+			else if (pThread->findKeyframe == 0x01)
 			{
 #ifdef _DEBUG
 				//_TRACE("[ch%d]Find Keyframe..\n", pThread->renderCh);
@@ -1035,7 +1035,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				continue;
 			}
 
-			DECODER_OBJ *pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_VIDEO, &frameinfo);		//获取相应的解码器
+			DECODER_OBJ* pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_VIDEO, &frameinfo);		//获取相应的解码器
 			if (NULL == pDecoderObj)
 			{
 #ifdef _DEBUG
@@ -1048,7 +1048,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			}
 
 			//如果已申请的内存小于当前需要的内存大小,则重新申请
-			if ( (pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize < pDecoderObj->yuv_size) && (NULL != pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf))
+			if ((pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize < pDecoderObj->yuv_size) && (NULL != pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf))
 			{
 				__DELETE_ARRAY(pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf);
 			}
@@ -1070,68 +1070,68 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			if (pThread->decodeThread.flag == 0x03)		break;
 
 			//开启录像
-			if (pThread->manuRecording == 0x01 && NULL==pThread->m_pMP4Writer && frameinfo.type==EASY_SDK_VIDEO_FRAME_I)//开启录制
+			if (pThread->manuRecording == 0x01 && NULL == pThread->m_pMP4Writer && frameinfo.type == EASY_SDK_VIDEO_FRAME_I)//开启录制
 			{
 				//EnterCriticalSection(&pThread->critRecQueue);				
 				if (!pThread->m_pMP4Writer)
 				{
 					pThread->m_pMP4Writer = new EasyMP4Writer();
 				}
-// 				unsigned int timestamp = (unsigned int)time(NULL);
-// 				time_t tt = timestamp;
-// 				struct tm *_time = localtime(&tt);
-// 				char szTime[64] = {0,};
-// 				strftime(szTime, 32, "%Y%m%d%H%M%S", _time);
+				// 				unsigned int timestamp = (unsigned int)time(NULL);
+				// 				time_t tt = timestamp;
+				// 				struct tm *_time = localtime(&tt);
+				// 				char szTime[64] = {0,};
+				// 				strftime(szTime, 32, "%Y%m%d%H%M%S", _time);
 
 				int nRecordPathLen = strlen(pThread->manuRecordingPath);
-				if (nRecordPathLen==0 || (pThread->manuRecordingPath[nRecordPathLen-1] != '/' && pThread->manuRecordingPath[nRecordPathLen-1] != '\\') )
+				if (nRecordPathLen == 0 || (pThread->manuRecordingPath[nRecordPathLen - 1] != '/' && pThread->manuRecordingPath[nRecordPathLen - 1] != '\\'))
 				{
 					pThread->manuRecordingPath[nRecordPathLen] = '\\';
 				}
 				string strRecordPath = pThread->manuRecordingPath;
 				strRecordPath += "Record\\";
 
-// 				char sFileName[512] = {0,};
-// 				sprintf(sFileName, "%sch%d_%s.mp4", pThread->manuRecordingPath, pThread->channelId, szTime);
-				 
-				char sFileName[64] = {0,};
+				// 				char sFileName[512] = {0,};
+				// 				sprintf(sFileName, "%sch%d_%s.mp4", pThread->manuRecordingPath, pThread->channelId, szTime);
+
+				char sFileName[64] = { 0, };
 				sprintf(sFileName, "channel%d", channelid);
 
 				char subDir[64] = { 0 };
 				sprintf(subDir, "%s\\", sFileName);
 
 				//自定义Duration
-				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, sFileName, 30*60, 1))
+				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, sFileName, 30 * 60, 1))
 				{
 					delete pThread->m_pMP4Writer;
 					pThread->m_pMP4Writer = NULL;
 					//return -1;
-				}		
+				}
 				//LeaveCriticalSection(&pThread->critRecQueue);
 			}
-			if ( NULL != pThread->m_pMP4Writer)//录制
+			if (NULL != pThread->m_pMP4Writer)//录制
 			{
-				if (pThread->manuRecording == 0x01 )//继续MP4写数据
+				if (pThread->manuRecording == 0x01)//继续MP4写数据
 				{
 #if 0
-					pThread->m_pMP4Writer->WriteMp4File((unsigned char*)pbuf, frameinfo.length, 
-						(frameinfo.type==EASY_SDK_VIDEO_FRAME_I)?true:false, 
-						frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000, frameinfo.width, frameinfo.height);
+					pThread->m_pMP4Writer->WriteMp4File((unsigned char*)pbuf, frameinfo.length,
+						(frameinfo.type == EASY_SDK_VIDEO_FRAME_I) ? true : false,
+						frameinfo.timestamp_sec * 1000 + frameinfo.timestamp_usec / 1000, frameinfo.width, frameinfo.height);
 #endif
-// 					EnterCriticalSection(&pThread->critRecQueue);				
-// 					RECORD_FRAME_INFO *pFrameInfo;
-// 					pFrameInfo=new RECORD_FRAME_INFO;
-// 					pFrameInfo->pDataBuffer=new unsigned char[frameinfo.length];
-// 					memcpy(pFrameInfo->pDataBuffer, pbuf, frameinfo.length);					
-// 					pFrameInfo->nBufSize=frameinfo.length;
-// 					pFrameInfo->bIsVideo=TRUE;
-// 					pFrameInfo->bKeyFrame = (frameinfo.type==EASY_SDK_VIDEO_FRAME_I)?true:false;
-// 					pFrameInfo->nID=channelid;	
-// 					memcpy(&pFrameInfo->mediaInfo, &frameinfo, sizeof(MEDIA_FRAME_INFO) );
-// 
-// 					pFrameInfo->nTimestamp=frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
-// 					pThread->frameRecQueue.push(pFrameInfo);
-// 					LeaveCriticalSection(&pThread->critRecQueue);
+					// 					EnterCriticalSection(&pThread->critRecQueue);				
+					// 					RECORD_FRAME_INFO *pFrameInfo;
+					// 					pFrameInfo=new RECORD_FRAME_INFO;
+					// 					pFrameInfo->pDataBuffer=new unsigned char[frameinfo.length];
+					// 					memcpy(pFrameInfo->pDataBuffer, pbuf, frameinfo.length);					
+					// 					pFrameInfo->nBufSize=frameinfo.length;
+					// 					pFrameInfo->bIsVideo=TRUE;
+					// 					pFrameInfo->bKeyFrame = (frameinfo.type==EASY_SDK_VIDEO_FRAME_I)?true:false;
+					// 					pFrameInfo->nID=channelid;	
+					// 					memcpy(&pFrameInfo->mediaInfo, &frameinfo, sizeof(MEDIA_FRAME_INFO) );
+					// 
+					// 					pFrameInfo->nTimestamp=frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
+					// 					pThread->frameRecQueue.push(pFrameInfo);
+					// 					LeaveCriticalSection(&pThread->critRecQueue);
 
 					if (NULL != pThread->pRecAVQueue)
 					{
@@ -1146,7 +1146,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			if (NULL != pThread->mp4cHandle)
 			{
 				//30fps * 60 seconds * 30 minutes  = 手动录像必须小于30分钟
-				if (pThread->vidFrameNum >= 30*60*30 || (pThread->manuRecording == 0x00) )
+				if (pThread->vidFrameNum >= 30 * 60 * 30 || (pThread->manuRecording == 0x00))
 				{
 					MP4C_CloseMp4File(pThread->mp4cHandle);
 					MP4C_Deinit(&pThread->mp4cHandle);
@@ -1155,16 +1155,16 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				}
 				else
 				{
-					pThread->vidFrameNum ++;
-					MP4C_AddFrame(pThread->mp4cHandle, MEDIA_TYPE_VIDEO, (unsigned char*)pbuf, frameinfo.length, frameinfo.type, frameinfo.timestamp_sec, frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000, frameinfo.fps);
+					pThread->vidFrameNum++;
+					MP4C_AddFrame(pThread->mp4cHandle, MEDIA_TYPE_VIDEO, (unsigned char*)pbuf, frameinfo.length, frameinfo.type, frameinfo.timestamp_sec, frameinfo.timestamp_sec * 1000 + frameinfo.timestamp_usec / 1000, frameinfo.fps);
 				}
 			}
-			else if (pThread->manuRecording == 0x01 && NULL==pThread->mp4cHandle)
+			else if (pThread->manuRecording == 0x01 && NULL == pThread->mp4cHandle)
 			{
 				unsigned int timestamp = (unsigned int)time(NULL);
 				time_t tt = timestamp;
-				struct tm *_time = localtime(&tt);
-				char szTime[64] = {0,};
+				struct tm* _time = localtime(&tt);
+				char szTime[64] = { 0, };
 				strftime(szTime, 32, "%Y%m%d %H%M%S", _time);
 
 				memset(pThread->manuRecordingFile, 0x00, sizeof(pThread->manuRecordingFile));
@@ -1174,7 +1174,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				MP4C_Init(&pThread->mp4cHandle);
 				MP4C_SetMp4VideoInfo(pThread->mp4cHandle, VIDEO_CODEC_H264, frameinfo.width, frameinfo.height, frameinfo.fps);
 				MP4C_SetMp4AudioInfo(pThread->mp4cHandle, AUDIO_CODEC_AAC, 8000, 1);
-				MP4C_CreateMp4File(pThread->mp4cHandle, pThread->manuRecordingFile, 1024*1024*2);
+				MP4C_CreateMp4File(pThread->mp4cHandle, pThread->manuRecordingFile, 1024 * 1024 * 2);
 			}
 #endif
 
@@ -1189,10 +1189,10 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 			//解码
 			EnterCriticalSection(&pThread->crit);
-			int nRet = 1; 
+			int nRet = 1;
 			if (pDecoderObj->pIntelDecoder)
 			{
-				if(frameinfo.length > 0)
+				if (frameinfo.length > 0)
 				{
 					nRet = pDecoderObj->pIntelDecoder->Decode((unsigned char*)pbuf, frameinfo.length, (unsigned char*)/*pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf*/NULL);
 				}
@@ -1203,40 +1203,40 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				nRet = FFD_DecodeVideo3(pDecoderObj->ffDecoder, pbuf, frameinfo.length, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, frameinfo.width, frameinfo.height, lTimestamp, lTimestamp);
 				if (0 != nRet)
 				{
-					if(nRet == -4)//-4表示为当前帧尚未解码完成，不作为错误判断
+					if (nRet == -4)//-4表示为当前帧尚未解码完成，不作为错误判断
 					{
-							_TRACE("视频帧解码尚未完成[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
+						_TRACE("视频帧解码尚未完成[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length,
 							(unsigned char)pbuf[0], (unsigned char)pbuf[1], (unsigned char)pbuf[2], (unsigned char)pbuf[3], (unsigned char)pbuf[4],
 							(unsigned char)pbuf[5], (unsigned char)pbuf[6], (unsigned char)pbuf[7], (unsigned char)pbuf[8], (unsigned char)pbuf[9]);
 					}
 					else
 					{
-						_TRACE("视频帧解解码失败[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length, 
+						_TRACE("视频帧解解码失败[%d]... framesize:%d   %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n", nRet, frameinfo.length,
 							(unsigned char)pbuf[0], (unsigned char)pbuf[1], (unsigned char)pbuf[2], (unsigned char)pbuf[3], (unsigned char)pbuf[4],
 							(unsigned char)pbuf[5], (unsigned char)pbuf[6], (unsigned char)pbuf[7], (unsigned char)pbuf[8], (unsigned char)pbuf[9]);
 
 						if (frameinfo.type == EASY_SDK_VIDEO_FRAME_I)		//关键帧
 						{
 							_TRACE("[ch%d]当前关键帧解码失败...\n", pThread->channelId);
-	#ifdef _DEBUG
-							FILE *f = fopen("keyframe.txt", "wb");
+#ifdef _DEBUG
+							FILE* f = fopen("keyframe.txt", "wb");
 							if (NULL != f)
 							{
 								fwrite(pbuf, 1, frameinfo.length, f);
 								fclose(f);
 							}
-	#endif
+#endif
 						}
 						else
 						{
-	#ifdef _DEBUG
-							FILE *f = fopen("pframe.txt", "wb");
+#ifdef _DEBUG
+							FILE* f = fopen("pframe.txt", "wb");
 							if (NULL != f)
 							{
 								fwrite(pbuf, 1, frameinfo.length, f);
 								fclose(f);
 							}
-	#endif
+#endif
 						}
 						pThread->findKeyframe = 0x01;
 					}
@@ -1245,31 +1245,31 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 				{
 					memcpy(&pThread->yuvFrame[pThread->decodeYuvIdx].frameinfo, &frameinfo, sizeof(MEDIA_FRAME_INFO));
 
-					pThread->decodeYuvIdx ++;
+					pThread->decodeYuvIdx++;
 					if (pThread->decodeYuvIdx >= MAX_YUV_FRAME_NUM)		pThread->decodeYuvIdx = 0;
 
 					//抓图
-					if (pThread->manuScreenshot == 0x01 )//Just support jpg，png
+					if (pThread->manuScreenshot == 0x01)//Just support jpg，png
 					{
 						unsigned int timestamp = (unsigned int)time(NULL);
 						time_t tt = timestamp;
-						struct tm *_time = localtime(&tt);
-						char szTime[64] = {0,};
+						struct tm* _time = localtime(&tt);
+						char szTime[64] = { 0, };
 						strftime(szTime, 32, "%Y%m%d-%H%M%S", _time);
-	
-// 						char strPath[512] = {0,};
-// 						sprintf(strPath , "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime) ;
+
+						// 						char strPath[512] = {0,};
+						// 						sprintf(strPath , "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime) ;
 
 						PhotoShotThreadInfo* pShotThreadInfo = new PhotoShotThreadInfo;
-						sprintf(pShotThreadInfo->strPath , "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime) ;
+						sprintf(pShotThreadInfo->strPath, "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime);
 
-						int nYuvBufLen = frameinfo.width*frameinfo.height*3;// most size = RGB24, we donot support RGBA Render type
+						int nYuvBufLen = frameinfo.width * frameinfo.height * 3;// most size = RGB24, we donot support RGBA Render type
 						pShotThreadInfo->pYuvBuf = new unsigned char[nYuvBufLen];
 						pShotThreadInfo->width = frameinfo.width;
 						pShotThreadInfo->height = frameinfo.height;
-						pShotThreadInfo->renderFormat = pThread->renderFormat ;
+						pShotThreadInfo->renderFormat = pThread->renderFormat;
 
-						memcpy(pShotThreadInfo->pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize-1);
+						memcpy(pShotThreadInfo->pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, pThread->yuvFrame[pThread->decodeYuvIdx].Yuvsize - 1);
 						CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_lpPhotoShotThread, pShotThreadInfo, 0, NULL);
 						pThread->manuScreenshot = 0;
 					}
@@ -1282,24 +1282,24 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 		{
 			if (NULL != pChannelManager)
 			{
-				if (NULL != pChannelManager->pAudioPlayThread )
+				if (NULL != pChannelManager->pAudioPlayThread)
 				{
 					char* pDecBuffer = pbuf;
 					unsigned int nDecBufLen = frameinfo.length;
 
 #if 0
-					if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711U || EASY_SDK_AUDIO_CODEC_G726 == frameinfo.codec || frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711A) 
+					if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711U || EASY_SDK_AUDIO_CODEC_G726 == frameinfo.codec || frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711A)
 					{
 						if (!m_pAACEncoderHandle)
 						{
 							InitParam initParam;
-							initParam.u32AudioSamplerate=frameinfo.sample_rate;
-							initParam.ucAudioChannel=frameinfo.channels;
-							initParam.u32PCMBitSize=frameinfo.bits_per_sample;
+							initParam.u32AudioSamplerate = frameinfo.sample_rate;
+							initParam.ucAudioChannel = frameinfo.channels;
+							initParam.u32PCMBitSize = frameinfo.bits_per_sample;
 							if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711U)
 							{
 								initParam.ucAudioCodec = Law_ULaw;
-							} 
+							}
 							else if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G726)
 							{
 								initParam.ucAudioCodec = Law_G726;
@@ -1308,16 +1308,16 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 							{
 								initParam.ucAudioCodec = Law_ALaw;
 							}
-							m_pAACEncoderHandle = Easy_AACEncoder_Init( initParam);
+							m_pAACEncoderHandle = Easy_AACEncoder_Init(initParam);
 						}
 						unsigned int out_len = 0;
-						int nRet = Easy_AACEncoder_Encode(m_pAACEncoderHandle, (unsigned char*)/*m_pG711EncBufer*/pbuf, /*m_nG711BufferLen*/frameinfo.length, (unsigned char*)m_pAACEncBufer, &out_len) ;
-						if (nRet>0&&out_len>0)
+						int nRet = Easy_AACEncoder_Encode(m_pAACEncoderHandle, (unsigned char*)/*m_pG711EncBufer*/pbuf, /*m_nG711BufferLen*/frameinfo.length, (unsigned char*)m_pAACEncBufer, &out_len);
+						if (nRet > 0 && out_len > 0)
 						{
 							pDecBuffer = m_pAACEncBufer;
 							nDecBufLen = out_len;
 							frameinfo.codec = EASY_SDK_AUDIO_CODEC_AAC;
-						} 
+						}
 						else
 						{
 							continue;
@@ -1325,42 +1325,42 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 					}
 #endif
 
-					if (pThread->manuRecording == 0x01 && pThread&&pThread->m_pMP4Writer)//音频写入MP4文件(now we support AAC, G711, G726)
+					if (pThread->manuRecording == 0x01 && pThread && pThread->m_pMP4Writer)//音频写入MP4文件(now we support AAC, G711, G726)
 					{
 #if 0
 						if (pThread->m_pMP4Writer->CanWrite())
 						{
-							pThread->m_pMP4Writer->WriteAACToMp4File((unsigned char*)pbuf, 
-								frameinfo.length, frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000, frameinfo.sample_rate, frameinfo.channels, frameinfo.bits_per_sample);
+							pThread->m_pMP4Writer->WriteAACToMp4File((unsigned char*)pbuf,
+								frameinfo.length, frameinfo.timestamp_sec * 1000 + frameinfo.timestamp_usec / 1000, frameinfo.sample_rate, frameinfo.channels, frameinfo.bits_per_sample);
 						}
 #endif
-// 						EnterCriticalSection(&pThread->critRecQueue);				
-// 						RECORD_FRAME_INFO *pFrameInfo;
-// 						pFrameInfo=new RECORD_FRAME_INFO;
-// 						pFrameInfo->pDataBuffer=new unsigned char[frameinfo.length];
-// 						memcpy(pFrameInfo->pDataBuffer, pbuf, frameinfo.length);					
-// 						pFrameInfo->nBufSize=frameinfo.length;
-// 						pFrameInfo->bIsVideo=FALSE;
-// 						pFrameInfo->nID=channelid;	
-// 						memcpy(&pFrameInfo->mediaInfo, &frameinfo, sizeof(MEDIA_FRAME_INFO) );
-// 
-// 						pFrameInfo->nTimestamp=frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
-// 						pThread->frameRecQueue.push(pFrameInfo);
-// 						LeaveCriticalSection(&pThread->critRecQueue);
-										
+						// 						EnterCriticalSection(&pThread->critRecQueue);				
+						// 						RECORD_FRAME_INFO *pFrameInfo;
+						// 						pFrameInfo=new RECORD_FRAME_INFO;
+						// 						pFrameInfo->pDataBuffer=new unsigned char[frameinfo.length];
+						// 						memcpy(pFrameInfo->pDataBuffer, pbuf, frameinfo.length);					
+						// 						pFrameInfo->nBufSize=frameinfo.length;
+						// 						pFrameInfo->bIsVideo=FALSE;
+						// 						pFrameInfo->nID=channelid;	
+						// 						memcpy(&pFrameInfo->mediaInfo, &frameinfo, sizeof(MEDIA_FRAME_INFO) );
+						// 
+						// 						pFrameInfo->nTimestamp=frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
+						// 						pThread->frameRecQueue.push(pFrameInfo);
+						// 						LeaveCriticalSection(&pThread->critRecQueue);
+
 						if (NULL != pThread->pRecAVQueue)
 						{
 							SSQ_AddData(pThread->pRecAVQueue, channelid, MEDIA_TYPE_AUDIO, (MEDIA_FRAME_INFO*)&frameinfo, pbuf);
 						}
 					}
 
-					if ( pChannelManager->pAudioPlayThread->channelId == pThread->channelId)
+					if (pChannelManager->pAudioPlayThread->channelId == pThread->channelId)
 					{
-						if(frameinfo.sample_rate==8000)
+						if (frameinfo.sample_rate == 8000)
 						{
-							frameinfo.channels=1;
+							frameinfo.channels = 1;
 						}
-						DECODER_OBJ *pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_AUDIO, &frameinfo);
+						DECODER_OBJ* pDecoderObj = GetDecoder(pThread, MEDIA_TYPE_AUDIO, &frameinfo);
 						if (NULL == pDecoderObj)
 						{
 #ifdef _DEBUG
@@ -1371,7 +1371,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 						memset(audio_buf, 0x00, audbuf_len);
 						int pcm_data_size = 0;
-						int ret = FFD_DecodeAudio(pDecoderObj->ffDecoder, (char*)pDecBuffer, nDecBufLen, (char *)audio_buf, &pcm_data_size);	//音频解码(支持g711(ulaw)和AAC)
+						int ret = FFD_DecodeAudio(pDecoderObj->ffDecoder, (char*)pDecBuffer, nDecBufLen, (char*)audio_buf, &pcm_data_size);	//音频解码(支持g711(ulaw)和AAC)
 						if (ret == 0)
 						{
 							//播放
@@ -1379,9 +1379,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 							{
 								pChannelManager->SetAudioParams(pDecoderObj->codec.channels, pDecoderObj->codec.samplerate, 16);//32);// 16);
 							}
-							if (pChannelManager->pAudioPlayThread->audiochannels != 0 && NULL!=pChannelManager->pAudioPlayThread->pSoundPlayer)
+							if (pChannelManager->pAudioPlayThread->audiochannels != 0 && NULL != pChannelManager->pAudioPlayThread->pSoundPlayer)
 							{
-								pChannelManager->pAudioPlayThread->pSoundPlayer->Write((char *)audio_buf, pcm_data_size);
+								pChannelManager->pAudioPlayThread->pSoundPlayer->Write((char*)audio_buf, pcm_data_size);
 							}
 						}
 						else
@@ -1390,7 +1390,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 							_TRACE("[ERROR]解码音频失败....\n");
 #endif
 						}
-					}	
+					}
 				}
 			}
 		}
@@ -1398,18 +1398,18 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 		{
 			if (frameinfo.type == 0xF1)		//Loss Packet
 			{
-				pThread->dwLosspacketTime	=	GetTickCount();
+				pThread->dwLosspacketTime = GetTickCount();
 			}
 			else if (frameinfo.type == 0xFF)	//Disconnect
 			{
-				pThread->dwDisconnectTime	=	GetTickCount();
+				pThread->dwDisconnectTime = GetTickCount();
 			}
 		}
 	}
 
-	if ( (NULL != pChannelManager) && (NULL != pChannelManager->pAudioPlayThread) && (pChannelManager->pAudioPlayThread->channelId == pThread->channelId) )
+	if ((NULL != pChannelManager) && (NULL != pChannelManager->pAudioPlayThread) && (pChannelManager->pAudioPlayThread->channelId == pThread->channelId))
 	{
-		if (NULL!=pChannelManager->pAudioPlayThread->pSoundPlayer)
+		if (NULL != pChannelManager->pAudioPlayThread->pSoundPlayer)
 		{
 			pChannelManager->pAudioPlayThread->pSoundPlayer->Close();
 		}
@@ -1433,17 +1433,17 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 
 	if (m_pAACEncBufer)
 	{
-		delete[] m_pAACEncBufer ;
+		delete[] m_pAACEncBufer;
 		m_pAACEncBufer = NULL;
 	}
 
-	delete []audio_buf;
-	delete []pbuf;
+	delete[]audio_buf;
+	delete[]pbuf;
 	pbuf = NULL;
 
-    if (NULL != fES)    fclose(fES);
+	if (NULL != fES)    fclose(fES);
 
-	pThread->decodeThread.flag	=	0x00;
+	pThread->decodeThread.flag = 0x00;
 
 #ifdef _DEBUG
 	_TRACE("解码线程[%d]已退出 ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
@@ -1453,23 +1453,23 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 }
 
 // 抓图函数实现
-int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Format)
+int take_snapshot(char* file, int w, int h, uint8_t* buffer, AVPixelFormat Format)
 {
-	char              *fileext = NULL;
+	char* fileext = NULL;
 	enum AVCodecID     codecid = AV_CODEC_ID_NONE;
-	struct SwsContext *sws_ctx = NULL;
+	struct SwsContext* sws_ctx = NULL;
 	AVPixelFormat      swsofmt = AV_PIX_FMT_NONE;
 	AVFrame            picture = {};
-	int                ret     = -1;
+	int                ret = -1;
 
-	AVFormatContext   *fmt_ctxt   = NULL;
-	AVOutputFormat    *out_fmt    = NULL;
-	AVStream          *stream     = NULL;
-	AVCodecContext    *codec_ctxt = NULL;
-	AVCodec           *codec      = NULL;
-	AVPacket           packet     = {};
-	int                retry      = 8;
-	int                got        = 0;
+	AVFormatContext* fmt_ctxt = NULL;
+	AVOutputFormat* out_fmt = NULL;
+	AVStream* stream = NULL;
+	AVCodecContext* codec_ctxt = NULL;
+	AVCodec* codec = NULL;
+	AVPacket           packet = {};
+	int                retry = 8;
+	int                got = 0;
 
 	// init ffmpeg
 	av_register_all();
@@ -1494,12 +1494,12 @@ int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Forma
 
 	// alloc picture
 	picture.format = swsofmt;
-	picture.width  = w > 0 ? w : video.width;
+	picture.width = w > 0 ? w : video.width;
 	picture.height = h > 0 ? h : video.height;
 
-	int numBytes = av_image_get_buffer_size(swsofmt, picture.width, picture.height , 1);
+	int numBytes = av_image_get_buffer_size(swsofmt, picture.width, picture.height, 1);
 
-	buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
+	buffer = (uint8_t*)av_malloc(numBytes * sizeof(uint8_t));
 
 	av_image_fill_arrays(picture.data, picture.linesize, buffer, swsofmt, picture.width, picture.height, 1);
 
@@ -1514,7 +1514,7 @@ int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Forma
 
 	// do encoding
 	fmt_ctxt = avformat_alloc_context();
-	out_fmt  = av_guess_format(codecid == AV_CODEC_ID_APNG ? "apng" : "mjpeg", NULL, NULL);
+	out_fmt = av_guess_format(codecid == AV_CODEC_ID_APNG ? "apng" : "mjpeg", NULL, NULL);
 	fmt_ctxt->oformat = out_fmt;
 	if (!out_fmt) {
 		//av_log(NULL, AV_LOG_ERROR, "failed to guess format !\n");
@@ -1532,12 +1532,12 @@ int take_snapshot(char *file, int w, int h, uint8_t *buffer, AVPixelFormat Forma
 		goto done;
 	}
 
-	codec_ctxt                = stream->codec;
-	codec_ctxt->codec_id      = out_fmt->video_codec;
-	codec_ctxt->codec_type    = AVMEDIA_TYPE_VIDEO;
-	codec_ctxt->pix_fmt       = swsofmt;
-	codec_ctxt->width         = picture.width;
-	codec_ctxt->height        = picture.height;
+	codec_ctxt = stream->codec;
+	codec_ctxt->codec_id = out_fmt->video_codec;
+	codec_ctxt->codec_type = AVMEDIA_TYPE_VIDEO;
+	codec_ctxt->pix_fmt = swsofmt;
+	codec_ctxt->width = picture.width;
+	codec_ctxt->height = picture.height;
 	codec_ctxt->time_base.num = 1;
 	codec_ctxt->time_base.den = 25;
 
@@ -1588,13 +1588,13 @@ done:
 }
 
 
-LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread( LPVOID _pParam )
+LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread(LPVOID _pParam)
 {
 	if (_pParam)
 	{
 		AVPixelFormat FFVFormat = AV_PIX_FMT_RGB24;
 		PhotoShotThreadInfo* pThreadInfo = (PhotoShotThreadInfo*)_pParam;
-		switch (pThreadInfo->renderFormat )
+		switch (pThreadInfo->renderFormat)
 		{
 		case D3D_FORMAT_YUY2:
 			FFVFormat = AV_PIX_FMT_YUYV422;
@@ -1605,15 +1605,15 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread( LPVOID _pParam )
 		case	D3D_FORMAT_UYVY:
 			FFVFormat = AV_PIX_FMT_UYVY422;
 			break;
-		case	D3D_FORMAT_A8R8G8B8	:
+		case	D3D_FORMAT_A8R8G8B8:
 			FFVFormat = AV_PIX_FMT_ARGB;
 			break;
-		case	D3D_FORMAT_X8R8G8B8:	
+		case	D3D_FORMAT_X8R8G8B8:
 			FFVFormat = AV_PIX_FMT_RGBA;
 			break;
 		case	D3D_FORMAT_RGB565:
 			break;
-		case	D3D_FORMAT_RGB555	:	
+		case	D3D_FORMAT_RGB555:
 			break;
 		case GDI_FORMAT_RGB24:
 			FFVFormat = AV_PIX_FMT_BGR24;
@@ -1631,24 +1631,24 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpPhotoShotThread( LPVOID _pParam )
 }
 
 
-LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
+LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread(LPVOID _pParam)
 {
-	PLAY_THREAD_OBJ *pThread = (PLAY_THREAD_OBJ*)_pParam;
+	PLAY_THREAD_OBJ* pThread = (PLAY_THREAD_OBJ*)_pParam;
 	if (NULL == pThread)			return 0;
 
-	pThread->recordThread.flag	=	0x02;
+	pThread->recordThread.flag = 0x02;
 
 #ifdef _DEBUG
 	_TRACE("录像线程[%d]已启动. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	EasyAACEncoder_Handle m_pAACEncoderHandle = NULL;
-	int buf_size = 1024*1024;
+	int buf_size = 1024 * 1024;
 
-	char *pbuf = new char[buf_size];
+	char* pbuf = new char[buf_size];
 	if (NULL == pbuf)
 	{
-		pThread->recordThread.flag	=	0x00;
+		pThread->recordThread.flag = 0x00;
 		return 0;
 	}
 
@@ -1658,7 +1658,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 	//#define AVCODEC_MAX_AUDIO_FRAME_SIZE	(192000)
 #define AVCODEC_MAX_AUDIO_FRAME_SIZE	(64000)
 	int audbuf_len = (AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2;
-	unsigned char *audio_buf = new unsigned char[audbuf_len+1];
+	unsigned char* audio_buf = new unsigned char[audbuf_len + 1];
 	memset(audio_buf, 0x00, audbuf_len);
 
 	MEDIA_FRAME_INFO frameinfo;
@@ -1678,20 +1678,20 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 			continue;
 		}
 
-		long long nTimeStamp = frameinfo.timestamp_sec*1000+frameinfo.timestamp_usec/1000;
-		byte*pdata=NULL;
-		int datasize=0;
+		long long nTimeStamp = frameinfo.timestamp_sec * 1000 + frameinfo.timestamp_usec / 1000;
+		byte* pdata = NULL;
+		int datasize = 0;
 		try
-		{	
+		{
 			if (mediatype == MEDIA_TYPE_VIDEO)
 			{
 				pdata = (byte*)pbuf;//获取到的编码数据
 				datasize = frameinfo.length;
-				int nVideoWidth     = frameinfo.width;
-				int nVideoHeight    = frameinfo.height;
+				int nVideoWidth = frameinfo.width;
+				int nVideoHeight = frameinfo.height;
 				if (pThread->m_pMP4Writer)
 				{
-					pThread->m_pMP4Writer->VideoMux( frameinfo.codec, frameinfo.type, (unsigned char*)pdata, datasize,  nTimeStamp, nVideoWidth, nVideoHeight);
+					pThread->m_pMP4Writer->VideoMux(frameinfo.codec, frameinfo.type, (unsigned char*)pdata, datasize, nTimeStamp, nVideoWidth, nVideoHeight);
 				}
 			}
 			else //音频
@@ -1703,19 +1703,19 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 				int sampleRate = frameinfo.sample_rate;
 
 				if (EASY_SDK_AUDIO_CODEC_G711U == frameinfo.codec
-					|| EASY_SDK_AUDIO_CODEC_G726 == frameinfo.codec 
-					|| EASY_SDK_AUDIO_CODEC_G711A == frameinfo.codec ) 
+					|| EASY_SDK_AUDIO_CODEC_G726 == frameinfo.codec
+					|| EASY_SDK_AUDIO_CODEC_G711A == frameinfo.codec)
 				{
 					if (!m_pAACEncoderHandle)
 					{
 						InitParam initParam;
-						initParam.u32AudioSamplerate=frameinfo.sample_rate;
-						initParam.ucAudioChannel=frameinfo.channels;
-						initParam.u32PCMBitSize=frameinfo.bits_per_sample;
+						initParam.u32AudioSamplerate = frameinfo.sample_rate;
+						initParam.ucAudioChannel = frameinfo.channels;
+						initParam.u32PCMBitSize = frameinfo.bits_per_sample;
 						if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G711U)
 						{
 							initParam.ucAudioCodec = Law_ULaw;
-						} 
+						}
 						else if (frameinfo.codec == EASY_SDK_AUDIO_CODEC_G726)
 						{
 							initParam.ucAudioCodec = Law_G726;
@@ -1724,17 +1724,17 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 						{
 							initParam.ucAudioCodec = Law_ALaw;
 						}
-						m_pAACEncoderHandle = Easy_AACEncoder_Init( initParam);
+						m_pAACEncoderHandle = Easy_AACEncoder_Init(initParam);
 					}
 					unsigned int out_len = 0;
-					int nRet = Easy_AACEncoder_Encode(m_pAACEncoderHandle, 
-						(unsigned char*)pbuf, frameinfo.length, (unsigned char*)m_pAACEncBufer, &out_len) ;
-					if (nRet>0&&out_len>0)
+					int nRet = Easy_AACEncoder_Encode(m_pAACEncoderHandle,
+						(unsigned char*)pbuf, frameinfo.length, (unsigned char*)m_pAACEncBufer, &out_len);
+					if (nRet > 0 && out_len > 0)
 					{
 						pdata = (byte*)m_pAACEncBufer;
 						datasize = out_len;
 						frameinfo.codec = EASY_SDK_AUDIO_CODEC_AAC;
-					} 
+					}
 					else
 					{
 						continue;
@@ -1743,8 +1743,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 
 				if (pThread->m_pMP4Writer)
 				{
-						pThread->m_pMP4Writer->AudioMux((unsigned char*)pdata, 
-							datasize, nTimeStamp, sampleRate, channels, bits_per_sample);
+					pThread->m_pMP4Writer->AudioMux((unsigned char*)pdata,
+						datasize, nTimeStamp, sampleRate, channels, bits_per_sample);
 				}
 			}
 		}
@@ -1754,11 +1754,11 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpRecordThread( LPVOID _pParam )
 		}
 	}
 
-		pThread->recordThread.flag	=	0x00;
-				
-		delete []m_pAACEncBufer;
-		delete []audio_buf;
-		delete []pbuf;
+	pThread->recordThread.flag = 0x00;
+
+	delete[]m_pAACEncBufer;
+	delete[]audio_buf;
+	delete[]pbuf;
 
 #ifdef _DEBUG
 	_TRACE("录像线程[%d]已退出 ThreadId:%d.\n", pThread->channelId, GetCurrentThreadId());
@@ -1787,13 +1787,13 @@ bool CChannelManager::ConvertImage(AVPixelFormat eInFormat, int iInWidth, int iI
 	video.height = iOutHeight;
 	video.format = eOutFormat;
 
-	AVFrame ptPictureIn= {};
+	AVFrame ptPictureIn = {};
 	ptPictureIn.format = eInFormat;
-	ptPictureIn.width  = iInWidth > 0 ? iInWidth : video.width;
+	ptPictureIn.width = iInWidth > 0 ? iInWidth : video.width;
 	ptPictureIn.height = iInHeight > 0 ? iInHeight : video.height;
-// 	if (av_frame_get_buffer(&ptPictureIn, 32) < 0) {
-// 		//av_log(NULL, AV_LOG_ERROR, "failed to allocate picture !\n", file);
-// 	}
+	// 	if (av_frame_get_buffer(&ptPictureIn, 32) < 0) {
+	// 		//av_log(NULL, AV_LOG_ERROR, "failed to allocate picture !\n", file);
+	// 	}
 	av_image_fill_arrays(ptPictureIn.data, ptPictureIn.linesize, (const uint8_t*)ptInData, eInFormat, iInWidth, iInHeight, 1);
 
 
@@ -1824,33 +1824,33 @@ bool CChannelManager::ConvertImage(AVPixelFormat eInFormat, int iInWidth, int iI
 	return false;
 }
 
-LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
+LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread(LPVOID _pParam)
 {
-	PLAY_THREAD_OBJ *pThread = (PLAY_THREAD_OBJ*)_pParam;
+	PLAY_THREAD_OBJ* pThread = (PLAY_THREAD_OBJ*)_pParam;
 	if (NULL == pThread)			return 0;
 
-	pThread->displayThread.flag	=	0x02;
+	pThread->displayThread.flag = 0x02;
 
 #ifdef _DEBUG
 	_TRACE("显示线程[%d]已启动. ThreadId:%d ...\n", pThread->channelId, GetCurrentThreadId());
 #endif
 
 	int width = 0;
-	int height= 0;
+	int height = 0;
 	RECT	rcVideoRender;
 	SetRectEmpty(&rcVideoRender);
 
 	int iInitTimestamp = 0;
 
 	pThread->rtpTimestamp = 0;
-	unsigned int deviceLostTime = (unsigned int)time(NULL)-2;
+	unsigned int deviceLostTime = (unsigned int)time(NULL) - 2;
 
 	int iLastDisplayYuvIdx = -1;
 
 	MEDIA_FRAME_INFO	lastFrameInfo;
 	memset(&lastFrameInfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 
-//#ifdef _DEBUG
+	//#ifdef _DEBUG
 #if 1
 	float	fDisplayTimes = 0.0f;		//显示耗时统计
 	int		displayFrameNum = 0;
@@ -1877,14 +1877,14 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		{
 			if (pThread->displayThread.flag == 0x03)		break;
 
-			for (int iYuvIdx=0; iYuvIdx<MAX_YUV_FRAME_NUM; iYuvIdx++)
+			for (int iYuvIdx = 0; iYuvIdx < MAX_YUV_FRAME_NUM; iYuvIdx++)
 			{
 				if (pThread->displayThread.flag == 0x03)		break;
 				if (pThread->yuvFrame[iYuvIdx].frameinfo.length < 1)		continue;
 
-				unsigned int timestampTmp = pThread->yuvFrame[iYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iYuvIdx].frameinfo.timestamp_usec/1000;
+				unsigned int timestampTmp = pThread->yuvFrame[iYuvIdx].frameinfo.timestamp_sec * 1000 + pThread->yuvFrame[iYuvIdx].frameinfo.timestamp_usec / 1000;
 
-				if (timestampTmp > rtpTimestamp && getNextFrame==0)
+				if (timestampTmp > rtpTimestamp && getNextFrame == 0)
 				{
 					rtpTimestamp = timestampTmp;
 					iDispalyYuvIdx = iYuvIdx;
@@ -1904,27 +1904,27 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 					break;
 				}
 				*/
-				iYuvFrameNum ++;
+				iYuvFrameNum++;
 			}
 			_VS_BEGIN_TIME_PERIOD(1);
 			__VS_Delay(1);
 			_VS_END_TIME_PERIOD(1);
 
-		}while (iDispalyYuvIdx == -1);
+		} while (iDispalyYuvIdx == -1);
 
 		pThread->dwDisconnectTime = 0;
-		if (pThread->displayThread.flag == 0x03 )						break;
-		if (iDispalyYuvIdx < 0 || iDispalyYuvIdx>=MAX_YUV_FRAME_NUM)	continue;
+		if (pThread->displayThread.flag == 0x03)						break;
+		if (iDispalyYuvIdx < 0 || iDispalyYuvIdx >= MAX_YUV_FRAME_NUM)	continue;
 
 		if (pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width < 1 ||
-			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height< 1)
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height < 1)
 		{
 			continue;
 		}
 
-		if ( (NULL==pThread->hWnd) || (NULL!=pThread->hWnd && (!IsWindow(pThread->hWnd))) || (NULL!=pThread->hWnd && (!IsWindowVisible(pThread->hWnd))))
+		if ((NULL == pThread->hWnd) || (NULL != pThread->hWnd && (!IsWindow(pThread->hWnd))) || (NULL != pThread->hWnd && (!IsWindowVisible(pThread->hWnd))))
 		{
-			pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec/1000;
+			pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec * 1000 + pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec / 1000;
 
 			memset(&pThread->yuvFrame[iDispalyYuvIdx].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 			continue;
@@ -1933,7 +1933,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 #ifdef _DEBUG1
 		static unsigned int uiTmpTimestamp = 0;
-		if (uiTmpTimestamp == 0)		uiTmpTimestamp= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp;
+		if (uiTmpTimestamp == 0)		uiTmpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp;
 		if (pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp <= uiTmpTimestamp)
 		{
 			_TRACE("当前时间戳[%u] <= 最新的时间戳[%u].\n", pThread->yuvFrame[iDispalyYuvIdx].frameinfo.rtptimestamp, uiTmpTimestamp);
@@ -1946,20 +1946,20 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		iLastDisplayYuvIdx = iDispalyYuvIdx;
 
 		pThread->frameQueue = 0;
-		if (NULL != pThread->pAVQueue && NULL!=pThread->pAVQueue->pQueHeader)
+		if (NULL != pThread->pAVQueue && NULL != pThread->pAVQueue->pQueHeader)
 			//if (pThread->initQueue==0x01 && NULL!=pThread->avQueue.pQueHeader)
 		{
 			pThread->frameQueue = pThread->pAVQueue->pQueHeader->videoframes;
 		}
 
 		int iQue1_DecodeQueue = pThread->frameQueue;		//未解码的帧数
-		int iQue2_DisplayQueue= iYuvFrameNum;				//已解码的帧数
+		int iQue2_DisplayQueue = iYuvFrameNum;				//已解码的帧数
 
 		int nQueueFrame = iQue1_DecodeQueue + iQue2_DisplayQueue;
 
 		RECT rcSrc;
 		RECT rcDst;
-		if (! IsRectEmpty(&pThread->rcSrcRender))
+		if (!IsRectEmpty(&pThread->rcSrcRender))
 		{
 			CopyRect(&rcSrc, &pThread->rcSrcRender);
 		}
@@ -1967,18 +1967,18 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		{
 			SetRect(&rcSrc, 0, 0, width, height);
 		}
-		if (NULL!=pThread->hWnd && (IsWindow(pThread->hWnd)) )
+		if (NULL != pThread->hWnd && (IsWindow(pThread->hWnd)))
 		{
 			GetClientRect(pThread->hWnd, &rcDst);
 		}
 
 		//如果当前分辨率和之前的不同,则重新初始化d3d
 		if (lastFrameInfo.width != pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width ||
-			lastFrameInfo.height!= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height)
+			lastFrameInfo.height != pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height)
 		{
 			pThread->resetD3d = true;
-			int nRGB24Len = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width*pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height * 3+1;
-			if(m_RGB24)
+			int nRGB24Len = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width * pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height * 3 + 1;
+			if (m_RGB24)
 			{
 				delete[] m_RGB24;
 				m_RGB24 = NULL;
@@ -1992,7 +1992,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 		EnterCriticalSection(&pThread->crit);			//Lock
 
-		if ( pThread->resetD3d )
+		if (pThread->resetD3d)
 		{
 			pThread->resetD3d = false;
 			//关闭d3d
@@ -2005,11 +2005,11 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				D3D_Release(&pThread->d3dHandle);
 			}
 			pThread->d3dHandle = NULL;
-			deviceLostTime = (unsigned int)time(NULL)-2;
+			deviceLostTime = (unsigned int)time(NULL) - 2;
 
 		}
 		width = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width;
-		height= pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height;
+		height = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height;
 
 		LeaveCriticalSection(&pThread->crit);			//Unlock
 
@@ -2018,46 +2018,46 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		{
 			if (NULL == pThread->d3dHandle)	RGB_InitDraw(&pThread->d3dHandle);
 		}
-		else if ( (NULL == pThread->d3dHandle) && ((unsigned int)time(NULL)-deviceLostTime >= 2) )
+		else if ((NULL == pThread->d3dHandle) && ((unsigned int)time(NULL) - deviceLostTime >= 2))
 		{
 			D3D_FONT	font;
 			memset(&font, 0x00, sizeof(D3D_FONT));
-			font.bold	=	0x00;
+			font.bold = 0x00;
 			wcscpy(font.name, TEXT("Arial Black"));
 
-			font.size	=	(int)(float)((width)*0.2f);// 32;
+			font.size = (int)(float)((width) * 0.2f);// 32;
 			if (pThread->showOSD)
 			{
-				font.size	=	pThread->osd.size;// 32;
+				font.size = pThread->osd.size;// 32;
 			}
-			font.width	=	(int)(float)((font.size)/2.5f);//13;
-			if (NULL!=pThread->hWnd && (IsWindow(pThread->hWnd)) )
+			font.width = (int)(float)((font.size) / 2.5f);//13;
+			if (NULL != pThread->hWnd && (IsWindow(pThread->hWnd)))
 			{
 				D3D_Initial(&pThread->d3dHandle, pThread->hWnd, width, height, 0, 1, pThread->renderFormat, &font);
 
-// 				D3D_SetDisplayFlag(pThread->d3dHandle, D3D_SHOW_ZONE|D3D_SHOW_SEL_BOX);
-// 
-// 				D3D9_LINE	d3d9Line;
-// 				memset(&d3d9Line, 0x00, sizeof(D3D9_LINE));
-// 				d3d9Line.usLineId = 1;
-// 				strcpy(d3d9Line.strLineName, "Line1");
-// 				d3d9Line.dwColor = RGB(0xff,0x80,0x00);
-// 				d3d9Line.uiTotalNodes = 2;
-// 				d3d9Line.pNodes[0].x = 20;
-// 				d3d9Line.pNodes[0].y = 60;
-// 
-// 				d3d9Line.pNodes[1].x = 60;
-// 				d3d9Line.pNodes[1].y = 60;
-// 
-// 				D3D_AddLine(pThread->d3dHandle, &d3d9Line);
+				// 				D3D_SetDisplayFlag(pThread->d3dHandle, D3D_SHOW_ZONE|D3D_SHOW_SEL_BOX);
+				// 
+				// 				D3D9_LINE	d3d9Line;
+				// 				memset(&d3d9Line, 0x00, sizeof(D3D9_LINE));
+				// 				d3d9Line.usLineId = 1;
+				// 				strcpy(d3d9Line.strLineName, "Line1");
+				// 				d3d9Line.dwColor = RGB(0xff,0x80,0x00);
+				// 				d3d9Line.uiTotalNodes = 2;
+				// 				d3d9Line.pNodes[0].x = 20;
+				// 				d3d9Line.pNodes[0].y = 60;
+				// 
+				// 				d3d9Line.pNodes[1].x = 60;
+				// 				d3d9Line.pNodes[1].y = 60;
+				// 
+				// 				D3D_AddLine(pThread->d3dHandle, &d3d9Line);
 
 			}
 			if (NULL == pThread->d3dHandle)
 			{
-				_TRACE("DEVICE LOST...   times:%d\n", ((unsigned int)time(NULL)-deviceLostTime));
+				_TRACE("DEVICE LOST...   times:%d\n", ((unsigned int)time(NULL) - deviceLostTime));
 				deviceLostTime = (unsigned int)time(NULL);
 				//如果d3d 初始化失败,则清空帧头信息,以便解码线程继续解码下一帧
-				pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec/1000;
+				pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec * 1000 + pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec / 1000;
 				memset(&pThread->yuvFrame[iDispalyYuvIdx].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 				_VS_BEGIN_TIME_PERIOD(1);
 				__VS_Delay(1);
@@ -2067,54 +2067,54 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		}
 
 		int fps = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.fps;
-		int iOneFrameUsec = 1000/30;	//normal
-		if (fps>0)	iOneFrameUsec = 1000 / fps;
+		int iOneFrameUsec = 1000 / 30;	//normal
+		if (fps > 0)	iOneFrameUsec = 1000 / fps;
 
 		int iCache = 0;
-		if (NULL!=pThread->frameCache) iCache = pThread->frameCache;
-	
-		pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec*1000+pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec/1000;
+		if (NULL != pThread->frameCache) iCache = pThread->frameCache;
+
+		pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec * 1000 + pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec / 1000;
 
 		//统计信息:  编码格式 分辨率 帧率 帧类型  码流  缓存帧数
-		char sztmp[128] = {0,};
+		char sztmp[128] = { 0, };
 #if 0
 		sprintf(sztmp, "%s[%d x %d]  FPS: %d[%s]    Bitrate: %.2fMbps   Cache: %d / %d",
-			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.codec==0x1C?"H264":"MPEG4",
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.codec == 0x1C ? "H264" : "MPEG4",
 			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width,
 			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height,
 			fps,
-			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.type==0x01?"I":"P",
-			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.bitrate/1024.0f,
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.type == 0x01 ? "I" : "P",
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.bitrate / 1024.0f,
 			nQueueFrame, iCache);
 #else
-			sprintf(sztmp, "[%dx%d] fps[%d] Bitrate[%.2fMbps]Cache[%d(%d+%d) / %d]  AverageTime: %.2f  Delay: %d  totaltime:%d / %d dropframe:%d",
-				pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width,
-				pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height,
-				pThread->yuvFrame[iDispalyYuvIdx].frameinfo.fps,
-				pThread->yuvFrame[iDispalyYuvIdx].frameinfo.bitrate/1024.0f,
-				nQueueFrame,  iQue1_DecodeQueue, iQue2_DisplayQueue,  iCache, 
-				fDisplayTimes, iDelay, (int)fDisplayTimes+(iDelay>0?iDelay:0), iOneFrameUsec, iDropFrame);
+		sprintf(sztmp, "[%dx%d] fps[%d] Bitrate[%.2fMbps]Cache[%d(%d+%d) / %d]  AverageTime: %.2f  Delay: %d  totaltime:%d / %d dropframe:%d",
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.width,
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.height,
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.fps,
+			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.bitrate / 1024.0f,
+			nQueueFrame, iQue1_DecodeQueue, iQue2_DisplayQueue, iCache,
+			fDisplayTimes, iDelay, (int)fDisplayTimes + (iDelay > 0 ? iDelay : 0), iOneFrameUsec, iDropFrame);
 #endif
-			D3D_OSD	osd[1024];
-			memset(osd, 0, 1024);
-			int osdLines = 0;
+		D3D_OSD	osd[1024];
+		memset(osd, 0, 1024);
+		int osdLines = 0;
 
 		int showOSD = pThread->showStatisticalInfo;
 		if (pThread->showStatisticalInfo)
 		{
 			osdLines = 1;
-			MByteToWChar(sztmp, osd[0].string, sizeof(osd[0].string)/sizeof(osd[0].string[0]));
+			MByteToWChar(sztmp, osd[0].string, sizeof(osd[0].string) / sizeof(osd[0].string[0]));
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
-				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string)*7, (int)(float)((height)*0.046f));//40);
+				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string) * 7, (int)(float)((height) * 0.046f));//40);
 			}
 			else
 			{
-				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string)*20, (int)(float)((height)*0.1f));//40);
+				SetRect(&osd[0].rect, 2, 2, (int)wcslen(osd[0].string) * 20, (int)(float)((height) * 0.1f));//40);
 			}
-			osd[0].color = RGB(0x00,0xff,0x00);
+			osd[0].color = RGB(0x00, 0xff, 0x00);
 			//osd.shadowcolor = RGB(0x15,0x15,0x15);
-			osd[0].shadowcolor = RGB(0x00,0x00,0x00);
+			osd[0].shadowcolor = RGB(0x00, 0x00, 0x00);
 			osd[0].alpha = 180;
 		}
 		if (pThread->showOSD)
@@ -2129,7 +2129,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 				int nEofPos = sOSD.find("\r\n");
 
-				if (nEofPos>127)
+				if (nEofPos > 127)
 				{
 					subOSD[128] = 0;
 					sublen = 128;
@@ -2137,9 +2137,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				if (pThread->renderFormat == GDI_FORMAT_RGB24)
 				{
 					CopyRect(&osd[osdLines].rect, &pThread->osd.rect);
-					osd[osdLines].rect.top = pThread->osd.rect.top+40*osdLines;
-					osd[osdLines].rect.bottom = pThread->osd.rect.bottom+40*osdLines;
-					if (nEofPos>=0)
+					osd[osdLines].rect.top = pThread->osd.rect.top + 40 * osdLines;
+					osd[osdLines].rect.bottom = pThread->osd.rect.bottom + 40 * osdLines;
+					if (nEofPos >= 0)
 					{
 						subOSD[nEofPos] = 0;
 						sublen = nEofPos;
@@ -2148,24 +2148,24 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 				else
 				{
 					CopyRect(&osd[osdLines].rect, &pThread->osd.rect);
-					osd[osdLines].rect.top = pThread->osd.rect.top+pThread->osd.size*osdLines;
-					osd[osdLines].rect.bottom = pThread->osd.rect.bottom+pThread->osd.size*osdLines;
-					if (nEofPos>=0)
+					osd[osdLines].rect.top = pThread->osd.rect.top + pThread->osd.size * osdLines;
+					osd[osdLines].rect.bottom = pThread->osd.rect.bottom + pThread->osd.size * osdLines;
+					if (nEofPos >= 0)
 					{
 						subOSD[nEofPos] = 0;
 						sublen = nEofPos;
 					}
-				}	
+				}
 
-				MByteToWChar(subOSD, osd[osdLines].string, sizeof(osd[osdLines].string)/sizeof(osd[osdLines].string[0]));
+				MByteToWChar(subOSD, osd[osdLines].string, sizeof(osd[osdLines].string) / sizeof(osd[osdLines].string[0]));
 
 				osd[osdLines].color = pThread->osd.color;
 				osd[osdLines].shadowcolor = pThread->osd.shadowcolor;
 				osd[osdLines].alpha = pThread->osd.alpha;
 				osdLines++;
-				if (nEofPos>=0)
+				if (nEofPos >= 0)
 				{
-					sOSD = subOSD+nEofPos+2;
+					sOSD = subOSD + nEofPos + 2;
 				}
 				else
 				{
@@ -2179,14 +2179,14 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		memset(&lastFrameInfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 		memcpy(&lastFrameInfo, &pThread->yuvFrame[iDispalyYuvIdx].frameinfo, sizeof(MEDIA_FRAME_INFO));
 
-		if (nQueueFrame > iCache * 2)	iDropFrame ++;
+		if (nQueueFrame > iCache * 2)	iDropFrame++;
 		else							iDropFrame = 0;
 		if (iDropFrame < 0x02)
 		{
 #if 1
 			// 解码数据显示+回调  [12/13/2017 Dingshuai]
 			//pRealtimePlayThread[iNvsIdx].pCallback = callback;
-			if (pThread&&pThread->pCallback&&iDispalyYuvIdx>=0)
+			if (pThread && pThread->pCallback && iDispalyYuvIdx >= 0)
 			{
 				// 硬件编码出来是NV12，外部为了显示方便应该转成I420 [12/6/2016 dingshuai]
 				//外部显示
@@ -2198,7 +2198,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 					FFVFormat = AV_PIX_FMT_NV12;//AV_PIX_FMT_NV12
 					if (nDevId == 1)
 					{
-						static FILE *fOutput = NULL;
+						static FILE* fOutput = NULL;
 						if (NULL == fOutput)
 						{
 							char sztmp[128] = { 0, };
@@ -2211,10 +2211,10 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 					break;
 #endif
 				case DISPLAY_FORMAT_YV12:
-					{
-						FFVFormat = AV_PIX_FMT_YUV420P;
-					}
-					break;
+				{
+					FFVFormat = AV_PIX_FMT_YUV420P;
+				}
+				break;
 				case DISPLAY_FORMAT_YUY2:
 					FFVFormat = AV_PIX_FMT_YUYV422;
 					break;
@@ -2251,27 +2251,27 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 				// 获取解码后的YUV/RGB数据的大小
 				//int nYuvFrameLen = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
-				lastFrameInfo.length =  pThread->yuvFrame[iDispalyYuvIdx].Yuvsize-1;
+				lastFrameInfo.length = pThread->yuvFrame[iDispalyYuvIdx].Yuvsize - 1;
 
-				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG,  m_RGB24 , (EASY_FRAME_INFO*)(&lastFrameInfo));
+				pThread->pCallback(pThread->channelId, (INT*)pThread->pUserPtr, EASY_SDK_DECODE_VIDEO_FLAG, m_RGB24, (EASY_FRAME_INFO*)(&lastFrameInfo));
 			}
 #endif
 
 			if (pThread->renderFormat == GDI_FORMAT_RGB24)
 			{
-				RGB_DrawData(pThread->d3dHandle, pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, pThread->ShownToScale, RGB(0x3c,0x3c,0x3c), 0, osdLines, osd);
+				RGB_DrawData(pThread->d3dHandle, pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, &rcSrc, pThread->ShownToScale, RGB(0x3c, 0x3c, 0x3c), 0, osdLines, osd);
 				//D3D_RenderRGB24ByGDI(pThread->hWnd, pThread->yuvFrame[iDispalyYuvIdx].pYuvBuf, width, height, showOSD, &osd);
-			
+
 				//int	D3DRENDER_API  RGB_DrawData(D3D_HANDLE handle, HWND hWnd, char *pBuff, int width, int height, int ShownToScale, COLORREF bkColor, int flip=0, int OSDNum=0, D3D_OSD *_osd = NULL);
 
 			}
 			else if (NULL != pThread->d3dHandle)
 			{
 #ifdef _DEBUG0
-				static FILE *fOutput = NULL;
+				static FILE* fOutput = NULL;
 				if (NULL == fOutput)
 				{
-					char sztmp[128] = {0,};
+					char sztmp[128] = { 0, };
 					sprintf(sztmp, "C:\\test\\%dx%d.yv12", width, height);
 					fOutput = fopen(sztmp, "wb");
 				}
@@ -2291,7 +2291,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 		{
 			_TRACE("丢帧...%d\n", iDropFrame);
 		}
-		
+
 		memset(&pThread->yuvFrame[iDispalyYuvIdx].frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 
 		if (iInitTimestamp == 0x00)
@@ -2318,7 +2318,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			}
 			nRandTally ++;
 			*/
-			
+
 			Sleep(30);
 #endif
 
@@ -2332,20 +2332,20 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 			iDelay = iOneFrameUsec - iInterval;
 
-			if (iDelay<1)	iDelay = 0;
-			else if (iDelay>1500)	iDelay=1500;
-			if (nQueueFrame<iCache && fps>0)
+			if (iDelay < 1)	iDelay = 0;
+			else if (iDelay > 1500)	iDelay = 1500;
+			if (nQueueFrame < iCache && fps>0)
 			{
-				int ii = ((iOneFrameUsec * (iCache-nQueueFrame))/fps);
+				int ii = ((iOneFrameUsec * (iCache - nQueueFrame)) / fps);
 				iDelay += ii;
 			}
-			else if (nQueueFrame>iCache && fps>0)
+			else if (nQueueFrame > iCache && fps > 0)
 			{
-				int ii = ((iOneFrameUsec * (nQueueFrame-iCache))/fps);
+				int ii = ((iOneFrameUsec * (nQueueFrame - iCache)) / fps);
 				iDelay -= ii;
 			}
 
-//#ifdef _DEBUG
+			//#ifdef _DEBUG
 #if 1
 			unsigned int uiCurrTime = (unsigned int)time(NULL);
 			if (uiLastTotalTime == 0x00)		uiLastTotalTime = uiCurrTime;
@@ -2361,13 +2361,13 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 			else
 			{
 				nDisplayTotalTimes += iInterval;
-				displayFrameNum ++;
+				displayFrameNum++;
 			}
 #endif
 
 			_VS_BEGIN_TIME_PERIOD(1);
 			//_TRACE("[ch%d]共用时: %d\t显示耗时:%d\t延时:%d\t缓存帧数:%d\t当前帧大小:%d  OneFrameUsec:%d\n", pThread->renderCh, iInterval+iDelay, iInterval, iDelay, nQueueFrame, frame_size, iOneFrameUsec);
-			if (iDelay>0 && iDelay<1500 && iCache>0 && iCache*2>nQueueFrame && iDropFrame==0)
+			if (iDelay > 0 && iDelay < 1500 && iCache>0 && iCache * 2 > nQueueFrame && iDropFrame == 0)
 			{
 				__VS_Delay(iDelay);
 			}
@@ -2385,7 +2385,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	{
 		D3D_Release(&pThread->d3dHandle);
 	}
-	if(m_RGB24)
+	if (m_RGB24)
 	{
 		delete[] m_RGB24;
 		m_RGB24 = NULL;
@@ -2393,7 +2393,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 
 	pThread->rtpTimestamp = 0;
 
-	pThread->displayThread.flag	=	0x00;
+	pThread->displayThread.flag = 0x00;
 
 #ifdef _DEBUG
 	_TRACE("显示线程[%d]已退出. ThreadId:%d ..\n", pThread->channelId, GetCurrentThreadId());
@@ -2402,9 +2402,9 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread( LPVOID _pParam )
 	return 0;
 }
 
-int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *pbuf, EASY_FRAME_INFO *frameinfo)
+int CALLBACK __NVSourceCallBack(int _chid, int* _chPtr, int _mediatype, char* pbuf, EASY_FRAME_INFO* frameinfo)
 {
-	PLAY_THREAD_OBJ	*pPlayThread = (PLAY_THREAD_OBJ *)_chPtr;
+	PLAY_THREAD_OBJ* pPlayThread = (PLAY_THREAD_OBJ*)_chPtr;
 
 	if (NULL == pPlayThread)			return -1;
 
@@ -2415,9 +2415,9 @@ int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *p
 		//frameinfo->width = 640;
 		//frameinfo->height = 360;
 
-		if (frameinfo->height==3008)		frameinfo->height=3000;
-		else if (frameinfo->height==1088)		frameinfo->height=1080;
-		else if (frameinfo->height==544)	frameinfo->height=540;
+		if (frameinfo->height == 3008)		frameinfo->height = 3000;
+		else if (frameinfo->height == 1088)		frameinfo->height = 1080;
+		else if (frameinfo->height == 544)	frameinfo->height = 540;
 	}
 
 	pChannelManager->ProcessData(_chid, _mediatype, pbuf, frameinfo);
@@ -2425,9 +2425,9 @@ int CALLBACK __NVSourceCallBack( int _chid, int *_chPtr, int _mediatype, char *p
 	return 0;
 }
 
-int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo)
+int CALLBACK __RTSPSourceCallBack(int _channelId, void* _channelPtr, int _frameType, char* pBuf, EASY_FRAME_INFO* _frameInfo)
 {
-	PLAY_THREAD_OBJ	*pPlayThread = (PLAY_THREAD_OBJ *)_channelPtr;
+	PLAY_THREAD_OBJ* pPlayThread = (PLAY_THREAD_OBJ*)_channelPtr;
 
 	if (NULL == pPlayThread)			return -1;
 
@@ -2438,9 +2438,9 @@ int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frame
 		//frameinfo->width = 640;
 		//frameinfo->height = 360;
 
-		if (_frameInfo->height==3008)			_frameInfo->height=3000;
-		else if (_frameInfo->height==1088)		_frameInfo->height=1080;
-		else if (_frameInfo->height==544)		_frameInfo->height=540;
+		if (_frameInfo->height == 3008)			_frameInfo->height = 3000;
+		else if (_frameInfo->height == 1088)		_frameInfo->height = 1080;
+		else if (_frameInfo->height == 544)		_frameInfo->height = 540;
 	}
 
 	pChannelManager->ProcessData(_channelId, _frameType, pBuf, _frameInfo);
@@ -2449,11 +2449,11 @@ int CALLBACK __RTSPSourceCallBack( int _channelId, void *_channelPtr, int _frame
 }
 
 
-int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAME_INFO *frameinfo)
+int	CChannelManager::ProcessData(int _chid, int mediatype, char* pbuf, EASY_FRAME_INFO* frameinfo)
 {
 	if (NULL == pRealtimePlayThread)			return 0;
 
-	MediaSourceCallBack pMediaCallback = (MediaSourceCallBack )pRealtimePlayThread[_chid].pCallback;
+	MediaSourceCallBack pMediaCallback = (MediaSourceCallBack)pRealtimePlayThread[_chid].pCallback;
 	if (NULL != pMediaCallback && (mediatype == EASY_SDK_VIDEO_FRAME_FLAG || mediatype == EASY_SDK_AUDIO_FRAME_FLAG || mediatype == EASY_SDK_MEDIA_INFO_FLAG))
 	{
 		pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, pbuf, frameinfo);
@@ -2468,10 +2468,10 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 			pRealtimePlayThread[_chid].frameinfo.width = frameinfo->width;
 			pRealtimePlayThread[_chid].frameinfo.height = frameinfo->height;
 		}
-		if (frameinfo->type==EASY_SDK_VIDEO_FRAME_I/*Key frame*/) 
+		if (frameinfo->type == EASY_SDK_VIDEO_FRAME_I/*Key frame*/)
 		{
 			m_bIFrameArrive = true;
-			if ( (NULL == pRealtimePlayThread[_chid].pAVQueue))
+			if ((NULL == pRealtimePlayThread[_chid].pAVQueue))
 			{
 				pRealtimePlayThread[_chid].pAVQueue = new SS_QUEUE_OBJ_T();
 				if (NULL != pRealtimePlayThread[_chid].pAVQueue)
@@ -2482,8 +2482,8 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 					pRealtimePlayThread[_chid].initQueue = 0x01;
 				}
 
-				pRealtimePlayThread[_chid].dwLosspacketTime=0;
-				pRealtimePlayThread[_chid].dwDisconnectTime=0;
+				pRealtimePlayThread[_chid].dwLosspacketTime = 0;
+				pRealtimePlayThread[_chid].dwDisconnectTime = 0;
 			}
 		}
 		if (NULL != pRealtimePlayThread[_chid].pAVQueue && m_bIFrameArrive)
@@ -2500,7 +2500,7 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 			pRealtimePlayThread[_chid].frameinfo.channels = frameinfo->channels;
 			pRealtimePlayThread[_chid].frameinfo.sample_rate = frameinfo->sample_rate;
 		}
-		if ( (NULL == pRealtimePlayThread[_chid].pAVQueue) )
+		if ((NULL == pRealtimePlayThread[_chid].pAVQueue))
 		{
 			pRealtimePlayThread[_chid].pAVQueue = new SS_QUEUE_OBJ_T();
 			if (NULL != pRealtimePlayThread[_chid].pAVQueue)
@@ -2511,38 +2511,38 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 				pRealtimePlayThread[_chid].initQueue = 0x01;
 			}
 
-			pRealtimePlayThread[_chid].dwLosspacketTime=0;
-			pRealtimePlayThread[_chid].dwDisconnectTime=0;
+			pRealtimePlayThread[_chid].dwLosspacketTime = 0;
+			pRealtimePlayThread[_chid].dwDisconnectTime = 0;
 		}
 		if (NULL != pRealtimePlayThread[_chid].pAVQueue)
 		{
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_AUDIO, (MEDIA_FRAME_INFO*)frameinfo, pbuf);
 		}
 	}
-// 	else if (mediatype == EASY_SDK_EVENT_FRAME_FLAG)
-// 	{
-// 		if (NULL == pbuf && NULL == frameinfo)
-// 		{
-// 			_TRACE("[ch%d]连接中...\n", _chid);
-// 
-// 			MEDIA_FRAME_INFO	frameinfo;
-// 			memset(&frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
-// 			frameinfo.length = 1;
-// 			frameinfo.type   = 0xFF;
-// 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)&frameinfo, "1");
-// 		}
-// 		else if (NULL!=frameinfo && frameinfo->type==0xF1)
-// 		{
-// 			_TRACE("[ch%d]掉包[%.2f]...\n", _chid, frameinfo->losspacket);
-// 
-// 			frameinfo->length = 1;
-// 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, "1");
-// 		}
-// 	}
+	// 	else if (mediatype == EASY_SDK_EVENT_FRAME_FLAG)
+	// 	{
+	// 		if (NULL == pbuf && NULL == frameinfo)
+	// 		{
+	// 			_TRACE("[ch%d]连接中...\n", _chid);
+	// 
+	// 			MEDIA_FRAME_INFO	frameinfo;
+	// 			memset(&frameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
+	// 			frameinfo.length = 1;
+	// 			frameinfo.type   = 0xFF;
+	// 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)&frameinfo, "1");
+	// 		}
+	// 		else if (NULL!=frameinfo && frameinfo->type==0xF1)
+	// 		{
+	// 			_TRACE("[ch%d]掉包[%.2f]...\n", _chid, frameinfo->losspacket);
+	// 
+	// 			frameinfo->length = 1;
+	// 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, "1");
+	// 		}
+	// 	}
 	else if (mediatype == EASY_SDK_EVENT_FRAME_FLAG)//回调连接状态事件
 	{
 		// EasyRTSPClient开始进行连接，建立EasyRTSPClient连接线程
-		char*  fRTSPURL = pRealtimePlayThread[_chid].url;
+		char* fRTSPURL = pRealtimePlayThread[_chid].url;
 		char sErrorString[512];
 		if (NULL == pbuf && NULL == frameinfo)
 		{
@@ -2551,25 +2551,25 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char *pbuf, EASY_FRAM
 			MEDIA_FRAME_INFO	tmpFrameinfo;
 			memset(&tmpFrameinfo, 0x00, sizeof(MEDIA_FRAME_INFO));
 			tmpFrameinfo.length = 1;
-			tmpFrameinfo.type   = 0xFF;
+			tmpFrameinfo.type = 0xFF;
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)&tmpFrameinfo, sErrorString);
 			if (pMediaCallback)
-				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString,  (EASY_FRAME_INFO*)&tmpFrameinfo);
+				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, (EASY_FRAME_INFO*)&tmpFrameinfo);
 		}
-		else if (NULL!=frameinfo && frameinfo->type==0xF1)
+		else if (NULL != frameinfo && frameinfo->type == 0xF1)
 		{
-			sprintf(sErrorString, "Error:	 %s：	[ch%d]掉包[%.2f]...\n",  fRTSPURL, _chid, frameinfo->losspacket);
+			sprintf(sErrorString, "Error:	 %s：	[ch%d]掉包[%.2f]...\n", fRTSPURL, _chid, frameinfo->losspacket);
 
 			frameinfo->length = 1;
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, sErrorString);
 			if (pMediaCallback)
 				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
-	}
+		}
 
 		// EasyRTSPClient RTSPClient连接错误，错误码通过EasyRTSP_GetErrCode()接口获取，比如404
 		else if (NULL != frameinfo && frameinfo->codec == EASY_SDK_EVENT_CODEC_ERROR)
 		{
-			sprintf(sErrorString, "Error:	  %s： EasyRTSP_GetErrCode：%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf?pbuf:"null" );
+			sprintf(sErrorString, "Error:	  %s： EasyRTSP_GetErrCode：%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf ? pbuf : "null");
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, sErrorString);
 			if (pMediaCallback)
 				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
@@ -2592,20 +2592,20 @@ int	CChannelManager::SetManuRecordPath(int channelId, const char* recordPath)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (recordPath)
 	{
 		int nPathLen = strlen(recordPath);
-		if (nPathLen<=0)
+		if (nPathLen <= 0)
 		{
 			return -1;
 		}
-		if (nPathLen>MAX_PATH)
+		if (nPathLen > MAX_PATH)
 		{
 			nPathLen = MAX_PATH;
 		}
-		memcpy(pRealtimePlayThread[iNvsIdx].manuRecordingPath, recordPath, nPathLen+1);
+		memcpy(pRealtimePlayThread[iNvsIdx].manuRecordingPath, recordPath, nPathLen + 1);
 	}
 	return 1;
 }
@@ -2614,30 +2614,30 @@ int	CChannelManager::SetManuPicShotPath(int channelId, const char* shotPath)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 	if (shotPath)
 	{
 		int nPathLen = strlen(shotPath);
-		if (nPathLen<=0)
+		if (nPathLen <= 0)
 		{
 			return -1;
 		}
-		if (nPathLen>MAX_PATH)
+		if (nPathLen > MAX_PATH)
 		{
 			nPathLen = MAX_PATH;
 		}
-		memcpy(pRealtimePlayThread[iNvsIdx].strScreenCapturePath, shotPath, nPathLen+1);
+		memcpy(pRealtimePlayThread[iNvsIdx].strScreenCapturePath, shotPath, nPathLen + 1);
 	}
 	return 1;
 }
 
-int	CChannelManager::StartManuPicShot(int channelId)	
+int	CChannelManager::StartManuPicShot(int channelId)
 {
 	//pThread->manuScreenshot
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	//if (NULL == pRealtimePlayThread[iNvsIdx].m_pSaveImage)
 	{
@@ -2651,7 +2651,7 @@ int	CChannelManager::StopManuPicShot(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	pRealtimePlayThread[iNvsIdx].manuScreenshot = 0x00;
 	return 1;
@@ -2663,12 +2663,12 @@ int	CChannelManager::StartManuRecording(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (NULL == pRealtimePlayThread[iNvsIdx].mp4cHandle)
 	{
 		//初始化录像缓存队列
-		if (NULL == pRealtimePlayThread[iNvsIdx].pRecAVQueue)  
+		if (NULL == pRealtimePlayThread[iNvsIdx].pRecAVQueue)
 		{
 			pRealtimePlayThread[iNvsIdx].pRecAVQueue = new SS_QUEUE_OBJ_T();
 			if (NULL != pRealtimePlayThread[iNvsIdx].pRecAVQueue)
@@ -2679,8 +2679,8 @@ int	CChannelManager::StartManuRecording(int channelId)
 				pRealtimePlayThread[iNvsIdx].initRecQueue = 0x01;
 			}
 
-			pRealtimePlayThread[iNvsIdx].dwLosspacketTime=0;
-			pRealtimePlayThread[iNvsIdx].dwDisconnectTime=0;
+			pRealtimePlayThread[iNvsIdx].dwLosspacketTime = 0;
+			pRealtimePlayThread[iNvsIdx].dwDisconnectTime = 0;
 		}
 
 		//创建线程执行录像
@@ -2695,19 +2695,18 @@ int	CChannelManager::StopManuRecording(int channelId)
 	if (NULL == pRealtimePlayThread)			return -1;
 
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
-	if (iNvsIdx < 0 || iNvsIdx>= MAX_CHANNEL_NUM)	return -1;
+	if (iNvsIdx < 0 || iNvsIdx >= MAX_CHANNEL_NUM)	return -1;
 
 	if (pRealtimePlayThread[iNvsIdx].manuRecording == 0x01)
 	{
 		pRealtimePlayThread[iNvsIdx].manuRecording = 0x00;
 		CloseRecordThread(&pRealtimePlayThread[iNvsIdx]);
 	}
-	if(pRealtimePlayThread[iNvsIdx].m_pMP4Writer)
+	if (pRealtimePlayThread[iNvsIdx].m_pMP4Writer)
 	{
 		pRealtimePlayThread[iNvsIdx].m_pMP4Writer->ReleaseMP4Writer();
 		delete pRealtimePlayThread[iNvsIdx].m_pMP4Writer;
-		pRealtimePlayThread[iNvsIdx].m_pMP4Writer = NULL;
+		pRealtimePlayThread[iNvsIdx].m_pMP4Writer = NULL; 
 	}
-
 	return 1;
 }
