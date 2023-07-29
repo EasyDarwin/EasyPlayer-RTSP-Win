@@ -1094,14 +1094,14 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread(LPVOID _pParam)
 				// 				char sFileName[512] = {0,};
 				// 				sprintf(sFileName, "%sch%d_%s.mp4", pThread->manuRecordingPath, pThread->channelId, szTime);
 
-				char sFileName[64] = { 0, };
-				sprintf(sFileName, "channel%d", channelid);
+				//char sFileName[64] = { 0, };
+				//sprintf(sFileName, "channel%d", channelid);
 
 				char subDir[64] = { 0 };
-				sprintf(subDir, "%s\\", sFileName);
+				//sprintf(subDir, "%s\\", sFileName);
 
 				//自定义Duration
-				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, sFileName, 30 * 60, 1))
+				if (!pThread->m_pMP4Writer->ResetStreamCache(strRecordPath, subDir, "", 30 * 60, 1))
 				{
 					delete pThread->m_pMP4Writer;
 					pThread->m_pMP4Writer = NULL;
@@ -2076,7 +2076,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread(LPVOID _pParam)
 		pThread->rtpTimestamp = pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_sec * 1000 + pThread->yuvFrame[iDispalyYuvIdx].frameinfo.timestamp_usec / 1000;
 
 		//统计信息:  编码格式 分辨率 帧率 帧类型  码流  缓存帧数
-		char sztmp[128] = { 0, };
+		char sztmp[512] = { 0, };
 #if 0
 		sprintf(sztmp, "%s[%d x %d]  FPS: %d[%s]    Bitrate: %.2fMbps   Cache: %d / %d",
 			pThread->yuvFrame[iDispalyYuvIdx].frameinfo.codec == 0x1C ? "H264" : "MPEG4",
@@ -2201,7 +2201,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread(LPVOID _pParam)
 						static FILE* fOutput = NULL;
 						if (NULL == fOutput)
 						{
-							char sztmp[128] = { 0, };
+							char sztmp[512] = { 0, };
 							sprintf(sztmp, "D:\\%dx%d.yv12", width, height);
 							fOutput = fopen(sztmp, "wb");
 						}
@@ -2271,7 +2271,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDisplayThread(LPVOID _pParam)
 				static FILE* fOutput = NULL;
 				if (NULL == fOutput)
 				{
-					char sztmp[128] = { 0, };
+					char sztmp[512] = { 0, };
 					sprintf(sztmp, "C:\\test\\%dx%d.yv12", width, height);
 					fOutput = fopen(sztmp, "wb");
 				}
