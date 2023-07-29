@@ -2569,10 +2569,10 @@ int	CChannelManager::ProcessData(int _chid, int mediatype, char* pbuf, EASY_FRAM
 		// EasyRTSPClient RTSPClient连接错误，错误码通过EasyRTSP_GetErrCode()接口获取，比如404
 		else if (NULL != frameinfo && frameinfo->codec == EASY_SDK_EVENT_CODEC_ERROR)
 		{
-			sprintf(sErrorString, "Error:	  %s： EasyRTSP_GetErrCode：%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf ? pbuf : "null");
+			//sprintf(sErrorString, "Error:	  %s： EasyRTSP_GetErrCode：%d :%s ...\n", fRTSPURL, EasyRTSP_GetErrCode(pRealtimePlayThread[_chid].nvsHandle), pbuf ? pbuf : "null");
 			SSQ_AddData(pRealtimePlayThread[_chid].pAVQueue, _chid, MEDIA_TYPE_EVENT, (MEDIA_FRAME_INFO*)frameinfo, sErrorString);
-			if (pMediaCallback)
-				pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
+			//if (pMediaCallback)
+			//	pMediaCallback(_chid, (int*)pRealtimePlayThread[_chid].pUserPtr, mediatype, sErrorString, frameinfo);
 		}
 
 		// EasyRTSPClient连接线程退出，此时上层应该停止相关调用，复位连接按钮等状态
