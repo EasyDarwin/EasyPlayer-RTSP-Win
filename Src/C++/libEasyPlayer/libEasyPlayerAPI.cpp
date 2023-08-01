@@ -11,9 +11,9 @@
 CChannelManager	*g_pChannelManager = NULL;
 
 // ≥ı ºªØSDK
-LIB_EASYPLAYER_API int EasyPlayer_Init(char* key)
+LIB_EASYPLAYER_API int EasyPlayer_Init()
 {
-	int isEasyRTSPClientActivated = EasyRTSP_Activate(key);
+	int isEasyRTSPClientActivated = EasyRTSP_Activate("key");
 
 	if(isEasyRTSPClientActivated <= 0)
 		return isEasyRTSPClientActivated;
@@ -161,11 +161,11 @@ LIB_EASYPLAYER_API int		EasyPlayer_SetManuRecordPath(int channelId, const char* 
 	return g_pChannelManager->SetManuRecordPath(channelId, recordPath);
 }
 
-LIB_EASYPLAYER_API int		EasyPlayer_SetManuPicShotPath(int channelId, const char* shotPath)
+LIB_EASYPLAYER_API int		EasyPlayer_SetManuPicShotPath(int channelId, const char* shotPath,const char* fileName)
 {
 	if (NULL == g_pChannelManager)		return -1;
 
-	return g_pChannelManager->SetManuPicShotPath(channelId, shotPath);
+	return g_pChannelManager->SetManuPicShotPath(channelId, shotPath,fileName);
 }
 
 LIB_EASYPLAYER_API int		EasyPlayer_StartManuPicShot(int channelId)

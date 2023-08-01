@@ -37,7 +37,7 @@ public:
 	//��ʼ��
 	static int Init()
 	{
-		int LimitDay=EasyPlayer_Init((char*)KEY);
+		int LimitDay=EasyPlayer_Init();
 		return LimitDay;
 	}
 

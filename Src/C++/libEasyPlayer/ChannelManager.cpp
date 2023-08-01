@@ -1261,7 +1261,7 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread(LPVOID _pParam)
 						// 						sprintf(strPath , "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime) ;
 
 						PhotoShotThreadInfo* pShotThreadInfo = new PhotoShotThreadInfo;
-						sprintf(pShotThreadInfo->strPath, "%sch%d_%s.jpg", pThread->strScreenCapturePath, pThread->channelId, szTime);
+						sprintf(pShotThreadInfo->strPath, "%s%s.jpg", pThread->strScreenCapturePath, pThread->fileName);
 
 						int nYuvBufLen = frameinfo.width * frameinfo.height * 3;// most size = RGB24, we donot support RGBA Render type
 						pShotThreadInfo->pYuvBuf = new unsigned char[nYuvBufLen];
@@ -2610,7 +2610,7 @@ int	CChannelManager::SetManuRecordPath(int channelId, const char* recordPath)
 	return 1;
 }
 
-int	CChannelManager::SetManuPicShotPath(int channelId, const char* shotPath)
+int	CChannelManager::SetManuPicShotPath(int channelId, const char* shotPath,const char* fileName)
 {
 	if (NULL == pRealtimePlayThread)			return -1;
 	int iNvsIdx = channelId - CHANNEL_ID_GAIN;
@@ -2618,6 +2618,7 @@ int	CChannelManager::SetManuPicShotPath(int channelId, const char* shotPath)
 	if (shotPath)
 	{
 		int nPathLen = strlen(shotPath);
+		int nFileLen = strlen(fileName);
 		if (nPathLen <= 0)
 		{
 			return -1;
@@ -2627,6 +2628,7 @@ int	CChannelManager::SetManuPicShotPath(int channelId, const char* shotPath)
 			nPathLen = MAX_PATH;
 		}
 		memcpy(pRealtimePlayThread[iNvsIdx].strScreenCapturePath, shotPath, nPathLen + 1);
+		memcpy(pRealtimePlayThread[iNvsIdx].fileName, fileName, nFileLen + 1);
 	}
 	return 1;
 }

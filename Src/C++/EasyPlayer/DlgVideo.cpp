@@ -360,7 +360,7 @@ void CDlgVideo::OnBnClickedButtonPreview()
 
 			// 设置抓图和录制存放路径 [10/10/2016 dingshuai]
 			EasyPlayer_SetManuRecordPath(m_ChannelId, sFilePath);
-			EasyPlayer_SetManuPicShotPath(m_ChannelId, sFilePath);
+			EasyPlayer_SetManuPicShotPath(m_ChannelId, sFilePath,"test");
 
 			if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
 

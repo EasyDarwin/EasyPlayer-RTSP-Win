@@ -43,7 +43,7 @@ typedef struct tagEASY_PALYER_OSD
 
 typedef int (CALLBACK *MediaSourceCallBack)( int _channelId, int *_channelPtr, int _frameType, char *pBuf, EASY_FRAME_INFO* _frameInfo);
 
-LIB_EASYPLAYER_API int EasyPlayer_Init(char* key);
+LIB_EASYPLAYER_API int EasyPlayer_Init();
 LIB_EASYPLAYER_API void EasyPlayer_Release();
 
 // 增加RTSP回放相关接口参数 [5/9/2018 SwordTwelve]
@@ -70,7 +70,7 @@ LIB_EASYPLAYER_API int EasyPlayer_PlaySound(int channelId);
 LIB_EASYPLAYER_API int EasyPlayer_StopSound();
 
 LIB_EASYPLAYER_API int		EasyPlayer_SetManuRecordPath(int channelId, const char* recordPath);
-LIB_EASYPLAYER_API int		EasyPlayer_SetManuPicShotPath(int channelId, const char* shotPath);
+LIB_EASYPLAYER_API int		EasyPlayer_SetManuPicShotPath(int channelId, const char* shotPath,const char* fileName);
 
 LIB_EASYPLAYER_API int		EasyPlayer_StartManuPicShot(int channelId);//pThread->manuScreenshot
 LIB_EASYPLAYER_API int		EasyPlayer_StopManuPicShot(int channelId);

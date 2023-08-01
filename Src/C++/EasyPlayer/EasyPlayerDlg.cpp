@@ -240,7 +240,7 @@ void	CEasyPlayerDlg::InitialComponents()
 	pStaticCopyright	=	NULL;
 
 	RenderFormat	=	DISPLAY_FORMAT_RGB565;//RGB565
-	m_nValidTimes = EasyPlayer_Init(KEY);
+	m_nValidTimes = EasyPlayer_Init();
 }
 
 void	CEasyPlayerDlg::CreateComponents()

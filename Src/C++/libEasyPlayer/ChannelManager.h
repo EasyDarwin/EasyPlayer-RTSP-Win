@@ -179,7 +179,7 @@ typedef struct __PLAY_THREAD_OBJ
 	char			url[MAX_PATH];//播放的URL路径
 	char			manuRecordingPath[MAX_PATH];//录像存放路径
 	char			strScreenCapturePath[MAX_PATH];//抓图存放路径
-	//char			manuRecordingFile[MAX_PATH];
+	char			fileName[MAX_PATH];
 	int				manuRecording;	//=1 开启录制
 	int				manuScreenshot;//=1 开启抓图
 	//MP4Creator写MP4
@@ -262,7 +262,7 @@ public:
 	int		StopManuRecording(int channelId);
 
 	int		SetManuRecordPath(int channelId, const char* recordPath);
-	int		SetManuPicShotPath(int channelId, const char* shotPath);
+	int		SetManuPicShotPath(int channelId, const char* shotPath,const char* fileName);
 
 	int		StartManuPicShot(int channelId);//pThread->manuScreenshot
 	int		StopManuPicShot(int channelId);
