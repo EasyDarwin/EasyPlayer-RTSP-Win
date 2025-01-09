@@ -1,6 +1,9 @@
 #ifndef __FF_DECODER_API_H__
 #define __FF_DECODER_API_H__
 
+#ifdef _DEBUG
+//#include <vld.h>
+#endif
 
 #include <windows.h>
 #include <stdlib.h>
@@ -12,6 +15,9 @@
 //Decoder
 #ifndef DECODER_H264
 #define DECODER_H264			0x1C			//28
+#endif
+#ifndef DECODER_H265
+#define DECODER_H265			0xAE			//174
 #endif
 #ifndef DECODER_MPEG4
 #define DECODER_MPEG4			0x0D			//13
@@ -73,8 +79,8 @@ extern "C"
 	int	FFDECODER_API	FFD_Init(FFD_HANDLE *_handle);
 	int	FFDECODER_API	FFD_Deinit(FFD_HANDLE *_handle);
 
-	int FFDECODER_API	FFD_SetVideoDecoderParam(FFD_HANDLE _handle, int _width, int _height, int _decoder, int _outformat);
-	int FFDECODER_API	FFD_SetAudioDecoderParam(FFD_HANDLE _handle, unsigned char _channel, unsigned int _sample_rate, unsigned int _decoder);
+	int FFDECODER_API	FFD_SetVideoDecoderParam(FFD_HANDLE _handle, int _width, int _height, int _decoder, int _outformat, int multiThread);
+	int FFDECODER_API	FFD_SetAudioDecoderParam(FFD_HANDLE _handle, unsigned char _channel, unsigned int _sample_rate, unsigned int bitsPerSample, unsigned int _decoder);
 
 	int	FFDECODER_API	FFD_GetVideoDecoderInfo(FFD_HANDLE _handle, int *_decoder, int *_width, int *_height);
 
@@ -87,13 +93,18 @@ extern "C"
 	//desc:				解码后的数据，直接送到指定的内存中
 	int	FFDECODER_API	FFD_DecodeVideo2Buf(FFD_HANDLE _handle, char *_inbuf, int _bufsize, void *_outbuf[8], int _pitch);
 
-	int	FFDECODER_API	FFD_DecodeVideo3(FFD_HANDLE _handle, char *_inbuf, int _bufsize, void *yuvbuf, int dstW, int dstH, long long  pts = 0, long long dts = 0);
+	int	FFDECODER_API	FFD_DecodeVideo3(FFD_HANDLE _handle, char *_inbuf, int _bufsize, void *yuvbuf, int dstW, int dstH);
+	int	FFDECODER_API	FFD_ConvertDecodeFrameFormat(FFD_HANDLE _handle, char *dstData, int dstFormat, int dstW, int dstH);		//配合FFD_DecodeVideo3使用,将刚解码完的帧转换成指定格式
+	int	FFDECODER_API	FFD_ConvertDecodeFrameFormat2(FFD_HANDLE _handle, char *dstData, int dstFormat, char *srcData, int srcFormat, int dstW, int dstH);
+
 	int FFDECODER_API	FFD_DecodeVideoPacket(FFD_HANDLE _handle, char *pCodecCtx, unsigned char *avPacket, char **_outbuf);
 
 
 	int	FFDECODER_API	FFD_DecodeAudio(FFD_HANDLE _handle, char *pInBuf, int inputSize, char *pOutBuf, int *outSize);
 	int	FFDECODER_API	FFD_DecodeAudioPacket(FFD_HANDLE _handle, char *pCodecCtx, unsigned char *avPacket, char *pOutBuf, int *outSize);
 };
+
+
 
 
 #endif

@@ -750,7 +750,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					FFD_Init(&_pPlayThread->decoderObj[i].ffDecoder);
 					//H265 codecID改成FFMPEG新版的
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
-					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
+					//FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder, int multiThread);
+					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder, 2);
 				}
 				if (NULL == _pPlayThread->decoderObj[i].pIntelDecoder && _pPlayThread->decoderObj[i].bHardDecode)
 				{
@@ -799,7 +800,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					FFD_Init(&_pPlayThread->decoderObj[iIdx].ffDecoder);
 					//H265 codecID改成FFMPEG新版的
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
-					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
+					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder, 2);
 
 					if (NULL != _pPlayThread->decoderObj[iIdx].ffDecoder )
 					{
@@ -836,7 +837,7 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 
 					//H265 codecID改成FFMPEG新版的
 					int nCodec = (_frameinfo->codec == EASY_SDK_VIDEO_CODEC_H265) ? /*EASY_SDK_VIDEO_CODEC_H265*/174 : _frameinfo->codec;
-					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder);
+					FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->width, _frameinfo->height, nCodec, nDecoder, 2);
 					//FFD_SetVideoDecoderParam(_pPlayThread->decoderObj[iIdx].ffDecoder, _frameinfo->width, _frameinfo->height, _frameinfo->codec, nDecoder);
 					_pPlayThread->decoderObj[iIdx].codec.vidCodec	= _frameinfo->codec;
 					_pPlayThread->decoderObj[iIdx].codec.width	= _frameinfo->width;
@@ -866,7 +867,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 					iExist = i;
 
 					FFD_Init(&_pPlayThread->decoderObj[i].ffDecoder);
-					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
+					//FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
+					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, 16, _frameinfo->codec);
 				}
 				return &_pPlayThread->decoderObj[i];
 			}
@@ -876,7 +878,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				if (NULL == _pPlayThread->decoderObj[iIdx].ffDecoder)
 				{
 					FFD_Init(&_pPlayThread->decoderObj[iIdx].ffDecoder);
-					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
+					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, 16, _frameinfo->codec);
+					//FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
 
 					if (NULL != _pPlayThread->decoderObj[iIdx].ffDecoder)
 					{
@@ -893,7 +896,8 @@ DECODER_OBJ	*GetDecoder(PLAY_THREAD_OBJ	*_pPlayThread, unsigned int mediaType, M
 				}
 				else
 				{
-					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
+					FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, 16, _frameinfo->codec);
+					//FFD_SetAudioDecoderParam(_pPlayThread->decoderObj[i].ffDecoder, _frameinfo->channels, _frameinfo->sample_rate, _frameinfo->codec);
 					_pPlayThread->decoderObj[iIdx].codec.audCodec	= _frameinfo->codec;
 					_pPlayThread->decoderObj[iIdx].codec.samplerate	= _frameinfo->sample_rate;
 					_pPlayThread->decoderObj[iIdx].codec.channels = _frameinfo->channels;
@@ -1200,7 +1204,8 @@ LPTHREAD_START_ROUTINE CChannelManager::_lpDecodeThread( LPVOID _pParam )
 			else
 			{
 				long long lTimestamp = frameinfo.timestamp_sec * 1000 + frameinfo.timestamp_usec / 1000;
-				nRet = FFD_DecodeVideo3(pDecoderObj->ffDecoder, pbuf, frameinfo.length, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, frameinfo.width, frameinfo.height, lTimestamp, lTimestamp);
+				nRet = FFD_DecodeVideo3(pDecoderObj->ffDecoder, pbuf, frameinfo.length, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, frameinfo.width, frameinfo.height);
+				//nRet = FFD_DecodeVideo3(pDecoderObj->ffDecoder, pbuf, frameinfo.length, pThread->yuvFrame[pThread->decodeYuvIdx].pYuvBuf, frameinfo.width, frameinfo.height, lTimestamp, lTimestamp);
 				if (0 != nRet)
 				{
 					if(nRet == -4)//-4表示为当前帧尚未解码完成，不作为错误判断
