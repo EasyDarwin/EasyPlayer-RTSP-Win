@@ -30,6 +30,9 @@ EasyPlayer **RTSP Windows** 播放器是由[EasyDarwin开源社区](https://www.
 
 ## 获取更多信息
 
-**EasyDarwin**开源流媒体服务器：[www.EasyDarwin.org](http://www.easydarwin.org)
+<img width="185" height="184" alt="QQ_1756176182992" src="https://github.com/user-attachments/assets/1fb42348-2bf8-4ee5-9cb0-610385067c99" />
 
-Powered By [EasyDarwin Team](https://www.easydarwin.org "EasyDarwin")
+技术资料：关注‘EasyPlayer’公众号
+
+Powered By [EasyDarwin](https://www.easydarwin.org "EasyDarwin") Team
+
